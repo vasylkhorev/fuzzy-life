@@ -1,114 +1,165 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useState, useEffect } from "react";
+import './Grid.css';  // Assuming you have this CSS for the layout and styling
 
-const Grid = ({ cellSize = 20 }) => {
-  const [grid, setGrid] = useState({});
-  const [offsetX, setOffsetX] = useState(0);
-  const [offsetY, setOffsetY] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [cursor, setCursor] = useState('url("/pen-cursor.svg"), auto'); // Custom cursor
+const Grid = ({ initialCellSize = 20, zoomFactor = 1.1 }) => {
+    const gridRef = useRef(new Map()); // Store active cells
+    const offsetX = useRef(0);
+    const offsetY = useRef(0);
+    const dragStart = useRef({ x: 0, y: 0 });
+    const isDragging = useRef(false);
+    const previousDrag = useRef({ x: 0, y: 0 });
 
-  const canvasRef = useRef();
-  const [viewport, setViewport] = useState({ width: 0, height: 0 });
+    const canvasRef = useRef();
+    const [viewport, setViewport] = useState({ width: 0, height: 0 });
+    const [cellSize, setCellSize] = useState(initialCellSize);
 
-  useEffect(() => {
-    const resizeHandler = () => {
-      setViewport({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
+    useEffect(() => {
+        const resizeHandler = () => {
+            setViewport({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
+        };
+        window.addEventListener("resize", resizeHandler);
+        resizeHandler();
+
+        return () => window.removeEventListener("resize", resizeHandler);
+    }, []);
+
+    useEffect(() => {
+        drawGrid();
+    }, [viewport, cellSize]);
+
+    const drawGrid = () => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        const rows = Math.ceil(viewport.height / cellSize);
+        const cols = Math.ceil(viewport.width / cellSize);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Render gridlines
+        ctx.strokeStyle = "gray";
+        for (let row = 0; row <= rows; row++) {
+            const y = row * cellSize - offsetY.current % cellSize;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+        for (let col = 0; col <= cols; col++) {
+            const x = col * cellSize - offsetX.current % cellSize;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+        }
+
+        // Render active cells
+        const visibleCells = getVisibleCells(rows, cols);
+        ctx.fillStyle = "black";
+        visibleCells.forEach(([x, y]) => {
+            const canvasX = (x - offsetX.current) * cellSize;
+            const canvasY = (y - offsetY.current) * cellSize;
+            ctx.fillRect(canvasX, canvasY, cellSize, cellSize);
+        });
     };
-    window.addEventListener('resize', resizeHandler);
-    resizeHandler();
 
-    return () => window.removeEventListener('resize', resizeHandler);
-  }, []);
+    const getVisibleCells = (rows, cols) => {
+        const visibleCells = [];
+        for (let row = 0; row <= rows; row++) {
+            for (let col = 0; col <= cols; col++) {
+                const cellX = col + offsetX.current;
+                const cellY = row + offsetY.current;
+                if (gridRef.current.has(`${cellX},${cellY}`)) {
+                    visibleCells.push([cellX, cellY]);
+                }
+            }
+        }
+        return visibleCells;
+    };
 
-  useEffect(() => {
-    drawGrid();
-  }, [grid, viewport, offsetX, offsetY]);
+    const toggleCell = (x, y) => {
+        const key = `${x},${y}`;
+        if (gridRef.current.has(key)) {
+            gridRef.current.delete(key);
+        } else {
+            gridRef.current.set(key, 1);
+        }
+        drawGrid();
+    };
 
-  const drawGrid = () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+    const handleCanvasClick = (e) => {
+        if (isDragging.current) return;
+        const rect = canvasRef.current.getBoundingClientRect();
+        const x = Math.floor((e.clientX - rect.left) / cellSize) + offsetX.current;
+        const y = Math.floor((e.clientY - rect.top) / cellSize) + offsetY.current;
+        toggleCell(x, y);
+    };
 
-    const rows = Math.ceil(viewport.height / cellSize);
-    const cols = Math.ceil(viewport.width / cellSize);
+    const startDrag = (e) => {
+        isDragging.current = true;
+        dragStart.current = { x: e.clientX, y: e.clientY };
+        previousDrag.current = { x: e.clientX, y: e.clientY }; // Initialize previous drag position
+    };
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const handleDrag = (e) => {
+        if (!isDragging.current) return;
 
-    for (let row = 0; row <= rows; row++) {
-      for (let col = 0; col <= cols; col++) {
-        const cellX = col + offsetX;
-        const cellY = row + offsetY;
-        const cellState = grid[`${cellX},${cellY}`] || 0;
+        // Calculate the distance moved since the last drag event
+        const dx = e.clientX - previousDrag.current.x;
+        const dy = e.clientY - previousDrag.current.y;
 
-        ctx.fillStyle = cellState ? 'black' : 'white';
-        ctx.fillRect(
-          col * cellSize,
-          row * cellSize,
-          cellSize,
-          cellSize
-        );
-        ctx.strokeStyle = 'gray';
-        ctx.strokeRect(
-          col * cellSize,
-          row * cellSize,
-          cellSize,
-          cellSize
-        );
-      }
-    }
-  };
+        // Update the offsets to move the grid
+        offsetX.current -= dx;
+        offsetY.current -= dy;
 
-  const toggleCell = (x, y) => {
-    const newGrid = { ...grid };
-    const key = `${x},${y}`;
-    newGrid[key] = grid[key] ? 0 : 1;
-    setGrid(newGrid);
-  };
+        // Update the previous drag position for the next event
+        previousDrag.current = { x: e.clientX, y: e.clientY };
 
-  const handleCanvasClick = (e) => {
-    if (isDragging) return; // Ignore clicks during dragging
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = Math.floor((e.clientX - rect.left) / cellSize) + offsetX;
-    const y = Math.floor((e.clientY - rect.top) / cellSize) + offsetY;
-    toggleCell(x, y);
-  };
+        // Redraw grid after dragging
+        drawGrid();
+    };
 
-  const startDrag = (e) => {
-    setIsDragging(true);
-    setCursor('grabbing'); // Update cursor for dragging
-    setDragStart({ x: e.clientX, y: e.clientY });
-  };
+    const endDrag = () => {
+        isDragging.current = false;
+    };
 
-  const handleDrag = (e) => {
-    if (!isDragging) return;
-    const dx = Math.floor((e.clientX - dragStart.x) / cellSize);
-    const dy = Math.floor((e.clientY - dragStart.y) / cellSize);
-    setOffsetX(offsetX - dx);
-    setOffsetY(offsetY - dy);
-    setDragStart({ x: e.clientX, y: e.clientY });
-  };
+    const handleZoom = (e) => {
+        e.preventDefault();
+        const newCellSize =
+            e.deltaY < 0
+                ? Math.min(cellSize * zoomFactor, 100) // Zoom in
+                : Math.max(cellSize / zoomFactor, 5); // Zoom out
+        setCellSize(newCellSize);
+    };
 
-  const endDrag = () => {
-    setIsDragging(false);
-    setCursor('url("/pen-cursor.svg"), auto'); // Reset to pen cursor
-  };
+    const resetGrid = () => {
+        gridRef.current.clear();
+        drawGrid();
+    };
 
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{ display: 'block', cursor: cursor }} // Custom cursor applied here
-      onMouseDown={startDrag}
-      onMouseMove={handleDrag}
-      onMouseUp={endDrag}
-      onMouseLeave={endDrag}
-      onClick={handleCanvasClick}
-    />
-  );
+    return (
+        <div className="grid-container">
+            <div className="button-bar">
+                <span className="title">Fuzzy Life Grid</span>
+                <button onClick={resetGrid}>Reset Grid</button>
+            </div>
+            <canvas
+                ref={canvasRef}
+                className="canvas"
+                onMouseDown={startDrag}
+                onMouseMove={handleDrag}
+                onMouseUp={endDrag}
+                onMouseLeave={endDrag}
+                onClick={handleCanvasClick}
+                onWheel={handleZoom}
+            />
+        </div>
+    );
 };
 
 export default Grid;

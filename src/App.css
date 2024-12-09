@@ -1,38 +1,58 @@
-.App {
-  text-align: center;
+/* App.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.grid-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  height: 100vh;
+}
+
+.button-bar {
+  background-color: #333;
   color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
 }
 
-.App-link {
-  color: #61dafb;
+.title {
+  font-size: 1.5em;
+  font-weight: bold;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+button {
+  background-color: #f39c12;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #e67e22;
+}
+
+.canvas {
+  display: block;
+  margin-top: 50px; /* to make space for the button bar */
+  cursor: grab;
 }
