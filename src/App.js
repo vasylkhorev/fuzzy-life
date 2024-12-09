@@ -1,19 +1,19 @@
 import React, { useState, useRef } from 'react';
-import Grid from './components/Grid';
 import Controls from './components/Controls';
+import Main from "./components/Main";
 
 const App = () => {
-  const rows = 20;
-  const cols = 20;
-  const cellSize = 20;
+    const rows = 20;
+    const cols = 20;
+    const cellSize = 20;
 
-  return (
-    <div>
-      <h1>Game of Life</h1>
-      <Grid rows={rows} cols={cols} cellSize={cellSize} />
-      <Controls />
-    </div>
-  );
+    return (
+        <div>
+            <h1>Game of Life</h1>
+            <Main/>
+            <Controls />
+        </div>
+    );
 };
 
 export default App;

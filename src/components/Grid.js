@@ -13,6 +13,7 @@ const Grid = ({ initialCellSize = 20, zoomFactor = 1.1 }) => {
     const [viewport, setViewport] = useState({ width: 0, height: 0 });
     const [cellSize, setCellSize] = useState(initialCellSize);
 
+    // Resize handler for dynamic viewport size
     useEffect(() => {
         const resizeHandler = () => {
             setViewport({
@@ -21,15 +22,17 @@ const Grid = ({ initialCellSize = 20, zoomFactor = 1.1 }) => {
             });
         };
         window.addEventListener("resize", resizeHandler);
-        resizeHandler();
+        resizeHandler(); // Initialize viewport size on load
 
         return () => window.removeEventListener("resize", resizeHandler);
     }, []);
 
+    // Redraw grid after viewport or cell size change
     useEffect(() => {
         drawGrid();
     }, [viewport, cellSize]);
 
+    // Drawing grid and active cells
     const drawGrid = () => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
@@ -68,6 +71,7 @@ const Grid = ({ initialCellSize = 20, zoomFactor = 1.1 }) => {
         });
     };
 
+    // Get list of visible cells that are alive
     const getVisibleCells = (rows, cols) => {
         const visibleCells = [];
         for (let row = 0; row <= rows; row++) {
@@ -82,6 +86,7 @@ const Grid = ({ initialCellSize = 20, zoomFactor = 1.1 }) => {
         return visibleCells;
     };
 
+    // Toggle cell alive/dead on click
     const toggleCell = (x, y) => {
         const key = `${x},${y}`;
         if (gridRef.current.has(key)) {
@@ -92,6 +97,7 @@ const Grid = ({ initialCellSize = 20, zoomFactor = 1.1 }) => {
         drawGrid();
     };
 
+    // Handle canvas click to toggle cell
     const handleCanvasClick = (e) => {
         if (isDragging.current) return;
         const rect = canvasRef.current.getBoundingClientRect();
@@ -100,43 +106,44 @@ const Grid = ({ initialCellSize = 20, zoomFactor = 1.1 }) => {
         toggleCell(x, y);
     };
 
+    // Start dragging the grid
     const startDrag = (e) => {
         isDragging.current = true;
         dragStart.current = { x: e.clientX, y: e.clientY };
-        previousDrag.current = { x: e.clientX, y: e.clientY }; // Initialize previous drag position
+        previousDrag.current = { x: e.clientX, y: e.clientY };
     };
 
+    // Handle grid dragging
     const handleDrag = (e) => {
         if (!isDragging.current) return;
 
-        // Calculate the distance moved since the last drag event
         const dx = e.clientX - previousDrag.current.x;
         const dy = e.clientY - previousDrag.current.y;
 
-        // Update the offsets to move the grid
         offsetX.current -= dx;
         offsetY.current -= dy;
 
-        // Update the previous drag position for the next event
         previousDrag.current = { x: e.clientX, y: e.clientY };
 
-        // Redraw grid after dragging
         drawGrid();
     };
 
+    // End dragging
     const endDrag = () => {
         isDragging.current = false;
     };
 
+    // Handle zooming in and out
     const handleZoom = (e) => {
         e.preventDefault();
         const newCellSize =
             e.deltaY < 0
-                ? Math.min(cellSize * zoomFactor, 100) // Zoom in
-                : Math.max(cellSize / zoomFactor, 5); // Zoom out
+                ? Math.min(cellSize * zoomFactor, 100)
+                : Math.max(cellSize / zoomFactor, 5);
         setCellSize(newCellSize);
     };
 
+    // Reset grid
     const resetGrid = () => {
         gridRef.current.clear();
         drawGrid();
