@@ -30,6 +30,7 @@ const App = () => {
     const [offset, setOffset] = useState({ x: 0, y: 0 }); // To track the viewport offset
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const [dragDistance, setDragDistance] = useState(0); // Track drag distance to distinguish from clicks
 
     // Draw the grid on the canvas
     const drawGrid = () => {
@@ -43,7 +44,7 @@ const App = () => {
                 const y = (r * cellSize) + offset.y;
                 ctx.beginPath();
                 ctx.rect(x, y, cellSize, cellSize);
-                ctx.fillStyle = grid[r][c] ? "yellow" : "white"; // Alive cells are yellow
+                ctx.fillStyle = grid[r][c] ? "black" : "white"; // Alive cells are black
                 ctx.fill();
                 ctx.strokeStyle = "gray";
                 ctx.stroke();
@@ -53,13 +54,19 @@ const App = () => {
 
     // Toggle cell state on click
     const toggleCell = (e) => {
+        // Only toggle if not dragging and the mouse didn't move significantly
         const canvas = canvasRef.current;
         const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left + offset.x;
-        const y = e.clientY - rect.top + offset.y;
-        const col = Math.floor(x / cellSize);
-        const row = Math.floor(y / cellSize);
 
+        // Get mouse position relative to the canvas (without offset)
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Now, use the cell size and offset to calculate the clicked cell
+        const col = Math.floor((x - offset.x) / cellSize);
+        const row = Math.floor((y - offset.y) / cellSize);
+
+        // Toggle the cell state
         const newGrid = grid.map((r, rIdx) =>
             rIdx === row
                 ? r.map((c, cIdx) => (cIdx === col ? !c : c))
@@ -124,22 +131,39 @@ const App = () => {
     const handleMouseDown = (e) => {
         setIsDragging(true);
         setDragStart({ x: e.clientX, y: e.clientY });
+        setDragDistance(0); // Reset drag distance on mouse down
     };
 
     const handleMouseMove = (e) => {
         if (isDragging) {
+            // Calculate the difference between the current mouse position and the previous dragStart position
             const dx = e.clientX - dragStart.x;
             const dy = e.clientY - dragStart.y;
+
+            // Update the offset based on the difference
             setOffset((prevOffset) => ({
                 x: prevOffset.x + dx,
                 y: prevOffset.y + dy,
             }));
+
+            // Update dragStart to the new mouse position (for the next move)
             setDragStart({ x: e.clientX, y: e.clientY });
+
+            // Calculate the distance moved from the last dragStart
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            setDragDistance(dragDistance + distance);
         }
     };
 
-    const handleMouseUp = () => {
+
+    const handleMouseUp = (e) => {
+        // Only toggle cell if not dragging
+
+        if (dragDistance < 5) {
+            toggleCell(e);
+        }
         setIsDragging(false);
+        setDragDistance(0);
     };
 
     // Run the draw function after grid update
@@ -156,11 +180,10 @@ const App = () => {
                 ref={canvasRef}
                 width={canvasWidth}
                 height={canvasHeight}
-                onClick={toggleCell}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
-                style={{ cursor: "move" }}
+                style={{ cursor: isDragging ? "move" : "pointer" }} // Move cursor for dragging, pointer for clicking
             />
             <div className="controls">
                 <button onClick={isRunning ? stopGame : runGame}>
