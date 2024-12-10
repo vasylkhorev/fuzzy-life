@@ -9,7 +9,6 @@ const App = () => {
 
     return (
         <div>
-            <h1>Game of Life</h1>
             <Main/>
             <Controls />
         </div>
