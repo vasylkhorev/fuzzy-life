@@ -1,15 +1,11 @@
 import React, { useState, useRef } from 'react';
 import Controls from './components/Controls';
-import Main from "./components/Main";
+import Grid from "./components/Grid";
 
 const App = () => {
-    const rows = 20;
-    const cols = 20;
-    const cellSize = 20;
-
     return (
         <div>
-            <Main/>
+            <Grid/>
             <Controls />
         </div>
     );
