@@ -6,7 +6,7 @@ const Grid = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [intervalId, setIntervalId] = useState(null);
     const [speed, setSpeed] = useState(500); // Speed of the game
-    const gridSize = { rows: 100, cols: 100 }; // Grid size
+    const gridSize = { rows: 1000, cols: 1000 }; // Grid size
     const cellSize = 20; // Size of each cell in the canvas
 
     // Canvas viewport size (80% of screen width)
@@ -36,20 +36,24 @@ const Grid = () => {
     const drawGrid = () => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-
-        for (let r = 0; r < gridSize.rows; r++) {
-            for (let c = 0; c < gridSize.cols; c++) {
-                const x = (c * cellSize) + offset.x;
-                const y = (r * cellSize) + offset.y;
-                ctx.beginPath();
-                ctx.rect(x, y, cellSize, cellSize);
-                ctx.fillStyle = grid[r][c] ? "black" : "white"; // Alive cells are black
-                ctx.fill();
-                ctx.strokeStyle = "gray";
-                ctx.stroke();
-            }
+        
+        let step = 10;
+        let left = 0.5 - Math.ceil(canvas.width / step) * step;
+        let top = 0.5 - Math.ceil(canvas.height / step) * step;
+        let right = 2*canvas.width;
+        let bottom = 2*canvas.height;
+        ctx.clearRect(left, top, right - left, bottom - top);
+        ctx.beginPath();
+        for (let x = left; x < right; x += step) {
+            ctx.moveTo(x, top);
+            ctx.lineTo(x, bottom);
         }
+        for (let y = top; y < bottom; y += step) {
+            ctx.moveTo(left, y);
+            ctx.lineTo(right, y);
+        }
+        ctx.strokeStyle = "#888";
+        ctx.stroke();
     };
 
     // Toggle cell state on click
