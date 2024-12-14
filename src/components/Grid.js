@@ -3,7 +3,7 @@ import "./Grid.css";
 
 const Grid = ({ grid, setGrid}) => {
     const canvasRef = useRef(null); // Ref for the canvas
-    const [offset, setOffset] = useState({ x: 0, y: 0 }); // Viewport offset
+    const [offset, setOffset] = useState({ x: 500 * 20, y: 500 * 20 }); // Viewport offset
     const [dragging, setDragging] = useState(false);
     const [lastMousePos, setLastMousePos] = useState(null);
 
@@ -36,13 +36,11 @@ const Grid = ({ grid, setGrid}) => {
             canvas.width = canvasWidth; // Set canvas width
             canvas.height = canvasHeight; // Set canvas height
         }
-        setGrid(createEmptyGrid(canvasWidth, canvasHeight));
+        setGrid(createEmptyGrid());
     }, [canvasWidth, canvasHeight]);
 
     function createEmptyGrid() {
-        const cols = Math.ceil(canvasWidth / cellSize);
-        const rows = Math.ceil(canvasHeight / cellSize);
-        return Array.from({ length: rows }, () => Array(cols).fill(false));
+        return Array.from({ length: 1000 }, () => Array(1000).fill(false));
     }
 
     const drawGrid = (ctx) => {
@@ -54,12 +52,12 @@ const Grid = ({ grid, setGrid}) => {
         const startRow = Math.floor(offset.y / cellSize);
 
         // Draw only the visible cells based on the offset
-        for (let x = startCol; x < startCol + Math.ceil(canvasWidth / cellSize); x++) {
+        for (let x = startCol; x < startCol + Math.ceil(canvasWidth / cellSize)+1; x++) {
             const xPos = x * cellSize - offset.x;
             ctx.moveTo(xPos, 0);
             ctx.lineTo(xPos, canvasHeight);
         }
-        for (let y = startRow; y < startRow + Math.ceil(canvasHeight / cellSize); y++) {
+        for (let y = startRow; y < startRow + Math.ceil(canvasHeight / cellSize)+1; y++) {
             const yPos = y * cellSize - offset.y;
             ctx.moveTo(0, yPos);
             ctx.lineTo(canvasWidth, yPos);
@@ -68,9 +66,9 @@ const Grid = ({ grid, setGrid}) => {
         ctx.stroke();
 
         // Draw live cells within the visible area
-        for (let row = startRow; row < startRow + Math.ceil(canvasHeight / cellSize); row++) {
-            for (let col = startCol; col < startCol + Math.ceil(canvasWidth / cellSize); col++) {
-                if (grid[row] && grid[row][col] && grid[row][col]) { // Check if grid[row] is defined
+        for (let row = startRow; row < startRow + Math.ceil(canvasHeight / cellSize)+1; row++) {
+            for (let col = startCol; col < startCol + Math.ceil(canvasWidth / cellSize)+1; col++) {
+                if (grid[row] && grid[row][col] && grid[row][col]) {
                     ctx.fillStyle = "black";
                     ctx.fillRect(
                         col * cellSize - offset.x,
@@ -124,7 +122,7 @@ const Grid = ({ grid, setGrid}) => {
 
         const col = Math.floor((x + offset.x) / cellSize); // Add offset.x to the position
         const row = Math.floor((y + offset.y) / cellSize); // Add offset.y to the position
-
+        console.log("col - ", col)
         if (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length) {
             const newGrid = [...grid];
             newGrid[row][col] = !newGrid[row][col];

@@ -5,7 +5,10 @@ import Info from "./components/Info";
 
 const App = () => {
     const [isRunning, setIsRunning] = useState(false);
-    const [grid, setGrid] = useState([]);
+    const [grid, setGrid] = useState(
+        Array.from({ length: 1000 }, () => Array(1000).fill(false))
+    );
+
     const [speed, setSpeed] = useState(500);
     const [generation, setGeneration] = useState(0);
 
@@ -26,6 +29,7 @@ const App = () => {
     };
 
     const nextGeneration = () => {
+        console.log(grid.length)
         const newGrid = grid.map((row, rowIndex) =>
             row.map((cell, colIndex) => {
                 const neighbors = [
