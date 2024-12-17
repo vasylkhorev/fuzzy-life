@@ -27,6 +27,8 @@ const App = () => {
     const clearGrid = () => {
         setGrid(grid.map(() => Array(grid[0].length).fill(false)));
         setIsRunning(false)
+
+        setGeneration(0)
     };
 
     const nextGeneration = () => {
