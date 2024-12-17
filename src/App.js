@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Controls from './components/Controls';
 import Grid from './components/Grid';
 import Info from "./components/Info";
+import { GRID_SIZE } from "./config";
 
 const App = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [grid, setGrid] = useState(
-        Array.from({ length: 1000 }, () => Array(1000).fill(false))
+        Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(false))
     );
 
     const [speed, setSpeed] = useState(500);

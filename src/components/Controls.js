@@ -32,7 +32,7 @@ const Controls = ({ runOrStop, isRunning, onReset, changeSpeed, speed, nextGener
                 <div className="relative flex items-center">
                     <input
                         type="number"
-                        min="100"
+                        min="10"
                         max="1000"
                         value={speed}
                         onChange={(e) => changeSpeed(Number(e.target.value))}

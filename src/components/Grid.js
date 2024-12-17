@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Grid.css";
+import { GRID_SIZE} from "../config";
 
 const Grid = ({ grid, setGrid}) => {
     const canvasRef = useRef(null); // Ref for the canvas
-    const [offset, setOffset] = useState({ x: 500 * 20, y: 500 * 20 }); // Viewport offset
+    const [offset, setOffset] = useState({ x: GRID_SIZE/2 * 20, y: GRID_SIZE/2 * 20 }); // Viewport offset
     const [dragging, setDragging] = useState(false);
     const [lastMousePos, setLastMousePos] = useState(null);
 
@@ -40,7 +41,7 @@ const Grid = ({ grid, setGrid}) => {
     }, [canvasWidth, canvasHeight]);
 
     function createEmptyGrid() {
-        return Array.from({ length: 1000 }, () => Array(1000).fill(false));
+        return Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(false));
     }
 
     const drawGrid = (ctx) => {
