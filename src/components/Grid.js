@@ -77,6 +77,16 @@ const Grid = ({ grid, setGrid}) => {
                         cellSize,
                         cellSize
                     );
+
+                    // Draw a thin gray outline to separate adjacent cells
+                    ctx.strokeStyle = "gray";
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(
+                        col * cellSize - offset.x,
+                        row * cellSize - offset.y,
+                        cellSize,
+                        cellSize
+                    );
                 }
             }
         }
