@@ -3,7 +3,7 @@ import Popover from './Popover';
 
 const Controls = ({ runOrStop, isRunning, onReset, changeSpeed, speed, nextGeneration }) => {
     return (
-        <div className="flex flex-col items-center space-y-4 p-4 bg-gray-800 text-white rounded-md shadow-lg w-full max-w-sm mx-auto">
+        <div className="flex flex-col items-center space-y-2 p-4 bg-gray-800 text-white rounded-md shadow-lg w-full max-w-sm mx-auto">
             <div className="flex space-x-4">
                 <button
                     onClick={nextGeneration}
@@ -32,7 +32,7 @@ const Controls = ({ runOrStop, isRunning, onReset, changeSpeed, speed, nextGener
                 <div className="relative flex items-center">
                     <input
                         type="number"
-                        min="10"
+                        min="100"
                         max="1000"
                         value={speed}
                         onChange={(e) => changeSpeed(Number(e.target.value))}

@@ -1,18 +1,21 @@
+// src/components/Grid.js
 import React, { useState, useEffect, useRef } from "react";
 import "./Grid.css";
-import { GRID_SIZE} from "../config";
+import { GRID_SIZE } from "../config";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+import HelpDialog from './HelpDialog';
 
-const Grid = ({ grid, setGrid}) => {
-    const canvasRef = useRef(null); // Ref for the canvas
-    const [offset, setOffset] = useState({ x: GRID_SIZE/2 * 20, y: GRID_SIZE/2 * 20 }); // Viewport offset
+const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern }) => {
+    const canvasRef = useRef(null);
+    const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [dragging, setDragging] = useState(false);
     const [lastMousePos, setLastMousePos] = useState(null);
+    const [isHelpOpen, setIsHelpOpen] = useState(false);
 
     const cellSize = 20;
 
     const [canvasWidth, setCanvasWidth] = useState(0);
     const [canvasHeight, setCanvasHeight] = useState(0);
-
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -26,39 +29,46 @@ const Grid = ({ grid, setGrid}) => {
         if (canvasRef.current) {
             const canvas = canvasRef.current;
             const canvasContainer = canvas.parentElement;
-            setCanvasWidth(canvasContainer.offsetWidth);
-            setCanvasHeight(canvasContainer.offsetHeight);
-        }
-    }, [])
+            const width = canvasContainer.offsetWidth;
+            const height = canvasContainer.offsetHeight;
+            setCanvasWidth(width);
+            setCanvasHeight(height);
+            canvas.width = width;
+            canvas.height = height;
+            if (onDimensionsChange) {
+                onDimensionsChange({ width, height });
+            }
+            console.log("Canvas dimensions set:", { width, height });
 
-    useEffect(() => {
-        if (canvasRef.current) {
-            const canvas = canvasRef.current;
-            canvas.width = canvasWidth; // Set canvas width
-            canvas.height = canvasHeight; // Set canvas height
-        }
-        setGrid(createEmptyGrid());
-    }, [canvasWidth, canvasHeight]);
+            const centerGridX = (GRID_SIZE / 2) * cellSize;
+            const centerGridY = (GRID_SIZE / 2) * cellSize;
+            const centerCanvasX = width / 2;
+            const centerCanvasY = height / 2;
 
-    function createEmptyGrid() {
-        return Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(false));
-    }
+            const newOffset = {
+                x: centerGridX - centerCanvasX,
+                y: centerGridY - centerCanvasY,
+            };
+            setOffset(newOffset);
+            if (onOffsetChange) {
+                onOffsetChange(newOffset);
+            }
+        }
+    }, [onDimensionsChange, onOffsetChange]);
 
     const drawGrid = (ctx) => {
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight); // Clear the canvas
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
         ctx.beginPath();
 
-        // Calculate the first visible cell position
         const startCol = Math.floor(offset.x / cellSize);
         const startRow = Math.floor(offset.y / cellSize);
 
-        // Draw only the visible cells based on the offset
-        for (let x = startCol; x < startCol + Math.ceil(canvasWidth / cellSize)+1; x++) {
+        for (let x = startCol; x < startCol + Math.ceil(canvasWidth / cellSize) + 1; x++) {
             const xPos = x * cellSize - offset.x;
             ctx.moveTo(xPos, 0);
             ctx.lineTo(xPos, canvasHeight);
         }
-        for (let y = startRow; y < startRow + Math.ceil(canvasHeight / cellSize)+1; y++) {
+        for (let y = startRow; y < startRow + Math.ceil(canvasHeight / cellSize) + 1; y++) {
             const yPos = y * cellSize - offset.y;
             ctx.moveTo(0, yPos);
             ctx.lineTo(canvasWidth, yPos);
@@ -66,10 +76,9 @@ const Grid = ({ grid, setGrid}) => {
         ctx.strokeStyle = "#888";
         ctx.stroke();
 
-        // Draw live cells within the visible area
-        for (let row = startRow; row < startRow + Math.ceil(canvasHeight / cellSize)+1; row++) {
-            for (let col = startCol; col < startCol + Math.ceil(canvasWidth / cellSize)+1; col++) {
-                if (grid[row] && grid[row][col] && grid[row][col]) {
+        for (let row = startRow; row < startRow + Math.ceil(canvasHeight / cellSize) + 1; row++) {
+            for (let col = startCol; col < startCol + Math.ceil(canvasWidth / cellSize) + 1; col++) {
+                if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE && grid[row] && grid[row][col]) {
                     ctx.fillStyle = "black";
                     ctx.fillRect(
                         col * cellSize - offset.x,
@@ -78,7 +87,6 @@ const Grid = ({ grid, setGrid}) => {
                         cellSize
                     );
 
-                    // Draw a thin gray outline to separate adjacent cells
                     ctx.strokeStyle = "gray";
                     ctx.lineWidth = 1;
                     ctx.strokeRect(
@@ -87,6 +95,18 @@ const Grid = ({ grid, setGrid}) => {
                         cellSize,
                         cellSize
                     );
+
+                    ctx.fillStyle = "white";
+                    ctx.font = "8px Arial";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+
+                    const xPos = col * cellSize - offset.x + cellSize / 2;
+                    const yPosTop = row * cellSize - offset.y + cellSize / 3;
+                    const yPosBottom = row * cellSize - offset.y + (2 * cellSize) / 3;
+
+                    ctx.fillText(`${row}`, xPos, yPosTop);
+                    ctx.fillText(`${col}`, xPos, yPosBottom);
                 }
             }
         }
@@ -105,16 +125,19 @@ const Grid = ({ grid, setGrid}) => {
 
         if (distance > 5 || dragging) {
             setDragging(true);
-
-            setOffset((prev) => ({
-                x: prev.x - deltaX,
-                y: prev.y - deltaY,
-            }));
-
+            setOffset((prev) => {
+                const newOffset = {
+                    x: prev.x - deltaX,
+                    y: prev.y - deltaY,
+                };
+                if (onOffsetChange) {
+                    onOffsetChange(newOffset);
+                }
+                return newOffset;
+            });
             setLastMousePos({ x: e.clientX, y: e.clientY });
         }
     };
-
 
     const handleMouseUp = (e) => {
         if (!dragging) {
@@ -122,7 +145,6 @@ const Grid = ({ grid, setGrid}) => {
         }
         setDragging(false);
         setLastMousePos(null);
-
     };
 
     const toggleCell = (e) => {
@@ -131,23 +153,85 @@ const Grid = ({ grid, setGrid}) => {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        const col = Math.floor((x + offset.x) / cellSize); // Add offset.x to the position
-        const row = Math.floor((y + offset.y) / cellSize); // Add offset.y to the position
-        console.log("col - ", col)
+        const col = Math.floor((x + offset.x) / cellSize);
+        const row = Math.floor((y + offset.y) / cellSize);
+        console.log("Clicked cell: ", `[${row}, ${col}]`);
         if (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length) {
-            const newGrid = [...grid];
-            newGrid[row][col] = !newGrid[row][col];
+            const newGrid = grid.map((rowArray, rIdx) =>
+                rowArray.map((cell, cIdx) => (rIdx === row && cIdx === col ? !cell : cell))
+            );
             setGrid(newGrid);
         }
     };
 
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+
+        const preview = document.querySelector('.drag-preview');
+        if (preview) {
+            const centerX = parseFloat(preview.dataset.centerX);
+            const centerY = parseFloat(preview.dataset.centerY);
+            preview.style.left = `${e.pageX - centerX}px`;
+            preview.style.top = `${e.pageY - centerY}px`;
+        }
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        const patternData = e.dataTransfer.getData('application/json');
+        if (patternData) {
+            const pattern = JSON.parse(patternData);
+            const rect = canvasRef.current.getBoundingClientRect();
+            const preview = document.querySelector('.drag-preview');
+
+            const rows = Math.max(...pattern.cells.map(([row]) => row)) + 1;
+            const cols = Math.max(...pattern.cells.map(([, col]) => col)) + 1;
+
+            const centerX = (cols * cellSize) / 2;
+            const centerY = (rows * cellSize) / 2;
+
+            const x = e.clientX - rect.left - centerX;
+            const y = e.clientY - rect.top - centerY;
+
+            const colOffset = Math.round((x + offset.x) / cellSize);
+            const rowOffset = Math.round((y + offset.y) / cellSize);
+
+            loadPattern(pattern, rowOffset, colOffset);
+
+            if (preview) {
+                document.body.removeChild(preview);
+            }
+        }
+    };
+
+    const handleDragEnd = () => {
+        const preview = document.querySelector('.drag-preview');
+        if (preview) {
+            document.body.removeChild(preview);
+        }
+        console.log("Drag ended");
+    };
+
     return (
         <div className="app">
-            <div className="p-6 bg-gray-800 text-white text-3xl">
-                <h1>Conway's Game of Life</h1>
+            <div className="p-6 bg-gray-800 text-white text-3xl flex items-center justify-center ">
+                <h1 className="text-center">Conway's Game of Life</h1>
+                <button
+                    onClick={() => setIsHelpOpen(true)}
+                    className="absolute right-6 p-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center justify-center"
+                    title="How to Use"
+                >
+                    <AiOutlineInfoCircle size={20} />
+                </button>
             </div>
             <div className="main-panel">
-                <div className="canvas-container">
+                <div
+                    className="canvas-container"
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                    onDragEnd={handleDragEnd}
+                >
                     <canvas
                         ref={canvasRef}
                         onMouseDown={handleMouseDown}
@@ -159,7 +243,7 @@ const Grid = ({ grid, setGrid}) => {
                     />
                 </div>
             </div>
-
+            <HelpDialog isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
         </div>
     );
 };
