@@ -4,7 +4,7 @@ import Controls from './components/Controls';
 import Grid from './components/Grid';
 import Menu from './components/Menu';
 import ModeMenu from './components/ModeMenu';
-import { GRID_SIZE, DEFAULT_DEBUG_CONFIG } from "./config";
+import { GRID_SIZE, DEFAULT_DEBUG_CONFIG, CELL_PIXEL_SIZE } from "./config";
 import patterns from './generated-patterns';
 import { modes, availableModes, defaultParams, renderCellMap } from './modes';
 
@@ -25,6 +25,7 @@ const App = () => {
     const [controlFreePosition, setControlFreePosition] = useState({ x: 0, y: 0 });
     const [isDraggingControls, setIsDraggingControls] = useState(false);
     const [controlDragCoords, setControlDragCoords] = useState({ x: 0, y: 0 });
+    const [cellPixelSize, setCellPixelSize] = useState(CELL_PIXEL_SIZE);
     const controlsRef = useRef(null);
     const playAreaRef = useRef(null);
     const dragOffsetRef = useRef({ x: 0, y: 0 });
@@ -233,6 +234,7 @@ const App = () => {
                 loadPattern={loadPattern}
                 loadConfiguration={loadConfiguration}
                 loadConfigurationFromFile={handleLoadConfigurationFromFile}
+                cellPixelSize={cellPixelSize}
             />
             <div className="relative flex flex-1 flex-col bg-gray-900" ref={playAreaRef}>
                 <Grid
@@ -249,7 +251,10 @@ const App = () => {
                     setModel={setModel}
                     availableModes={availableModes}
                     setIsModeMenuOpen={setIsModeMenuOpen}
+                    setIsMenuOpen={setIsMenuOpen}
                     renderCell={renderCellMap[model]}
+                    cellPixelSize={cellPixelSize}
+                    onCellPixelSizeChange={setCellPixelSize}
                     generation={generation}
                     debugConfig={debugConfig}
                 />

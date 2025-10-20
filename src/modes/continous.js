@@ -89,23 +89,102 @@ export const renderCellContinuous = (ctx, x, y, val, cellSize, generation) => {
 };
 
 export const modeInfo = {
-  label: 'Continuous (Quartile Fuzzy)',
+  label: 'Continuous',
   description: 'Cells evolve in quartiles with unique mechanics: probabilistic birth in low, gradual promotion in med-low, oscillation in med-high, and decay survival in high. Shades of gray visualize intensity.'
 };
 
 export const rulesHtml = `
-<div class="prose prose-sm max-w-none text-gray-200">
-  <p><strong>Overview:</strong> A fuzzy variant where states \\( G(i,j) \\in [0,1] \\) (intensity/aliveness). Divided into quartiles: Q0 [0,0.25) low/dead, Q1 [0.25,0.5) med-low, Q2 [0.5,0.75) med-high, Q3 [0.75,1] high/alive. Moore neighborhood average \\( N(i,j) = \\frac{1}{k} \\sum_{neighbors} G(neigh) \\), where \\( k \\leq 8 \\).</p>
-  <h4>Mathematical Formulation:</h4>
-  <p>Quartile \\( Q = \\lfloor G_t(i,j) \\times 4 \\rfloor \\). Centers: \\( C = [0.125, 0.375, 0.625, 0.875] \\).</p>
-  <p>Next state \\( G_{t+1}(i,j) = f(Q, N_t(i,j), params) \\), where \\( f \\) is:</p>
-  <ul class="list-disc ml-4">
-    <li><strong>Q0 (Low):</strong> If \\( birthLow < N < birthHigh \\), prob = \\( \\frac{N - birthLow}{birthHigh - birthLow} \\), then \\( G' = \\text{rand} < \\text{prob} ? C_3 : G \\times fadeRate \\); else \\( G \\times fadeRate \\).</li>
-    <li><strong>Q1 (Med-Low):</strong> If \\( survLow < N < 0.3 \\), \\( G' = G \\); elif \\( N > 0.35 \\), \\( G' = \\min(0.5, G \\times promoteRate) \\); else \\( \\max(0, G \\times fadeRate) \\).</li>
-    <li><strong>Q2 (Med-High):</strong> If \\( 0.3 < N < 0.4 \\), \\( G' = G + oscillation \\times \\sin(generation \\times 0.1) \\); elif \\( N < 0.25 \\), \\( \\max(0.25, G \\times fadeRate) \\); else \\( \\min(1, G \\times promoteRate) \\).</li>
-    <li><strong>Q3 (High):</strong> If \\( survLow < N < survHigh \\), \\( G' = G \\); elif \\( N < survLow \\), \\( \\max(0.5, G \\times fadeRate) \\); else 0.</li>
-  </ul>
-  <p>Clamp \\( G' \\in [0,1] \\). Rendering: Fill gray \\( rgb(255(1-G), 255(1-G), 255(1-G)) \\) if \\( G > 0 \\).</p>
-  <p><em>Parameters: birthLow/High, survLow/High, fadeRate, promoteRate, oscillation. Tuned for emergent fuzzy patterns.</em></p>
+<div class="space-y-5">
+  <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
+    <h4 class="text-lg font-semibold text-slate-100 mb-2">Overview</h4>
+    <p class="text-slate-300">
+      A fuzzy Game of Life variant where intensities \\( G(i,j) \\in [0,1] \\) evolve instead of binary states.
+      Values fall into quartiles
+      <span class="font-mono text-slate-200">Q0</span>,
+      <span class="font-mono text-slate-200">Q1</span>,
+      <span class="font-mono text-slate-200">Q2</span>,
+      <span class="font-mono text-slate-200">Q3</span>.
+      Moore neighborhood mean \\( N(i,j) = \\frac{1}{k} \\sum_{neighbors} G(neigh) \\) with \\( k \\le 8 \\).
+    </p>
+  </section>
+
+  <div class="grid gap-4 md:grid-cols-2">
+    <section class="rounded-lg border border-slate-700/70 bg-slate-800/50 p-4 shadow-inner">
+      <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">State Space</h5>
+      <p class="text-slate-300">
+        Quartile index \\( Q = \\lfloor G_t(i,j) \\times 4 \\rfloor \\).
+        Representative centers \\( C = [0.125, 0.375, 0.625, 0.875] \\) guide transitions.
+      </p>
+    </section>
+    <section class="rounded-lg border border-slate-700/70 bg-slate-800/50 p-4 shadow-inner">
+      <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Update Formula</h5>
+      <p class="text-slate-300">
+        Next state \\( G_{t+1}(i,j) = f(Q, N_t(i,j), params, generation) \\) selects behaviors per quartile.
+        Values are always clamped to \\([0,1]\\).
+      </p>
+    </section>
+  </div>
+
+  <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
+    <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-3">Quartile Behaviors</h5>
+    <dl class="space-y-3">
+      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
+        <dt class="font-semibold text-slate-100 flex items-center gap-2">
+          <span class="inline-flex h-6 w-6 items-center justify-center rounded bg-slate-700 text-xs font-bold">Q0</span>
+          Low / Dormant
+        </dt>
+        <dd class="text-slate-300 mt-1 text-sm">
+          If \\( birthLow < N < birthHigh \\) then
+          probability \\( \\frac{N - birthLow}{birthHigh - birthLow} \\) promotes to \\( C_3 \\);
+          otherwise value fades by \\( fadeRate \\).
+        </dd>
+      </div>
+      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
+        <dt class="font-semibold text-slate-100 flex items-center gap-2">
+          <span class="inline-flex h-6 w-6 items-center justify-center rounded bg-slate-700 text-xs font-bold">Q1</span>
+          Med-Low / Growing
+        </dt>
+        <dd class="text-slate-300 mt-1 text-sm">
+          Stable when \\( survLow < N < 0.3 \\); if \\( N > 0.35 \\) gently promotes toward \\( 0.5 \\) via
+          \\( promoteRate \\); else decays by \\( fadeRate \\).
+        </dd>
+      </div>
+      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
+        <dt class="font-semibold text-slate-100 flex items-center gap-2">
+          <span class="inline-flex h-6 w-6 items-center justify-center rounded bg-slate-700 text-xs font-bold">Q2</span>
+          Med-High / Oscillating
+        </dt>
+        <dd class="text-slate-300 mt-1 text-sm">
+          When \\( 0.3 < N < 0.4 \\) adds oscillation
+          \\( +\\,oscillation \\cdot \\sin(generation \\times 0.1) \\);
+          low neighborhoods demote toward 0.25, otherwise promote toward 1.
+        </dd>
+      </div>
+      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
+        <dt class="font-semibold text-slate-100 flex items-center gap-2">
+          <span class="inline-flex h-6 w-6 items-center justify-center rounded bg-slate-700 text-xs font-bold">Q3</span>
+          High / Intense
+        </dt>
+        <dd class="text-slate-300 mt-1 text-sm">
+          Survives while \\( survLow < N < survHigh \\);
+          low density causes a fade toward 0.5, otherwise the cell collapses to 0.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
+    <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Rendering & Parameters</h5>
+    <p class="text-slate-300">
+      Intensity \\( G \\) renders as gray scale: \\( rgb(255(1-G), 255(1-G), 255(1-G)) \\) for \\( G > 0 \\).
+      Tunable parameters: <span class="font-mono text-slate-200">birthLow</span>,
+      <span class="font-mono text-slate-200">birthHigh</span>,
+      <span class="font-mono text-slate-200">survLow</span>,
+      <span class="font-mono text-slate-200">survHigh</span>,
+      <span class="font-mono text-slate-200">fadeRate</span>,
+      <span class="font-mono text-slate-200">promoteRate</span>,
+      <span class="font-mono text-slate-200">oscillation</span>.
+    </p>
+  </section>
 </div>
 `;

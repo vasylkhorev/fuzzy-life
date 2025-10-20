@@ -1,0 +1,8 @@
+.rules-dialog-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.rules-dialog-scroll::-webkit-scrollbar {
+    display: none;
+}

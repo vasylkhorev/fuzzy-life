@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
 import { rulesHtmlMap } from '../modes';
+import './RulesDialog.css';
 
 const RulesDialog = ({ isOpen, onClose, model, modeInfo }) => {
     const dialogRef = useRef(null);
@@ -24,12 +25,12 @@ const RulesDialog = ({ isOpen, onClose, model, modeInfo }) => {
 
     if (!isOpen || !model) return null;
 
-    const rulesHtml = rulesHtmlMap[model] || '<div class="prose text-gray-200">No rules available.</div>';
+    const rulesHtml = rulesHtmlMap[model] || '<div class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 text-slate-200">No rules available.</div>';
     const title = modeInfo ? `${modeInfo.label} Rules` : 'Unknown Mode Rules';
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-slate-900 text-white p-6 rounded-lg max-w-4xl max-h-[90vh] overflow-y-auto shadow-xl relative border border-slate-700">
+            <div className="rules-dialog-scroll bg-slate-900 text-white p-6 rounded-lg max-w-4xl max-h-[88vh] overflow-y-auto overflow-x-hidden shadow-xl relative border border-slate-700">
                 <button
                     onClick={onClose}
                     className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
@@ -41,7 +42,7 @@ const RulesDialog = ({ isOpen, onClose, model, modeInfo }) => {
                 {/* Render HTML with LaTeX inside. dialogRef used for MathJax target. */}
                 <div
                     ref={dialogRef}
-                    className="prose prose-slate max-w-none text-gray-200 leading-relaxed"
+                    className="space-y-6 text-slate-200 text-sm sm:text-[15px] leading-relaxed"
                     dangerouslySetInnerHTML={{ __html: rulesHtml }}
                 />
 

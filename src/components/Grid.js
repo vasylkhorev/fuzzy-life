@@ -1,19 +1,20 @@
 // src/components/Grid.js
 import React, { useState, useEffect, useRef } from "react";
 import "./Grid.css";
-import { GRID_SIZE } from "../config";
-import { AiOutlineInfoCircle, AiOutlineBars } from "react-icons/ai";
+import { GRID_SIZE, CELL_PIXEL_MIN, CELL_PIXEL_MAX } from "../config";
+import { AiOutlineInfoCircle, AiOutlineSliders, AiOutlineBars } from "react-icons/ai";
 import HelpDialog from './HelpDialog';
 import Popover from './Popover';
 
-const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, model, setModel, availableModes, setIsModeMenuOpen, patterns, renderCell, generation }) => {
+const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, model, setModel, availableModes, setIsModeMenuOpen, setIsMenuOpen, patterns, renderCell, generation, debugConfig, cellPixelSize, onCellPixelSizeChange }) => {
     const canvasRef = useRef(null);
+    const initialCellSizeRef = useRef(cellPixelSize);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [dragging, setDragging] = useState(false);
     const [lastMousePos, setLastMousePos] = useState(null);
     const [isHelpOpen, setIsHelpOpen] = useState(false);
 
-    const cellSize = 20;
+    const cellSize = cellPixelSize;
 
     const [canvasWidth, setCanvasWidth] = useState(0);
     const [canvasHeight, setCanvasHeight] = useState(0);
@@ -24,7 +25,7 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
         if (ctx) {
             drawGrid(ctx);
         }
-    }, [grid, offset, canvasWidth, canvasHeight, renderCell, generation]);
+    }, [grid, offset, canvasWidth, canvasHeight, renderCell, generation, debugConfig, cellSize]);
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -41,8 +42,9 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
             }
             console.log("Canvas dimensions set:", { width, height });
 
-            const centerGridX = (GRID_SIZE / 2) * cellSize;
-            const centerGridY = (GRID_SIZE / 2) * cellSize;
+            const baseCellSize = initialCellSizeRef.current || cellSize;
+            const centerGridX = (GRID_SIZE / 2) * baseCellSize;
+            const centerGridY = (GRID_SIZE / 2) * baseCellSize;
             const centerCanvasX = width / 2;
             const centerCanvasY = height / 2;
 
@@ -59,6 +61,9 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
 
     const drawGrid = (ctx) => {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        const showCoordinates = Boolean(debugConfig?.enabled && debugConfig?.overlays?.showCellCoordinates);
         ctx.beginPath();
 
         const startCol = Math.floor(offset.x / cellSize);
@@ -74,42 +79,56 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
             ctx.moveTo(0, yPos);
             ctx.lineTo(canvasWidth, yPos);
         }
-        ctx.strokeStyle = "#888";
+        ctx.strokeStyle = "#e5e7eb";
         ctx.stroke();
 
-        for (let row = startRow; row < startRow + Math.ceil(canvasHeight / cellSize) + 1; row++) {
-            for (let col = startCol; col < startCol + Math.ceil(canvasWidth / cellSize) + 1; col++) {
-                if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE && grid[row]) {
+        const rowsToDraw = Math.ceil(canvasHeight / cellSize) + 1;
+        const colsToDraw = Math.ceil(canvasWidth / cellSize) + 1;
+
+        for (let row = startRow; row < startRow + rowsToDraw; row++) {
+            for (let col = startCol; col < startCol + colsToDraw; col++) {
+                const cellX = col * cellSize - offset.x;
+                const cellY = row * cellSize - offset.y;
+                const isWithinGrid =
+                    row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE;
+
+                if (!isWithinGrid) {
+                    ctx.fillStyle = "rgba(148, 163, 184, 0.18)";
+                    ctx.fillRect(cellX, cellY, cellSize, cellSize);
+                } else if (grid[row]) {
                     const val = grid[row][col];
-                    const x = col * cellSize - offset.x;
-                    const y = row * cellSize - offset.y;
-                    renderCell(ctx, x, y, val, cellSize, generation);
+                    renderCell(ctx, cellX, cellY, val, cellSize, generation);
                 }
 
-                // Always stroke the grid line
-                ctx.strokeStyle = "gray";
+                ctx.strokeStyle = "#d1d5db";
                 ctx.lineWidth = 1;
-                ctx.strokeRect(
-                    col * cellSize - offset.x,
-                    row * cellSize - offset.y,
-                    cellSize,
-                    cellSize
-                );
+                ctx.strokeRect(cellX, cellY, cellSize, cellSize);
 
-                // Coordinates text (always white on black/gray)
-                ctx.fillStyle = "white";
-                ctx.font = "8px Arial";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
+                if (showCoordinates && isWithinGrid) {
+                    ctx.fillStyle = "#4b5563";
+                    ctx.font = "8px Arial";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
 
-                const xPos = col * cellSize - offset.x + cellSize / 2;
-                const yPosTop = row * cellSize - offset.y + cellSize / 3;
-                const yPosBottom = row * cellSize - offset.y + (2 * cellSize) / 3;
+                    const xPos = cellX + cellSize / 2;
+                    const yPosTop = cellY + cellSize / 3;
+                    const yPosBottom = cellY + (2 * cellSize) / 3;
 
-                ctx.fillText(`${row}`, xPos, yPosTop);
-                ctx.fillText(`${col}`, xPos, yPosBottom);
+                    ctx.fillText(`${row}`, xPos, yPosTop);
+                    ctx.fillText(`${col}`, xPos, yPosBottom);
+                }
             }
         }
+
+        ctx.strokeStyle = "rgba(71, 85, 105, 0.6)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(
+            -offset.x,
+            -offset.y,
+            GRID_SIZE * cellSize,
+            GRID_SIZE * cellSize
+        );
+        ctx.lineWidth = 1;
     };
 
     const handleMouseDown = (e) => {
@@ -147,6 +166,46 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
         setLastMousePos(null);
     };
 
+    const handleWheel = (e) => {
+        if (!e.altKey) {
+            return;
+        }
+
+        e.preventDefault();
+
+        const canvas = canvasRef.current;
+        if (!canvas || !onCellPixelSizeChange) {
+            return;
+        }
+
+        const delta = e.deltaY;
+        const zoomFactor = delta > 0 ? 0.9 : 1.1;
+        let newSize = Math.round(cellSize * zoomFactor);
+        newSize = Math.max(CELL_PIXEL_MIN, Math.min(CELL_PIXEL_MAX, newSize));
+
+        if (newSize === cellSize) {
+            return;
+        }
+
+        const rect = canvas.getBoundingClientRect();
+        const pointerX = e.clientX - rect.left;
+        const pointerY = e.clientY - rect.top;
+
+        const worldCellX = (offset.x + pointerX) / cellSize;
+        const worldCellY = (offset.y + pointerY) / cellSize;
+
+        const newOffset = {
+            x: worldCellX * newSize - pointerX,
+            y: worldCellY * newSize - pointerY,
+        };
+
+        setOffset(newOffset);
+        if (onOffsetChange) {
+            onOffsetChange(newOffset);
+        }
+        onCellPixelSizeChange(newSize);
+    };
+
     const toggleCell = (e) => {
         const canvas = canvasRef.current;
         const rect = canvas.getBoundingClientRect();
@@ -177,8 +236,8 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
 
         const preview = document.querySelector('.drag-preview');
         if (preview) {
-            const centerX = parseFloat(preview.dataset.centerX);
-            const centerY = parseFloat(preview.dataset.centerY);
+            const centerX = parseFloat(preview.dataset.centerX) || 0;
+            const centerY = parseFloat(preview.dataset.centerY) || 0;
             preview.style.left = `${e.pageX - centerX}px`;
             preview.style.top = `${e.pageY - centerY}px`;
         }
@@ -221,17 +280,28 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
     };
 
     return (
-        <div className="app">
-            <div className="p-6 bg-gray-800 text-white text-3xl flex items-center justify-center relative">
-                <h1 className="text-center">Conway's Game of Life</h1>
-                <div className="absolute right-4 flex items-center space-x-2">
-                    {/* Modes Ham Menu Toggle */}
+        <div className="app h-full bg-gray-900 text-white">
+            <div className="relative flex items-center justify-center border-b border-gray-700 bg-gray-800/95 px-6 py-4 text-2xl font-semibold">
+                <div className="absolute left-4 flex items-center space-x-2">
                     <button
-                        onClick={() => setIsModeMenuOpen(true)}
-                        className="p-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center justify-center"
-                        title="Modes Panel"
+                        onClick={() => setIsMenuOpen(true)}
+                        className="px-3 py-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center space-x-2 text-sm font-medium"
+                        title="Patterns & Configurations"
                     >
                         <AiOutlineBars size={16} />
+                        <span className="hidden sm:inline">Library</span>
+                    </button>
+                </div>
+                <h1 className="text-center uppercase text-gray-100">Conway's Game of Life</h1>
+                <div className="absolute right-4 flex items-center space-x-2">
+                    {/* Modes menu toggle */}
+                    <button
+                        onClick={() => setIsModeMenuOpen(true)}
+                        className="px-3 py-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center space-x-2 text-sm font-medium"
+                        title="Modes Panel"
+                    >
+                        <AiOutlineSliders size={16} />
+                        <span className="hidden sm:inline">Modes</span>
                     </button>
                     {/* Help */}
                     <button
@@ -255,6 +325,7 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
                         onMouseDown={handleMouseDown}
                         onMouseMove={handleMouseMove}
                         onMouseUp={handleMouseUp}
+                        onWheel={handleWheel}
                         style={{
                             cursor: dragging ? "grabbing" : "pointer",
                         }}
