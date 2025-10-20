@@ -2,10 +2,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Grid.css";
 import { GRID_SIZE } from "../config";
-import { AiOutlineInfoCircle } from "react-icons/ai";
+import { AiOutlineInfoCircle, AiOutlineBars } from "react-icons/ai";
 import HelpDialog from './HelpDialog';
+import Popover from './Popover';
 
-const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern }) => {
+const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, model, setModel, availableModes, setIsModeMenuOpen, patterns, renderCell, generation }) => {
     const canvasRef = useRef(null);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [dragging, setDragging] = useState(false);
@@ -23,7 +24,7 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern }
         if (ctx) {
             drawGrid(ctx);
         }
-    }, [grid, offset, canvasWidth, canvasHeight]);
+    }, [grid, offset, canvasWidth, canvasHeight, renderCell, generation]);
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -78,36 +79,35 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern }
 
         for (let row = startRow; row < startRow + Math.ceil(canvasHeight / cellSize) + 1; row++) {
             for (let col = startCol; col < startCol + Math.ceil(canvasWidth / cellSize) + 1; col++) {
-                if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE && grid[row] && grid[row][col]) {
-                    ctx.fillStyle = "black";
-                    ctx.fillRect(
-                        col * cellSize - offset.x,
-                        row * cellSize - offset.y,
-                        cellSize,
-                        cellSize
-                    );
-
-                    ctx.strokeStyle = "gray";
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(
-                        col * cellSize - offset.x,
-                        row * cellSize - offset.y,
-                        cellSize,
-                        cellSize
-                    );
-
-                    ctx.fillStyle = "white";
-                    ctx.font = "8px Arial";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
-
-                    const xPos = col * cellSize - offset.x + cellSize / 2;
-                    const yPosTop = row * cellSize - offset.y + cellSize / 3;
-                    const yPosBottom = row * cellSize - offset.y + (2 * cellSize) / 3;
-
-                    ctx.fillText(`${row}`, xPos, yPosTop);
-                    ctx.fillText(`${col}`, xPos, yPosBottom);
+                if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE && grid[row]) {
+                    const val = grid[row][col];
+                    const x = col * cellSize - offset.x;
+                    const y = row * cellSize - offset.y;
+                    renderCell(ctx, x, y, val, cellSize, generation);
                 }
+
+                // Always stroke the grid line
+                ctx.strokeStyle = "gray";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(
+                    col * cellSize - offset.x,
+                    row * cellSize - offset.y,
+                    cellSize,
+                    cellSize
+                );
+
+                // Coordinates text (always white on black/gray)
+                ctx.fillStyle = "white";
+                ctx.font = "8px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+
+                const xPos = col * cellSize - offset.x + cellSize / 2;
+                const yPosTop = row * cellSize - offset.y + cellSize / 3;
+                const yPosBottom = row * cellSize - offset.y + (2 * cellSize) / 3;
+
+                ctx.fillText(`${row}`, xPos, yPosTop);
+                ctx.fillText(`${col}`, xPos, yPosBottom);
             }
         }
     };
@@ -157,8 +157,15 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern }
         const row = Math.floor((y + offset.y) / cellSize);
         console.log("Clicked cell: ", `[${row}, ${col}]`);
         if (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length) {
+            const currentVal = grid[row][col];
+            let newVal = 0;
+            if (model === 'classic') {
+                newVal = currentVal >= 0.5 ? 0 : 1;
+            } else {
+                newVal = currentVal > 0 ? 0 : 0.875; // Toggle to/from high quartile
+            }
             const newGrid = grid.map((rowArray, rIdx) =>
-                rowArray.map((cell, cIdx) => (rIdx === row && cIdx === col ? !cell : cell))
+                rowArray.map((cell, cIdx) => (rIdx === row && cIdx === col ? newVal : cell))
             );
             setGrid(newGrid);
         }
@@ -215,15 +222,26 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern }
 
     return (
         <div className="app">
-            <div className="p-6 bg-gray-800 text-white text-3xl flex items-center justify-center ">
+            <div className="p-6 bg-gray-800 text-white text-3xl flex items-center justify-center relative">
                 <h1 className="text-center">Conway's Game of Life</h1>
-                <button
-                    onClick={() => setIsHelpOpen(true)}
-                    className="absolute right-6 p-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center justify-center"
-                    title="How to Use"
-                >
-                    <AiOutlineInfoCircle size={20} />
-                </button>
+                <div className="absolute right-4 flex items-center space-x-2">
+                    {/* Modes Ham Menu Toggle */}
+                    <button
+                        onClick={() => setIsModeMenuOpen(true)}
+                        className="p-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center justify-center"
+                        title="Modes Panel"
+                    >
+                        <AiOutlineBars size={16} />
+                    </button>
+                    {/* Help */}
+                    <button
+                        onClick={() => setIsHelpOpen(true)}
+                        className="p-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center justify-center"
+                        title="How to Use"
+                    >
+                        <AiOutlineInfoCircle size={20} />
+                    </button>
+                </div>
             </div>
             <div className="main-panel">
                 <div
