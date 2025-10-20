@@ -1,6 +1,14 @@
 // src/components/Menu.js
 import React, { useState, useEffect } from 'react';
-import { AiOutlineBars, AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import {
+    AiOutlineBars,
+    AiOutlineDownload,
+    AiOutlineUpload,
+    AiOutlineDelete,
+    AiOutlineEdit,
+    AiOutlineClose
+} from "react-icons/ai";
+import { CELL_PIXEL_SIZE } from '../config';
 
 const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguration, loadConfigurationFromFile }) => {
     const [customPatterns, setCustomPatterns] = useState({});
@@ -155,25 +163,41 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
             const emptyImage = new Image();
             e.dataTransfer.setDragImage(emptyImage, 0, 0);
 
-            const cellSize = 20;
+            const cellSize = CELL_PIXEL_SIZE;
             const preview = document.createElement('canvas');
             preview.className = 'drag-preview';
-            const ctx = preview.getContext('2d');
 
             const rows = Math.max(...pattern.cells.map(([row]) => row)) + 1;
             const cols = Math.max(...pattern.cells.map(([, col]) => col)) + 1;
-            preview.width = cols * cellSize;
-            preview.height = rows * cellSize;
 
-            const centerX = (cols * cellSize) / 2;
-            const centerY = (rows * cellSize) / 2;
+            if (rows <= 0 || cols <= 0) {
+                return;
+            }
+
+            const cssWidth = cols * cellSize;
+            const cssHeight = rows * cellSize;
+            const deviceRatio = window.devicePixelRatio || 1;
+
+            preview.width = Math.max(1, Math.round(cssWidth * deviceRatio));
+            preview.height = Math.max(1, Math.round(cssHeight * deviceRatio));
+            preview.style.width = `${cssWidth}px`;
+            preview.style.height = `${cssHeight}px`;
+            preview.style.position = 'absolute';
+            preview.style.pointerEvents = 'none';
+            preview.style.zIndex = '1000';
+
+            const ctx = preview.getContext('2d');
+            ctx.scale(deviceRatio, deviceRatio);
+
+            const centerX = cssWidth / 2;
+            const centerY = cssHeight / 2;
             preview.dataset.centerX = centerX;
             preview.dataset.centerY = centerY;
 
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillStyle = 'rgba(156, 163, 175, 0.45)';
+            ctx.strokeStyle = 'rgba(75, 85, 99, 0.35)';
             pattern.cells.forEach(([row, col]) => {
                 ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
-                ctx.strokeStyle = 'gray';
                 ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
             });
 
@@ -185,156 +209,210 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
         <>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed top-4 left-4 z-50 p-2 bg-slate-700 hover:bg-slate-600 rounded-md text-white"
+                className="fixed top-4 left-4 z-50 rounded-md bg-slate-700 p-2 text-white shadow hover:bg-slate-600"
                 title="Open Menu"
             >
                 <AiOutlineBars size={24} />
             </button>
 
             {isOpen && (
-                <div className="fixed inset-y-0 left-0 z-40 w-80 bg-slate-900 text-white transform translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto">
-                    <div className="p-4 mt-14 ">
-
-                        <div className="flex space-x-2 mb-4">
+                <div className="fixed inset-0 z-40">
+                    <div
+                        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                        onClick={() => setIsOpen(false)}
+                    />
+                    <aside className="absolute inset-y-0 left-0 flex w-full max-w-md flex-col overflow-hidden border-r border-slate-800 bg-slate-900 text-white shadow-2xl">
+                        <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4">
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">
+                                    Library
+                                </p>
+                                <h2 className="text-lg font-semibold text-white">Patterns & Configurations</h2>
+                            </div>
                             <button
-                                onClick={() => setActiveTab('patterns')}
-                                className={`flex-1 p-2 rounded ${activeTab === 'patterns' ? 'bg-blue-600' : 'bg-gray-700'}`}
+                                onClick={() => setIsOpen(false)}
+                                className="rounded-md border border-slate-700 p-1.5 text-slate-300 transition hover:border-slate-500 hover:text-white"
                             >
-                                Patterns
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('configurations')}
-                                className={`flex-1 p-2 rounded ${activeTab === 'configurations' ? 'bg-blue-600' : 'bg-gray-700'}`}
-                            >
-                                Configurations
+                                <AiOutlineClose size={16} />
                             </button>
                         </div>
 
-                        {activeTab === 'patterns' && (
-                            <div>
-                                <div className="flex items-center justify-between w-full mb-4">
-                                    <h2 className="text-lg font-bold">Patterns:</h2>
-                                    <button
-                                        onClick={handleSavePattern}
-                                        className="p-2 bg-blue-600 hover:bg-blue-500 rounded flex items-center justify-center"
-                                        title="Save Pattern to Local Storage"
-                                    >
-                                        <AiOutlineDownload size={16} />
-                                    </button>
-                                </div>
-                                <ul>
-                                    {Object.entries(patterns).map(([name, { description }]) => (
-                                        <li key={name} className="mb-2">
+                        <div className="border-b border-slate-800/80 bg-slate-900 px-6 py-3">
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setActiveTab('patterns')}
+                                    className={`flex-1 rounded-md px-3 py-2 text-sm font-semibold transition ${
+                                        activeTab === 'patterns'
+                                            ? 'bg-blue-600 text-white shadow-sm'
+                                            : 'border border-slate-700 bg-slate-800 text-slate-200 hover:border-blue-500 hover:text-white'
+                                    }`}
+                                >
+                                    Patterns
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('configurations')}
+                                    className={`flex-1 rounded-md px-3 py-2 text-sm font-semibold transition ${
+                                        activeTab === 'configurations'
+                                            ? 'bg-blue-600 text-white shadow-sm'
+                                            : 'border border-slate-700 bg-slate-800 text-slate-200 hover:border-blue-500 hover:text-white'
+                                    }`}
+                                >
+                                    Configurations
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto px-6 py-5">
+                            {activeTab === 'patterns' && (
+                                <div className="space-y-6">
+                                    <section className="space-y-4 rounded-lg border border-slate-800 bg-slate-900/80 p-4">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
+                                                Core patterns
+                                            </h3>
                                             <button
-                                                draggable
-                                                onDragStart={(e) => handleDragStart(e, name, false, false)}
-                                                onClick={() => loadPattern(patterns[name], 0, 0)}
-                                                className="w-full text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move"
-                                                title="Drag to place on grid or click to load at origin"
+                                                onClick={handleSavePattern}
+                                                className="rounded-md border border-blue-500/60 bg-blue-500/10 p-2 text-blue-100 transition hover:border-blue-400 hover:text-white"
+                                                title="Save current live cells as a reusable pattern"
                                             >
-                                                {name}
+                                                <AiOutlineDownload size={16} />
                                             </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                                {/* Custom Patterns */}
-                                <div className="">
-                                    <div className="relative my-4">
-                                        <div className="absolute inset-0 flex items-center">
-                                            <div className="w-full border-b border-gray-300"></div>
                                         </div>
-                                        <div className="relative flex justify-center">
-                                            <span className="bg-slate-900 px-4 text-sm">Custom</span>
+                                        <ul className="space-y-2">
+                                            {Object.entries(patterns).map(([name]) => (
+                                                <li
+                                                    key={name}
+                                                    className="flex items-center rounded border border-slate-800/70 bg-slate-800/60 transition hover:border-slate-600"
+                                                    draggable
+                                                    onDragStart={(e) => handleDragStart(e, name)}
+                                                >
+                                                    <button
+                                                        onClick={() => loadPattern(patterns[name], 0, 0)}
+                                                        className="flex-1 truncate px-3 py-2 text-left text-sm text-slate-100"
+                                                    >
+                                                        {name}
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </section>
+
+                                    <section className="space-y-4 rounded-lg border border-slate-800 bg-slate-900/80 p-4">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
+                                                Custom
+                                            </h3>
+                                            <span className="text-xs text-slate-500">
+                                                Drag to place on canvas
+                                            </span>
+                                        </div>
+                                        <ul className="space-y-2">
+                                            {Object.entries(customPatterns).map(([name, { description }]) => (
+                                                <li
+                                                    key={name}
+                                                    className="flex items-center gap-2 rounded border border-slate-800/70 bg-slate-800/50 px-3 py-2"
+                                                >
+                                                    <button
+                                                        onClick={() => handleLoadCustomPattern(name)}
+                                                        className="flex-1 text-left text-sm text-slate-100"
+                                                        draggable
+                                                        onDragStart={(e) => handleDragStart(e, name, true)}
+                                                        title={description || name}
+                                                    >
+                                                        {name}
+                                                    </button>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => handleRemove(name, false)}
+                                                            className="rounded bg-red-600/90 p-1 text-white transition hover:bg-red-500"
+                                                            title="Remove"
+                                                        >
+                                                            <AiOutlineDelete size={16} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleRename(name, false)}
+                                                            className="rounded bg-yellow-600/90 p-1 text-white transition hover:bg-yellow-500"
+                                                            title="Rename"
+                                                        >
+                                                            <AiOutlineEdit size={16} />
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                            {Object.keys(customPatterns).length === 0 && (
+                                                <p className="rounded border border-dashed border-slate-700 bg-slate-900/70 p-4 text-sm text-slate-400">
+                                                    Save any live structure to reuse it later.
+                                                </p>
+                                            )}
+                                        </ul>
+                                    </section>
+                                </div>
+                            )}
+
+                            {activeTab === 'configurations' && (
+                                <div className="space-y-4 rounded-lg border border-slate-800 bg-slate-900/80 p-4">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
+                                            Saved configurations
+                                        </h3>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={handleSaveConfiguration}
+                                                className="rounded-md border border-blue-500/60 bg-blue-500/10 p-2 text-blue-100 transition hover:border-blue-400 hover:text-white"
+                                                title="Save current grid state"
+                                            >
+                                                <AiOutlineDownload size={16} />
+                                            </button>
+                                            <button
+                                                onClick={handleLoadClick}
+                                                className="rounded-md border border-emerald-500/60 bg-emerald-500/10 p-2 text-emerald-100 transition hover:border-emerald-400 hover:text-white"
+                                                title="Load configuration from file"
+                                            >
+                                                <AiOutlineUpload size={16} />
+                                            </button>
                                         </div>
                                     </div>
-                                    <ul>
-                                        {Object.entries(customPatterns).map(([name, {description}]) => (
-                                            <li key={name} className="mb-2 flex items-center space-x-2">
+                                    <ul className="space-y-2">
+                                        {Object.entries(customConfigurations).map(([name, { description }]) => (
+                                            <li
+                                                key={name}
+                                                className="flex items-center gap-2 rounded border border-slate-800/70 bg-slate-800/50 px-3 py-2"
+                                            >
                                                 <button
-                                                    draggable
-                                                    onDragStart={(e) => handleDragStart(e, name, true, false)}
-                                                    onClick={() => handleLoadCustomPattern(name)}
-                                                    className="flex-1 text-left whitespace-normal break-all pr-2 bg-gray-700 hover:bg-gray-600 rounded p-2 cursor-move"
-                                                    title="Drag to place on grid or click to load at origin"
+                                                    onClick={() => handleLoadConfiguration(name)}
+                                                    className="flex-1 text-left text-sm text-slate-100"
+                                                    title={description || name}
                                                 >
                                                     {name}
                                                 </button>
                                                 <div className="flex gap-2">
                                                     <button
-                                                        onClick={() => handleRemove(name, false)}
-                                                        className="p-1 bg-red-600 hover:bg-red-500 rounded"
+                                                        onClick={() => handleRemove(name, true)}
+                                                        className="rounded bg-red-600/90 p-1 text-white transition hover:bg-red-500"
                                                         title="Remove"
                                                     >
-                                                        <AiOutlineDelete size={16}/>
+                                                        <AiOutlineDelete size={16} />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleRename(name, false)}
-                                                        className="p-1 bg-yellow-600 hover:bg-yellow-500 rounded"
+                                                        onClick={() => handleRename(name, true)}
+                                                        className="rounded bg-yellow-600/90 p-1 text-white transition hover:bg-yellow-500"
                                                         title="Rename"
                                                     >
-                                                        <AiOutlineEdit size={16}/>
+                                                        <AiOutlineEdit size={16} />
                                                     </button>
                                                 </div>
                                             </li>
                                         ))}
+                                        {Object.keys(customConfigurations).length === 0 && (
+                                            <p className="rounded border border-dashed border-slate-700 bg-slate-900/70 p-4 text-sm text-slate-400">
+                                                Save a full-board snapshot to build your own library.
+                                            </p>
+                                        )}
                                     </ul>
                                 </div>
-                            </div>
-                        )}
-
-                        {activeTab === 'configurations' && (
-                            <div>
-                                <div className="flex items-center justify-between w-full">
-                                    <h2 className="text-lg flex-shrink-0 font-bold">Configurations:</h2>
-                                    <div className="flex space-x-2 p-2">
-                                        <button
-                                            onClick={handleSaveConfiguration}
-                                            className="p-2 bg-blue-600 hover:bg-blue-500 rounded flex items-center justify-center"
-                                            title="Save Configuration to Local Storage"
-                                        >
-                                            <AiOutlineDownload size={16} />
-                                        </button>
-                                        <button
-                                            onClick={handleLoadClick}
-                                            className="p-2 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center"
-                                            title="Load Configuration from File"
-                                        >
-                                            <AiOutlineUpload size={16} />
-                                        </button>
-                                    </div>
-                                </div>
-                                <ul>
-                                    {Object.entries(customConfigurations).map(([name, { description }]) => (
-                                        <li key={name} className="mb-2 flex items-center space-x-2 ">
-                                            <button
-                                                onClick={() => handleLoadConfiguration(name)}
-                                                className="flex-1 text-left whitespace-normal break-all pr-2 bg-gray-700 hover:bg-gray-600 rounded p-2 cursor-pointer"
-                                                title="Click to load full grid"
-                                            >
-                                                {name}
-                                            </button>
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => handleRemove(name, true)}
-                                                    className="p-1 bg-red-600 hover:bg-red-500 rounded"
-                                                    title="Remove"
-                                                >
-                                                    <AiOutlineDelete size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleRename(name, true)}
-                                                    className="p-1 bg-yellow-600 hover:bg-yellow-500 rounded"
-                                                    title="Rename"
-                                                >
-                                                    <AiOutlineEdit size={16} />
-                                                </button>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
+                            )}
+                        </div>
+                    </aside>
                 </div>
             )}
         </>
