@@ -1,7 +1,7 @@
 // src/components/Grid.js
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./Grid.css";
-import { GRID_SIZE, CELL_PIXEL_MIN, CELL_PIXEL_MAX } from "../config";
+import { GRID_SIZE, CELL_PIXEL_MAX, CELL_PIXEL_SIZE } from "../config";
 import { AiOutlineInfoCircle, AiOutlineSliders, AiOutlineBars } from "react-icons/ai";
 import HelpDialog from './HelpDialog';
 import Popover from './Popover';
@@ -59,76 +59,164 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
         }
     }, [onDimensionsChange, onOffsetChange]);
 
+    const resetZoomToDefault = useCallback(() => {
+        if (!onCellPixelSizeChange) {
+            return;
+        }
+        const baseCellSize = initialCellSizeRef.current || CELL_PIXEL_SIZE;
+        const width = canvasWidth;
+        const height = canvasHeight;
+
+        if (width && height) {
+            const centerGridX = (GRID_SIZE / 2) * baseCellSize;
+            const centerGridY = (GRID_SIZE / 2) * baseCellSize;
+            const centerCanvasX = width / 2;
+            const centerCanvasY = height / 2;
+
+            const newOffset = {
+                x: centerGridX - centerCanvasX,
+                y: centerGridY - centerCanvasY,
+            };
+            setOffset(newOffset);
+            if (onOffsetChange) {
+                onOffsetChange(newOffset);
+            }
+        }
+
+        onCellPixelSizeChange(baseCellSize);
+    }, [canvasWidth, canvasHeight, onCellPixelSizeChange, onOffsetChange]);
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === "Alt") {
+                event.preventDefault();
+            }
+
+            if (!event.altKey || event.ctrlKey || event.metaKey) {
+                return;
+            }
+
+            const isZeroKey = event.key === "0" || event.code === "Digit0" || event.keyCode === 48;
+            if (isZeroKey) {
+                event.preventDefault();
+                resetZoomToDefault();
+            }
+        };
+
+        const handleKeyUp = (event) => {
+            if (event.key === "Alt") {
+                event.preventDefault();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown, true);
+        window.addEventListener("keyup", handleKeyUp, true);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown, true);
+            window.removeEventListener("keyup", handleKeyUp, true);
+        };
+    }, [resetZoomToDefault]);
+
     const drawGrid = (ctx) => {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         const showCoordinates = Boolean(debugConfig?.enabled && debugConfig?.overlays?.showCellCoordinates);
-        ctx.beginPath();
 
-        const startCol = Math.floor(offset.x / cellSize);
-        const startRow = Math.floor(offset.y / cellSize);
+        const rawStartCol = Math.floor(offset.x / cellSize);
+        const rawStartRow = Math.floor(offset.y / cellSize);
+        const visibleCols = Math.ceil(canvasWidth / cellSize) + 2;
+        const visibleRows = Math.ceil(canvasHeight / cellSize) + 2;
 
-        for (let x = startCol; x < startCol + Math.ceil(canvasWidth / cellSize) + 1; x++) {
-            const xPos = x * cellSize - offset.x;
-            ctx.moveTo(xPos, 0);
-            ctx.lineTo(xPos, canvasHeight);
-        }
-        for (let y = startRow; y < startRow + Math.ceil(canvasHeight / cellSize) + 1; y++) {
-            const yPos = y * cellSize - offset.y;
-            ctx.moveTo(0, yPos);
-            ctx.lineTo(canvasWidth, yPos);
-        }
-        ctx.strokeStyle = "#e5e7eb";
-        ctx.stroke();
+        const colStart = Math.max(0, rawStartCol);
+        const rowStart = Math.max(0, rawStartRow);
+        const colEnd = Math.min(GRID_SIZE, Math.max(0, rawStartCol + visibleCols));
+        const rowEnd = Math.min(GRID_SIZE, Math.max(0, rawStartRow + visibleRows));
+        // Skip rendering work for cells outside the finite board.
 
-        const rowsToDraw = Math.ceil(canvasHeight / cellSize) + 1;
-        const colsToDraw = Math.ceil(canvasWidth / cellSize) + 1;
+        const boardPixelWidth = GRID_SIZE * cellSize;
+        const boardPixelHeight = GRID_SIZE * cellSize;
+        const boardOriginX = -offset.x;
+        const boardOriginY = -offset.y;
 
-        for (let row = startRow; row < startRow + rowsToDraw; row++) {
-            for (let col = startCol; col < startCol + colsToDraw; col++) {
-                const cellX = col * cellSize - offset.x;
-                const cellY = row * cellSize - offset.y;
-                const isWithinGrid =
-                    row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE;
+        ctx.save();
 
-                if (!isWithinGrid) {
-                    ctx.fillStyle = "rgba(148, 163, 184, 0.18)";
-                    ctx.fillRect(cellX, cellY, cellSize, cellSize);
-                } else if (grid[row]) {
-                    const val = grid[row][col];
-                    renderCell(ctx, cellX, cellY, val, cellSize, generation);
+        const drawCells = () => {
+            if (rowStart >= rowEnd || colStart >= colEnd) {
+                return;
+            }
+
+            if (showCoordinates) {
+                ctx.font = "8px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+            }
+
+            for (let row = rowStart; row < rowEnd; row++) {
+                const rowData = grid[row];
+                if (!rowData) {
+                    continue;
                 }
+                const cellY = row * cellSize - offset.y;
 
-                ctx.strokeStyle = "#d1d5db";
-                ctx.lineWidth = 1;
-                ctx.strokeRect(cellX, cellY, cellSize, cellSize);
+                for (let col = colStart; col < colEnd; col++) {
+                    const cellX = col * cellSize - offset.x;
+                    const val = rowData[col] ?? 0;
 
-                if (showCoordinates && isWithinGrid) {
-                    ctx.fillStyle = "#4b5563";
-                    ctx.font = "8px Arial";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
+                    renderCell(ctx, cellX, cellY, val, cellSize, generation);
 
-                    const xPos = cellX + cellSize / 2;
-                    const yPosTop = cellY + cellSize / 3;
-                    const yPosBottom = cellY + (2 * cellSize) / 3;
+                    if (showCoordinates) {
+                        ctx.fillStyle = "#4b5563";
+                        const xPos = cellX + cellSize / 2;
+                        const yPosTop = cellY + cellSize / 3;
+                        const yPosBottom = cellY + (2 * cellSize) / 3;
 
-                    ctx.fillText(`${row}`, xPos, yPosTop);
-                    ctx.fillText(`${col}`, xPos, yPosBottom);
+                        ctx.fillText(`${row}`, xPos, yPosTop);
+                        ctx.fillText(`${col}`, xPos, yPosBottom);
+                    }
                 }
             }
-        }
+        };
 
-        ctx.strokeStyle = "rgba(71, 85, 105, 0.6)";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(
-            -offset.x,
-            -offset.y,
-            GRID_SIZE * cellSize,
-            GRID_SIZE * cellSize
-        );
-        ctx.lineWidth = 1;
+        const drawLines = () => {
+            ctx.beginPath();
+            for (let col = colStart; col <= colEnd; col++) {
+                const xPos = col * cellSize - offset.x;
+                ctx.moveTo(xPos, boardOriginY);
+                ctx.lineTo(xPos, boardOriginY + boardPixelHeight);
+            }
+            for (let row = rowStart; row <= rowEnd; row++) {
+                const yPos = row * cellSize - offset.y;
+                ctx.moveTo(boardOriginX, yPos);
+                ctx.lineTo(boardOriginX + boardPixelWidth, yPos);
+            }
+            ctx.strokeStyle = "#e5e7eb";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        };
+
+        const drawOutline = () => {
+            ctx.strokeStyle = "rgba(71, 85, 105, 0.6)";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(
+                boardOriginX,
+                boardOriginY,
+                boardPixelWidth,
+                boardPixelHeight
+            );
+            ctx.lineWidth = 1;
+        };
+
+        ctx.save();
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(boardOriginX, boardOriginY, boardPixelWidth, boardPixelHeight);
+        ctx.clip();
+
+        drawCells();
+        drawLines();
+        ctx.restore();
+        drawOutline();
     };
 
     const handleMouseDown = (e) => {
@@ -180,8 +268,10 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
 
         const delta = e.deltaY;
         const zoomFactor = delta > 0 ? 0.9 : 1.1;
-        let newSize = Math.round(cellSize * zoomFactor);
-        newSize = Math.max(CELL_PIXEL_MIN, Math.min(CELL_PIXEL_MAX, newSize));
+        const zoomedSize = cellSize * zoomFactor;
+
+        const minCellSize = 0.25;
+        let newSize = Math.max(minCellSize, Math.min(CELL_PIXEL_MAX, zoomedSize));
 
         if (newSize === cellSize) {
             return;

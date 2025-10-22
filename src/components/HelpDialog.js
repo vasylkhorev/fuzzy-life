@@ -1,53 +1,103 @@
 // src/components/HelpDialog.js
 import React from 'react';
+import { HELP_SECTIONS, HOTKEY_SECTIONS } from '../config';
+
+const keyCapClass =
+    'inline-flex min-w-[2.25rem] max-w-[7.5rem] justify-center rounded-md border border-white/10 bg-white/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide whitespace-normal break-words leading-tight text-center';
 
 const HelpDialog = ({ isOpen, onClose }) => {
-    if (!isOpen) return null;
+    if (!isOpen) {
+        return null;
+    }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-slate-900 text-white p-6 rounded-lg max-w-lg max-h-[80vh] overflow-y-auto shadow-lg">
-                <h3 className="text-xl font-bold mb-4">How to Use the Game</h3>
-                <p className="mb-2">
-                    This is Conway's Game of Life grid, where you can interact with cells, patterns, and configurations. Switch modes in Controls for classic binary or continuous fuzzy evolution.
-                </p>
-                <ul className="ml-4 list-disc text-left list-outside mb-4">
-                    <li>
-                        <strong>Toggle Cells:</strong> Click on the grid to turn cells on (black) or off (empty). In continuous mode, values evolve smoothly between 0-1.
-                    </li>
-                    <li>
-                        <strong>Pan:</strong> Click and drag the grid to move it around for better positioning.
-                    </li>
-                    <li>
-                        <strong>Mode Selection:</strong> Use the "Mode" dropdown in Controls to switch between Classic (binary rules) and Continuous (fuzzy SmoothLife-like rules for gradual changes).
-                    </li>
-                    <li>
-                        <strong>Menu:</strong> Click the hamburger icon (☰) at the top-left of the screen to open or close the side menu. This menu contains tabs for "Patterns" and "Configurations," where you can load, save, or manage custom patterns and configurations.
-                    </li>
-                    <li>
-                        <strong>Patterns:</strong> In the "Patterns" tab, drag a pattern onto the grid to place it at
-                        your chosen position.
-                    </li>
-                    <li>
-                        <strong>Configurations:</strong> In the "Configurations" tab, click a configuration to replace
-                        the entire grid with its saved state.
-                    </li>
-                    <li>
-                        <strong>Saving:</strong> Use the download icon in the "Patterns" tab to save a pattern (shifted
-                        to [0, 0]) or in the "Configurations" tab to save the full grid. These are stored in your
-                        browser’s local storage. In continuous mode, saves capture cells >=0.5 as live.
-                    </li>
-                    <li>
-                        <strong>Storage Note:</strong> Saved patterns and configurations persist in local storage until
-                        you clear your browser’s cache or data (e.g., via browser settings or incognito mode).
-                    </li>
-                </ul>
-                <button
-                    onClick={onClose}
-                    className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded"
-                >
-                    Close
-                </button>
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            onClick={(event) => {
+                if (event.target === event.currentTarget) {
+                    onClose();
+                }
+            }}
+        >
+            <div
+                className="relative max-h-[80vh] w-full max-w-2xl overflow-y-auto no-scrollbar rounded-xl border border-white/10 bg-slate-900/95 p-6 text-white shadow-2xl"
+                onClick={(event) => event.stopPropagation()}
+            >
+                <header className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <h3 className="text-2xl font-bold tracking-tight">How to Use the Game</h3>
+                        <p className="mt-1 text-sm text-slate-300">
+                            Master the controls, explore patterns, and keep the simulation flowing—everything you need
+                            for fast iteration lives here.
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="self-start rounded-md bg-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-200 transition hover:bg-white/20"
+                    >
+                        Close
+                    </button>
+                </header>
+
+                <div className="space-y-8">
+                    {HELP_SECTIONS.map((section) => (
+                        <section key={section.title} className="space-y-3">
+                            <h4 className="text-lg font-semibold text-slate-100">{section.title}</h4>
+                            <ul className="grid gap-3 text-sm text-slate-300 sm:grid-cols-2">
+                                {section.bullets.map((item) => (
+                                    <li
+                                        key={`${section.title}-${item.label}`}
+                                        className="flex flex-col rounded-lg border border-white/5 bg-white/5 p-3"
+                                    >
+                                        <span className="text-sm font-semibold text-slate-100">{item.label}</span>
+                                        <p className="mt-1 text-xs leading-relaxed text-slate-300">{item.body}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    ))}
+
+                    <section className="space-y-4">
+                        <h4 className="text-lg font-semibold text-slate-100">Shortcuts &amp; Gestures</h4>
+                        <div className="space-y-3">
+                            {HOTKEY_SECTIONS.map((section) => (
+                                <div key={section.title} className="space-y-2">
+                                    <h5 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                                        {section.title}
+                                    </h5>
+                                    <ul className="grid gap-2">
+                                        {section.shortcuts.map((shortcut) => (
+                                            <li
+                                                key={`${section.title}-${shortcut.action}`}
+                                                className="flex flex-col rounded-lg border border-white/5 bg-slate-800/60 p-3 sm:flex-row sm:items-center sm:justify-between"
+                                            >
+                                                <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-slate-100">
+                                                    {shortcut.keys.map((keyLabel, index) => (
+                                                        <React.Fragment key={`${shortcut.action}-${keyLabel}-${index}`}>
+                                                            <span className={keyCapClass}>{keyLabel}</span>
+                                                            {index < shortcut.keys.length - 1 && (
+                                                                <span className="px-1 text-xs font-semibold text-slate-400">
+                                                                    +
+                                                                </span>
+                                                            )}
+                                                        </React.Fragment>
+                                                    ))}
+                                                </div>
+                                                <div className="mt-2 grid min-w-0 gap-1 text-xs text-slate-300 sm:mt-0 sm:max-w-[60%]">
+                                                    <span className="font-semibold text-slate-100">
+                                                        {shortcut.action}
+                                                    </span>
+                                                    <span className="leading-relaxed">{shortcut.description}</span>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </div>
             </div>
         </div>
     );
