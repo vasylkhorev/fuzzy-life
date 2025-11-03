@@ -2,6 +2,7 @@
 import React from 'react';
 import Popover from './Popover';
 import { BsArrowsMove } from 'react-icons/bs';
+import { useTranslation } from '../i18n';
 
 const Controls = ({
     runOrStop,
@@ -14,6 +15,8 @@ const Controls = ({
     onDragHandleMouseDown,
     isDragging,
 }) => {
+    const { t } = useTranslation();
+
     return (
         <div className="w-72 rounded-lg border border-gray-700 bg-gray-900/95 p-4 text-white shadow-xl backdrop-blur pointer-events-auto">
             <div
@@ -21,21 +24,21 @@ const Controls = ({
                 onMouseDown={onDragHandleMouseDown}
             >
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
-                    Controls
+                    {t('controls.title')}
                 </span>
-                <span className="text-gray-500" title="Drag to reposition controls">
+                <span className="text-gray-500" title={t('controls.dragTooltip')}>
                     <BsArrowsMove
                         aria-hidden="true"
                         size={14}
                     />
-                    <span className="sr-only">Drag</span>
+                    <span className="sr-only">{t('controls.dragSrLabel')}</span>
                 </span>
             </div>
 
             <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
                     <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-                        Generation
+                        {t('controls.generation')}
                     </span>
                     <span className="text-lg font-semibold text-blue-400">{generation}</span>
                 </div>
@@ -45,7 +48,7 @@ const Controls = ({
                         onClick={nextGeneration}
                         className="flex-1 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-500"
                     >
-                        Step
+                        {t('controls.step')}
                     </button>
                     <button
                         onClick={runOrStop}
@@ -55,29 +58,29 @@ const Controls = ({
                                 : 'bg-green-600 hover:bg-green-500'
                         }`}
                     >
-                        {isRunning ? "Stop" : "Start"}
+                        {t(isRunning ? 'controls.stop' : 'controls.start')}
                     </button>
                     <button
                         onClick={onReset}
                         className="rounded-md bg-gray-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-gray-600"
                     >
-                        Clear
+                        {t('controls.clear')}
                     </button>
                 </div>
 
                 <div className="space-y-2">
                     <label className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-gray-400">
-                        Speed
+                        {t('controls.speed')}
                         <Popover
                             trigger="hover"
                             content={
                                 <div className="text-sm text-white bg-gray-700 p-3 rounded-md">
-                                    Period (milliseconds) between generations. Lower values run faster.
+                                    {t('controls.speedTooltip')}
                                 </div>
                             }
                         >
                             <span className="cursor-help text-[11px] text-gray-300 underline decoration-dotted">
-                                ms
+                                {t('controls.speedUnits')}
                             </span>
                         </Popover>
                     </label>

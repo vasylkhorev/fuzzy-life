@@ -16,36 +16,36 @@ export const CELL_PIXEL_MAX = 60;
 // Structured help content used by the in-app Help dialog.
 export const HELP_SECTIONS = [
     {
-        title: 'Simulation Basics',
+        titleKey: 'help.sections.simulationBasics.title',
         bullets: [
             {
-                label: 'Run & Pause',
-                body: 'Use the Start/Stop button in the floating controls to toggle the simulation without clearing the board.',
+                labelKey: 'help.sections.simulationBasics.bullets.runPause.label',
+                bodyKey: 'help.sections.simulationBasics.bullets.runPause.body',
             },
             {
-                label: 'Single Step',
-                body: 'Press Step to advance exactly one generation—perfect for debugging patterns or inspecting fuzzy transitions.',
+                labelKey: 'help.sections.simulationBasics.bullets.singleStep.label',
+                bodyKey: 'help.sections.simulationBasics.bullets.singleStep.body',
             },
             {
-                label: 'Clear Grid',
-                body: 'Reset the world instantly with Clear. This keeps the current mode, speed, and camera position intact.',
+                labelKey: 'help.sections.simulationBasics.bullets.clearGrid.label',
+                bodyKey: 'help.sections.simulationBasics.bullets.clearGrid.body',
             },
         ],
     },
     {
-        title: 'Library & Files',
+        titleKey: 'help.sections.libraryFiles.title',
         bullets: [
             {
-                label: 'Patterns Tab',
-                body: 'Drag any pattern onto the grid to drop it where you like. Saved patterns are normalized to their top-left cell.',
+                labelKey: 'help.sections.libraryFiles.bullets.patternsTab.label',
+                bodyKey: 'help.sections.libraryFiles.bullets.patternsTab.body',
             },
             {
-                label: 'Configurations Tab',
-                body: 'Click a configuration to replace the entire board. Use the upload icon to import `.json` exports.',
+                labelKey: 'help.sections.libraryFiles.bullets.configurationsTab.label',
+                bodyKey: 'help.sections.libraryFiles.bullets.configurationsTab.body',
             },
             {
-                label: 'Local Storage',
-                body: 'Custom saves live in your browser. Clearing site data removes them, so export important work regularly.',
+                labelKey: 'help.sections.libraryFiles.bullets.localStorage.label',
+                bodyKey: 'help.sections.libraryFiles.bullets.localStorage.body',
             },
         ],
     },
@@ -53,38 +53,44 @@ export const HELP_SECTIONS = [
 
 export const HOTKEY_SECTIONS = [
     {
-        title: 'Navigation',
+        titleKey: 'hotkeys.sections.navigation.title',
         shortcuts: [
             {
-                keys: ['Click', 'Drag'],
-                action: 'Pan the camera',
-                description: 'Move around large boards while keeping your zoom level intact.',
+                id: 'panCamera',
+                keyLabelKeys: ['hotkeys.keyLabels.click', 'hotkeys.keyLabels.drag'],
+                actionKey: 'hotkeys.sections.navigation.shortcuts.panCamera.action',
+                descriptionKey: 'hotkeys.sections.navigation.shortcuts.panCamera.description',
             },
             {
-                keys: ['Alt', 'Scroll'],
-                action: 'Zoom at cursor',
-                description: 'Smoothly zoom in or out, anchored to wherever your pointer is hovering.',
+                id: 'zoomAtCursor',
+                keyLabelKeys: ['hotkeys.keyLabels.alt', 'hotkeys.keyLabels.scroll'],
+                actionKey: 'hotkeys.sections.navigation.shortcuts.zoomAtCursor.action',
+                descriptionKey: 'hotkeys.sections.navigation.shortcuts.zoomAtCursor.description',
             },
             {
-                keys: ['Alt', '0'],
-                action: 'Reset zoom',
-                description: 'Return to the default zoom level and recenter the grid in one motion.',
+                id: 'resetZoom',
+                keyLabelKeys: ['hotkeys.keyLabels.alt', 'hotkeys.keyLabels.zero'],
+                actionKey: 'hotkeys.sections.navigation.shortcuts.resetZoom.action',
+                descriptionKey: 'hotkeys.sections.navigation.shortcuts.resetZoom.description',
             },
         ],
     },
     {
-        title: 'Editing',
+        titleKey: 'hotkeys.sections.editing.title',
         shortcuts: [
             {
-                keys: ['Click'],
-                action: 'Toggle cell state',
-                description: 'Activate or deactivate a single cell. In fuzzy modes, toggles jump between off and a high starting value.',
+                id: 'toggleCell',
+                keyLabelKeys: ['hotkeys.keyLabels.click'],
+                actionKey: 'hotkeys.sections.editing.shortcuts.toggleCell.action',
+                descriptionKey: 'hotkeys.sections.editing.shortcuts.toggleCell.description',
             },
             {
-                keys: ['Drag pattern card'],
-                action: 'Drop pattern',
-                description: 'Drag from the Library to preview placement, then release to stamp it into the world.',
+                id: 'dropPattern',
+                keyLabelKeys: ['hotkeys.keyLabels.dragPatternCard'],
+                actionKey: 'hotkeys.sections.editing.shortcuts.dropPattern.action',
+                descriptionKey: 'hotkeys.sections.editing.shortcuts.dropPattern.description',
             },
         ],
     },
 ];
+

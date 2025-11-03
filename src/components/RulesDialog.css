@@ -6,3 +6,40 @@
 .rules-dialog-scroll::-webkit-scrollbar {
     display: none;
 }
+
+.rules-dialog-content {
+    text-wrap: pretty;
+}
+
+.rules-dialog-content h4,
+.rules-dialog-content h5 {
+    text-wrap: balance;
+}
+
+.rules-dialog-content section > p,
+.rules-dialog-content dd,
+.rules-dialog-content li {
+    max-width: 65ch;
+    text-wrap: pretty;
+    hyphens: auto;
+}
+
+.rules-dialog-content .grid {
+    grid-auto-rows: 1fr;
+    gap: 1rem;
+}
+
+.rules-dialog-content .grid > section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.rules-dialog-content .MathJax_Display {
+    overflow-x: auto;
+    padding-block: 0.25rem;
+}
+
+.rules-dialog-content .MathJax_Display::-webkit-scrollbar {
+    height: 6px;
+}

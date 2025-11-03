@@ -4,7 +4,7 @@ import "./Grid.css";
 import { GRID_SIZE, CELL_PIXEL_MAX, CELL_PIXEL_SIZE } from "../config";
 import { AiOutlineInfoCircle, AiOutlineSliders, AiOutlineBars } from "react-icons/ai";
 import HelpDialog from './HelpDialog';
-import Popover from './Popover';
+import { useTranslation } from '../i18n';
 
 const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, model, setModel, availableModes, setIsModeMenuOpen, setIsMenuOpen, patterns, renderCell, generation, debugConfig, cellPixelSize, onCellPixelSizeChange }) => {
     const canvasRef = useRef(null);
@@ -15,6 +15,7 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
     const [isHelpOpen, setIsHelpOpen] = useState(false);
 
     const cellSize = cellPixelSize;
+    const { t } = useTranslation();
 
     const [canvasWidth, setCanvasWidth] = useState(0);
     const [canvasHeight, setCanvasHeight] = useState(0);
@@ -376,28 +377,29 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
                     <button
                         onClick={() => setIsMenuOpen(true)}
                         className="px-3 py-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center space-x-2 text-sm font-medium"
-                        title="Patterns & Configurations"
+                        title={t('grid.libraryButtonTitle')}
+                        aria-label={t('grid.libraryButtonTitle')}
                     >
                         <AiOutlineBars size={16} />
-                        <span className="hidden sm:inline">Library</span>
+                        <span className="hidden sm:inline">{t('grid.libraryButton')}</span>
                     </button>
                 </div>
-                <h1 className="text-center uppercase text-gray-100">Conway's Game of Life</h1>
+                <h1 className="text-center uppercase text-gray-100">{t('grid.title')}</h1>
                 <div className="absolute right-4 flex items-center space-x-2">
-                    {/* Modes menu toggle */}
                     <button
                         onClick={() => setIsModeMenuOpen(true)}
-                        className="px-3 py-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center space-x-2 text-sm font-medium"
-                        title="Modes Panel"
+                        className="px-3 py-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center space-x-2 text-sm font-medium transition"
+                        title={t('grid.modesButtonTitle')}
+                        aria-label={t('grid.modesButtonTitle')}
                     >
                         <AiOutlineSliders size={16} />
-                        <span className="hidden sm:inline">Modes</span>
+                        <span className="hidden sm:inline">{t('grid.modesButton')}</span>
                     </button>
-                    {/* Help */}
                     <button
                         onClick={() => setIsHelpOpen(true)}
-                        className="p-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center justify-center"
-                        title="How to Use"
+                        className="p-2 rounded bg-gray-700 hover:bg-gray-500 transition flex items-center justify-center"
+                        title={t('grid.helpButtonTitle')}
+                        aria-label={t('grid.helpButtonTitle')}
                     >
                         <AiOutlineInfoCircle size={20} />
                     </button>

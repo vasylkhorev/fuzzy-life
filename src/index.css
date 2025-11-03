@@ -9,13 +9,12 @@ body, html, #root {
     height: 100%;
     width: 100%;
     font-family: Arial, sans-serif;
+    overflow: hidden;
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+    display: block;
+    background-color: #0f172a;
 }
 
 .no-scrollbar {

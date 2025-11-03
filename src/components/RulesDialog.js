@@ -3,9 +3,11 @@ import React, { useEffect, useRef } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
 import { rulesHtmlMap } from '../modes';
 import './RulesDialog.css';
+import { useTranslation } from '../i18n';
 
 const RulesDialog = ({ isOpen, onClose, model, modeInfo }) => {
     const dialogRef = useRef(null);
+    const { t, language } = useTranslation();
 
     // Whenever dialog opens or model changes, typeset MathJax
     useEffect(() => {
@@ -25,8 +27,21 @@ const RulesDialog = ({ isOpen, onClose, model, modeInfo }) => {
 
     if (!isOpen || !model) return null;
 
-    const rulesHtml = rulesHtmlMap[model] || '<div class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 text-slate-200">No rules available.</div>';
-    const title = modeInfo ? `${modeInfo.label} Rules` : 'Unknown Mode Rules';
+    const rulesEntry = rulesHtmlMap[model];
+    const fallbackHtml = t('modeRules.fallback');
+    const resolvedRulesHtml = rulesEntry
+        ? rulesEntry[language] || rulesEntry.en || fallbackHtml
+        : fallbackHtml;
+
+    const modeLabelKey = `modes.${model}.label`;
+    const translatedModeLabel = t(modeLabelKey);
+    const resolvedModeLabel =
+        translatedModeLabel === modeLabelKey
+            ? modeInfo?.label || model
+            : translatedModeLabel;
+    const title = modeInfo
+        ? t('modeRules.title', { mode: resolvedModeLabel })
+        : t('modeRules.unknownTitle');
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -42,8 +57,8 @@ const RulesDialog = ({ isOpen, onClose, model, modeInfo }) => {
                 {/* Render HTML with LaTeX inside. dialogRef used for MathJax target. */}
                 <div
                     ref={dialogRef}
-                    className="space-y-6 text-slate-200 text-sm sm:text-[15px] leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: rulesHtml }}
+                    className="rules-dialog-content space-y-6 text-slate-200 text-sm sm:text-[15px] leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: resolvedRulesHtml }}
                 />
 
                 <div className="mt-6 pt-4 border-t border-slate-700 flex justify-end">
@@ -51,7 +66,7 @@ const RulesDialog = ({ isOpen, onClose, model, modeInfo }) => {
                         onClick={onClose}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors shadow-md"
                     >
-                        Close
+                        {t('modeRules.close')}
                     </button>
                 </div>
             </div>

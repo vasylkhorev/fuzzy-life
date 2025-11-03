@@ -35,7 +35,8 @@ export const modeInfo = {
     description: 'Binary cells with standard Conway rules: birth on 3 neighbors, survival on 2-3.'
 };
 
-export const rulesHtml = `
+export const rulesHtml = {
+    en: `
 <div class="space-y-5">
   <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
     <h4 class="text-lg font-semibold text-slate-100 mb-2">Overview</h4>
@@ -50,7 +51,7 @@ export const rulesHtml = `
       <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Neighbor Count</h5>
       <p class="text-slate-300">
         Live neighbors \\( N_t(i,j) = \\sum_{di \\in \\{-1,0,1\\}} \\sum_{dj \\in \\{-1,0,1\\}} G_t(i+di,j+dj) - G_t(i,j) \\).
-        Values range from 0–8.
+        Values range from 0-8.
       </p>
     </section>
     <section class="rounded-lg border border-slate-700/70 bg-slate-800/50 p-4 shadow-inner">
@@ -105,4 +106,76 @@ export const rulesHtml = `
     </p>
   </section>
 </div>
-`;
+`,
+    sk: `
+<div class="space-y-5">
+  <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
+    <h4 class="text-lg font-semibold text-slate-100 mb-2">Prehľad</h4>
+    <p class="text-slate-300">
+      Conwayova hra života používa binárne stavy so synchronnými aktualizáciami na mriežke s ôsmimi susedmi (Mooreho okolie).
+      Bunky sú buď živé (1) alebo mŕtve (0); jednoduché pravidlá vytvárajú bohaté emergentné správanie.
+    </p>
+  </section>
+
+  <div class="grid gap-4 md:grid-cols-2">
+    <section class="rounded-lg border border-slate-700/70 bg-slate-800/50 p-4 shadow-inner">
+      <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Počet susedov</h5>
+      <p class="text-slate-300">
+        Živí susedia \\( N_t(i,j) = \\sum_{di \\in \\{-1,0,1\\}} \\sum_{dj \\in \\{-1,0,1\\}} G_t(i+di,j+dj) - G_t(i,j) \\).
+        Hodnoty sú v rozsahu 0-8.
+      </p>
+    </section>
+    <section class="rounded-lg border border-slate-700/70 bg-slate-800/50 p-4 shadow-inner">
+      <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Prechodové pravidlo</h5>
+      <p class="text-slate-300">
+        \\[
+          G_{t+1}(i,j) =
+          \\begin{cases}
+            1 &\\text{ak } (G_t(i,j)=0 \\land N_t=3) \\lor (G_t(i,j)=1 \\land N_t \\in \\{2,3\\}) \\\\
+            0 &\\text{inak}
+          \\end{cases}
+        \\]
+      </p>
+    </section>
+  </div>
+
+  <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
+    <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-3">Rozpis pravidiel</h5>
+    <dl class="space-y-3">
+      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
+        <dt class="font-semibold text-slate-100">Zrod</dt>
+        <dd class="text-slate-300 mt-1 text-sm">
+          Mŕtva bunka s presne tromi živými susedmi ožije.
+        </dd>
+      </div>
+      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
+        <dt class="font-semibold text-slate-100">Prežitie</dt>
+        <dd class="text-slate-300 mt-1 text-sm">
+          Živá bunka s dvoma alebo tromi susedmi zostáva živá.
+        </dd>
+      </div>
+      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
+        <dt class="font-semibold text-slate-100">Podpopulácia</dt>
+        <dd class="text-slate-300 mt-1 text-sm">
+          Menej ako dvaja susedia spôsobia, že bunka zomrie.
+        </dd>
+      </div>
+      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
+        <dt class="font-semibold text-slate-100">Preľudnenie</dt>
+        <dd class="text-slate-300 mt-1 text-sm">
+          Viac ako traja susedia takisto vedú k smrti bunky.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
+    <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Poznámky</h5>
+    <p class="text-slate-300">
+      Ekvivalent rodiny pravidiel typu life-like B3/S23.
+      Referencia: Conway (1970). Funguje na každej konečnej mriežke; okraje sa tu neprepájajú.
+    </p>
+  </section>
+</div>
+`,
+};

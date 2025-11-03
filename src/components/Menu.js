@@ -2,12 +2,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiOutlineClose } from "react-icons/ai";
 import { CELL_PIXEL_SIZE } from '../config';
+import { useTranslation } from '../i18n';
 
 const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguration, loadConfigurationFromFile, cellPixelSize = CELL_PIXEL_SIZE }) => {
     const [customPatterns, setCustomPatterns] = useState({});
     const [customConfigurations, setCustomConfigurations] = useState({});
     const [activeTab, setActiveTab] = useState('patterns'); // 'patterns' or 'configurations'
     const menuRef = useRef(null);
+    const { t, language } = useTranslation();
+    const locale = language === 'sk' ? 'sk-SK' : 'en-US';
 
     useEffect(() => {
         const storedCustomPatterns = JSON.parse(localStorage.getItem('customPatterns')) || {};
@@ -46,7 +49,7 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
         });
 
         if (liveCells.length === 0) {
-            console.log('No live cells to save as a pattern.');
+            console.log(t('menu.messages.noLiveCells'));
             return;
         }
 
@@ -60,12 +63,13 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
         const year = now.getFullYear();
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        const newName = `Pattern ${day}.${month}.${year} ${hours}:${minutes}`;
+        const newName = t('menu.generatedNames.pattern', { day, month, year, hours, minutes });
+        const timestamp = now.toLocaleString(locale);
 
         const pattern = {
             name: newName,
             cells: zeroedCells,
-            description: `Pattern saved at ${new Date().toLocaleString()}`
+            description: t('menu.generatedNames.patternDescription', { timestamp })
         };
         const updatedCustomPatterns = { ...customPatterns, [newName]: pattern };
         setCustomPatterns(updatedCustomPatterns);
@@ -86,12 +90,13 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
         const year = now.getFullYear();
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        const newName = `Config ${day}.${month}.${year} ${hours}:${minutes}`;
+        const newName = t('menu.generatedNames.configuration', { day, month, year, hours, minutes });
+        const timestamp = now.toLocaleString(locale);
 
         const configuration = {
             name: newName,
             cells: liveCells,
-            description: `Configuration saved at ${new Date().toLocaleString()}`
+            description: t('menu.generatedNames.configurationDescription', { timestamp })
         };
         const updatedCustomConfigurations = { ...customConfigurations, [newName]: configuration };
         setCustomConfigurations(updatedCustomConfigurations);
@@ -114,7 +119,7 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
     };
 
     const handleRemove = (name, isConfiguration = false) => {
-        const confirmRemove = window.confirm(`Are you sure you want to remove "${name}"?`);
+        const confirmRemove = window.confirm(t('menu.prompts.removeConfirm', { name }));
         if (confirmRemove) {
             if (isConfiguration) {
                 const updatedCustomConfigurations = { ...customConfigurations };
@@ -135,7 +140,7 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
     };
 
     const handleRename = (oldName, isConfiguration = false) => {
-        const newName = prompt('Enter new name:', oldName);
+        const newName = prompt(t('menu.prompts.renamePrompt'), oldName);
         const source = isConfiguration ? customConfigurations : customPatterns;
         const setSource = isConfiguration ? setCustomConfigurations : setCustomPatterns;
         const storageKey = isConfiguration ? 'customConfigurations' : 'customPatterns';
@@ -157,7 +162,7 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                 console.log(`Renamed ${oldName} to ${newName} in ${storageKey}`);
             }
         } else if (newName && (source[newName] || patterns[newName])) {
-            alert('A name with this value already exists.');
+            alert(t('menu.prompts.nameExists'));
         }
     };
 
@@ -222,14 +227,15 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                     <div className="flex items-center justify-between border-b border-slate-800 px-4 py-4">
                         <div>
                             <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">
-                                Library
+                                {t('menu.headingEyebrow')}
                             </p>
-                            <h2 className="text-lg font-semibold text-white">Patterns & Configurations</h2>
+                            <h2 className="text-lg font-semibold text-white">{t('menu.headingTitle')}</h2>
                         </div>
                         <button
                             onClick={() => setIsOpen(false)}
                             className="rounded-md border border-slate-700 p-1 text-slate-300 transition hover:border-slate-500 hover:text-white"
-                            title="Close"
+                            title={t('menu.tooltips.close')}
+                            aria-label={t('menu.tooltips.close')}
                         >
                             <AiOutlineClose size={16} />
                         </button>
@@ -241,24 +247,25 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                                 onClick={() => setActiveTab('patterns')}
                                 className={`flex-1 p-2 rounded ${activeTab === 'patterns' ? 'bg-blue-600' : 'bg-gray-700'}`}
                             >
-                                Patterns
+                                {t('menu.tabs.patterns')}
                             </button>
                             <button
                                 onClick={() => setActiveTab('configurations')}
                                 className={`flex-1 p-2 rounded ${activeTab === 'configurations' ? 'bg-blue-600' : 'bg-gray-700'}`}
                             >
-                                Configurations
+                                {t('menu.tabs.configurations')}
                             </button>
                         </div>
 
                         {activeTab === 'patterns' && (
                             <div>
                                 <div className="flex items-center justify-between w-full mb-4">
-                                    <h2 className="text-lg font-bold">Patterns:</h2>
+                                    <h2 className="text-lg font-bold">{t('menu.patternsSectionTitle')}</h2>
                                     <button
                                         onClick={handleSavePattern}
                                         className="p-2 bg-blue-600 hover:bg-blue-500 rounded flex items-center justify-center"
-                                        title="Save Pattern to Local Storage"
+                                        title={t('menu.tooltips.savePattern')}
+                                        aria-label={t('menu.tooltips.savePattern')}
                                     >
                                         <AiOutlineDownload size={16} />
                                     </button>
@@ -271,7 +278,8 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                                                 onDragStart={(e) => handleDragStart(e, name, false, false)}
                                                 onClick={() => loadPattern(patterns[name], 0, 0)}
                                                 className="w-full text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move"
-                                                title="Drag to place on grid or click to load at origin"
+                                                title={t('menu.tooltips.dragPattern')}
+                                                aria-label={t('menu.tooltips.dragPattern')}
                                             >
                                                 {name}
                                             </button>
@@ -284,7 +292,7 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                                             <div className="w-full border-b border-gray-300"></div>
                                         </div>
                                         <div className="relative flex justify-center">
-                                            <span className="bg-slate-900 px-4 text-sm">Custom</span>
+                                            <span className="bg-slate-900 px-4 text-sm">{t('menu.customSectionLabel')}</span>
                                         </div>
                                     </div>
                                     <ul>
@@ -295,7 +303,8 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                                                     onDragStart={(e) => handleDragStart(e, name, true, false)}
                                                     onClick={() => handleLoadCustomPattern(name)}
                                                     className="flex-1 text-left whitespace-normal break-all pr-2 bg-gray-700 hover:bg-gray-600 rounded p-2 cursor-move"
-                                                    title="Drag to place on grid or click to load at origin"
+                                                    title={t('menu.tooltips.dragPattern')}
+                                                    aria-label={t('menu.tooltips.dragPattern')}
                                                 >
                                                     {name}
                                                 </button>
@@ -303,14 +312,16 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                                                     <button
                                                         onClick={() => handleRemove(name, false)}
                                                         className="p-1 bg-red-600 hover:bg-red-500 rounded"
-                                                        title="Remove"
+                                                        title={t('menu.tooltips.remove')}
+                                                        aria-label={t('menu.tooltips.remove')}
                                                     >
                                                         <AiOutlineDelete size={16}/>
                                                     </button>
                                                     <button
                                                         onClick={() => handleRename(name, false)}
                                                         className="p-1 bg-yellow-600 hover:bg-yellow-500 rounded"
-                                                        title="Rename"
+                                                        title={t('menu.tooltips.rename')}
+                                                        aria-label={t('menu.tooltips.rename')}
                                                     >
                                                         <AiOutlineEdit size={16}/>
                                                     </button>
@@ -325,19 +336,21 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                         {activeTab === 'configurations' && (
                             <div>
                                 <div className="flex items-center justify-between w-full">
-                                    <h2 className="text-lg flex-shrink-0 font-bold">Configurations:</h2>
+                                    <h2 className="text-lg flex-shrink-0 font-bold">{t('menu.configurationsSectionTitle')}</h2>
                                     <div className="flex space-x-2 p-2">
                                         <button
                                             onClick={handleSaveConfiguration}
                                             className="p-2 bg-blue-600 hover:bg-blue-500 rounded flex items-center justify-center"
-                                            title="Save Configuration to Local Storage"
+                                            title={t('menu.tooltips.saveConfiguration')}
+                                            aria-label={t('menu.tooltips.saveConfiguration')}
                                         >
                                             <AiOutlineDownload size={16} />
                                         </button>
                                         <button
                                             onClick={handleLoadClick}
                                             className="p-2 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center"
-                                            title="Load Configuration from File"
+                                            title={t('menu.tooltips.loadConfiguration')}
+                                            aria-label={t('menu.tooltips.loadConfiguration')}
                                         >
                                             <AiOutlineUpload size={16} />
                                         </button>
@@ -349,7 +362,8 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                                             <button
                                                 onClick={() => handleLoadConfiguration(name)}
                                                 className="flex-1 text-left whitespace-normal break-all pr-2 bg-gray-700 hover:bg-gray-600 rounded p-2 cursor-pointer"
-                                                title="Click to load full grid"
+                                                title={t('menu.tooltips.loadConfigurationButton')}
+                                                aria-label={t('menu.tooltips.loadConfigurationButton')}
                                             >
                                                 {name}
                                             </button>
@@ -357,14 +371,16 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                                                 <button
                                                     onClick={() => handleRemove(name, true)}
                                                     className="p-1 bg-red-600 hover:bg-red-500 rounded"
-                                                    title="Remove"
+                                                    title={t('menu.tooltips.remove')}
+                                                    aria-label={t('menu.tooltips.remove')}
                                                 >
                                                     <AiOutlineDelete size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleRename(name, true)}
                                                     className="p-1 bg-yellow-600 hover:bg-yellow-500 rounded"
-                                                    title="Rename"
+                                                    title={t('menu.tooltips.rename')}
+                                                    aria-label={t('menu.tooltips.rename')}
                                                 >
                                                     <AiOutlineEdit size={16} />
                                                 </button>

@@ -7,6 +7,7 @@ import ModeMenu from './components/ModeMenu';
 import { GRID_SIZE, DEFAULT_DEBUG_CONFIG, CELL_PIXEL_SIZE } from "./config";
 import patterns from './generated-patterns';
 import { modes, availableModes, defaultParams, renderCellMap } from './modes';
+import { useTranslation } from './i18n';
 
 const App = () => {
     const [isRunning, setIsRunning] = useState(false);
@@ -30,6 +31,7 @@ const App = () => {
     const playAreaRef = useRef(null);
     const dragOffsetRef = useRef({ x: 0, y: 0 });
     const debugConfig = DEFAULT_DEBUG_CONFIG;
+    const { t } = useTranslation();
 
     useEffect(() => {
         setModeParams(defaultParams[model] || {});
@@ -107,7 +109,7 @@ const App = () => {
                 loadConfiguration(config);
             } catch (error) {
                 console.error('Error loading configuration:', error);
-                alert('Invalid configuration file');
+                alert(t('alerts.invalidConfigurationFile'));
             }
         };
         reader.readAsText(file);

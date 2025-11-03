@@ -42,7 +42,7 @@ function Popover({
       ref={wrapperRef}
       onMouseEnter={handleMouseOver}
       onMouseLeave={handleMouseLeft}
-      className="w-fit h-fit relative flex justify-center">
+      className="relative flex h-fit w-fit justify-center">
       <div
         onClick={() => setShow(!show)}
       >
@@ -50,8 +50,9 @@ function Popover({
       </div>
       <div
         hidden={!show}
-        className="min-w-fit w-[200px] h-fit absolute bottom-[100%] z-50 transition-all">
-        <div className="rounded shadow-[10px_30px_150px_rgba(46,38,92,0.25)] mb-[10px]">
+        className="pointer-events-none absolute bottom-full left-1/2 z-50 -translate-x-1/2 -translate-y-2 transform transition-all"
+      >
+        <div className="pointer-events-auto mb-2 w-max max-w-xs rounded shadow-[10px_30px_150px_rgba(46,38,92,0.25)]">
           {content}
         </div>
       </div>
