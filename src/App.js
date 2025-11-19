@@ -1,23 +1,46 @@
 // src/App.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Controls from './components/Controls';
 import Grid from './components/Grid';
 import Menu from './components/Menu';
 import ModeMenu from './components/ModeMenu';
 import { GRID_SIZE, DEFAULT_DEBUG_CONFIG, CELL_PIXEL_SIZE } from "./config";
-import patterns from './generated-patterns';
-import { modes, availableModes, defaultParams, renderCellMap } from './modes';
+import { getPatternsForMode } from './generated-patterns';
+import { modes, availableModes } from './modes';
 import { useTranslation } from './i18n';
+
+const gridsEqual = (gridA, gridB) => {
+    if (gridA === gridB) {
+        return true;
+    }
+    if (!gridA || !gridB || gridA.length !== gridB.length) {
+        return false;
+    }
+    for (let row = 0; row < gridA.length; row++) {
+        const rowA = gridA[row];
+        const rowB = gridB[row];
+        if (!rowA || !rowB || rowA.length !== rowB.length) {
+            return false;
+        }
+        for (let col = 0; col < rowA.length; col++) {
+            if (rowA[col] !== rowB[col]) {
+                return false;
+            }
+        }
+    }
+    return true;
+};
 
 const App = () => {
     const [isRunning, setIsRunning] = useState(false);
-    const [grid, setGrid] = useState(
+    const [grid, setGridState] = useState(
         Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0))
     );
+    const gridRef = useRef(grid);
     const [speed, setSpeed] = useState(500);
     const [generation, setGeneration] = useState(0);
     const [model, setModel] = useState('classic');
-    const [modeParams, setModeParams] = useState(defaultParams.classic);
+    const [modeParams, setModeParams] = useState(() => modes.classic.getDefaultParams());
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
     const [canvasOffset, setCanvasOffset] = useState({ x: 0, y: 0 });
@@ -34,24 +57,72 @@ const App = () => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        setModeParams(defaultParams[model] || {});
+        const nextMode = modes[model] || modes.classic;
+        setModeParams(nextMode.getDefaultParams());
     }, [model]);
+    useEffect(() => {
+        gridRef.current = grid;
+    }, [grid]);
+
+    const cloneGrid = useCallback((sourceGrid) => sourceGrid.map((row) => [...row]), []);
+    const historyRef = useRef([]);
+    const maxHistorySize = 100;
+
+    const applyGridChange = useCallback((updater, { skipHistory = false } = {}) => {
+        setGridState((prev) => {
+            const nextGrid = typeof updater === 'function' ? updater(prev) : updater;
+            if (gridsEqual(prev, nextGrid)) {
+                return prev;
+            }
+            if (!skipHistory) {
+                historyRef.current.push(cloneGrid(prev));
+                if (historyRef.current.length > maxHistorySize) {
+                    historyRef.current.shift();
+                }
+            }
+            return nextGrid;
+        });
+    }, [cloneGrid]);
+
+    const undo = useCallback(() => {
+        while (historyRef.current.length) {
+            const previous = historyRef.current.pop();
+            if (previous && !gridsEqual(previous, gridRef.current)) {
+                setGridState(previous);
+                setIsRunning(false);
+                return;
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            const isUndo = (event.ctrlKey || event.metaKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'z';
+            if (isUndo) {
+                event.preventDefault();
+                undo();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [undo]);
 
     const changeSpeed = (newSpeed) => setSpeed(newSpeed);
     const toggleRun = () => setIsRunning(prev => !prev);
     const clearGrid = () => {
-        setGrid(Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0)));
+        applyGridChange(Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0)));
         setIsRunning(false);
         setGeneration(0);
     };
     const nextGeneration = () => {
-        const computeNextState = modes[model] || modes.classic;
-        const newGrid = grid.map((row, rowIndex) =>
-            row.map((cell, colIndex) =>
-                computeNextState(grid, rowIndex, colIndex, modeParams, generation)
+        const mode = modes[model] || modes.classic;
+        applyGridChange((prevGrid) =>
+            prevGrid.map((row, rowIndex) =>
+                row.map((cell, colIndex) =>
+                    mode.computeNextState(prevGrid, rowIndex, colIndex, modeParams, generation)
+                )
             )
         );
-        setGrid(newGrid);
         setGeneration(prev => prev + 1);
     };
 
@@ -71,13 +142,15 @@ const App = () => {
         }
 
         const shiftedCells = pattern.cells.map(([row, col]) => [row + rowOffset, col + colOffset]);
-        const newGrid = grid.map(row => [...row]);
-        shiftedCells.forEach(([row, col]) => {
-            if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
-                newGrid[row][col] = 1;
-            }
+        applyGridChange((prevGrid) => {
+            const newGrid = prevGrid.map(row => [...row]);
+            shiftedCells.forEach(([row, col]) => {
+                if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
+                    newGrid[row][col] = 1;
+                }
+            });
+            return newGrid;
         });
-        setGrid(newGrid);
         setGeneration(0);
         setIsRunning(false);
     };
@@ -88,13 +161,15 @@ const App = () => {
             console.error('Invalid configuration data:', config);
             return;
         }
-        const newGrid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
-        config.cells.forEach(([row, col]) => {
-            if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
-                newGrid[row][col] = 1;
-            }
+        applyGridChange(() => {
+            const newGrid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
+            config.cells.forEach(([row, col]) => {
+                if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
+                    newGrid[row][col] = 1;
+                }
+            });
+            return newGrid;
         });
-        setGrid(newGrid);
         setGeneration(0);
         setIsRunning(false);
     };
@@ -226,12 +301,15 @@ const App = () => {
             ? anchorStyles[controlAnchor]
             : { top: `${controlFreePosition.y}px`, left: `${controlFreePosition.x}px` };
 
+    const patternsForMode = getPatternsForMode(model);
+
     return (
         <div className="flex h-screen">
             <Menu
                 isOpen={isMenuOpen}
                 setIsOpen={setIsMenuOpen}
-                patterns={patterns}
+                mode={model}
+                patterns={patternsForMode}
                 grid={grid}
                 loadPattern={loadPattern}
                 loadConfiguration={loadConfiguration}
@@ -241,20 +319,19 @@ const App = () => {
             <div className="relative flex flex-1 flex-col bg-gray-900" ref={playAreaRef}>
                 <Grid
                     grid={grid}
-                    setGrid={setGrid}
+                        setGrid={applyGridChange}
                     isRunning={isRunning}
                     speed={speed}
                     nextGeneration={nextGeneration}
                     onOffsetChange={setCanvasOffset}
                     onDimensionsChange={setCanvasDimensions}
                     loadPattern={loadPattern}
-                    patterns={patterns}
                     model={model}
                     setModel={setModel}
                     availableModes={availableModes}
                     setIsModeMenuOpen={setIsModeMenuOpen}
                     setIsMenuOpen={setIsMenuOpen}
-                    renderCell={renderCellMap[model]}
+                    renderCell={modes[model]?.renderCell || modes.classic.renderCell}
                     cellPixelSize={cellPixelSize}
                     onCellPixelSizeChange={setCellPixelSize}
                     generation={generation}

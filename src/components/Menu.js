@@ -4,20 +4,56 @@ import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiO
 import { CELL_PIXEL_SIZE } from '../config';
 import { useTranslation } from '../i18n';
 
-const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguration, loadConfigurationFromFile, cellPixelSize = CELL_PIXEL_SIZE }) => {
+const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPattern, loadConfiguration, loadConfigurationFromFile, cellPixelSize = CELL_PIXEL_SIZE }) => {
     const [customPatterns, setCustomPatterns] = useState({});
     const [customConfigurations, setCustomConfigurations] = useState({});
     const [activeTab, setActiveTab] = useState('patterns'); // 'patterns' or 'configurations'
     const menuRef = useRef(null);
     const { t, language } = useTranslation();
     const locale = language === 'sk' ? 'sk-SK' : 'en-US';
+    const safeMode = mode || 'classic';
+    const builtInPatterns = patterns || {};
+
+    const getStorageKey = (baseKey) => `${baseKey}:${safeMode}`;
+
+    const loadNamespacedStorage = (baseKey) => {
+        if (typeof window === 'undefined' || !window.localStorage) {
+            return {};
+        }
+        try {
+            const namespacedKey = getStorageKey(baseKey);
+            const namespacedValue = localStorage.getItem(namespacedKey);
+            if (namespacedValue) {
+                return JSON.parse(namespacedValue);
+            }
+            const legacyValue = localStorage.getItem(baseKey);
+            if (legacyValue) {
+                localStorage.setItem(namespacedKey, legacyValue);
+                return JSON.parse(legacyValue);
+            }
+        } catch (error) {
+            console.error(`Failed to parse ${baseKey} for mode ${safeMode}`, error);
+        }
+        return {};
+    };
+
+    const persistNamespacedStorage = (baseKey, value) => {
+        if (typeof window === 'undefined' || !window.localStorage) {
+            return;
+        }
+        try {
+            localStorage.setItem(getStorageKey(baseKey), JSON.stringify(value));
+        } catch (error) {
+            console.error(`Failed to persist ${baseKey} for mode ${safeMode}`, error);
+        }
+    };
 
     useEffect(() => {
-        const storedCustomPatterns = JSON.parse(localStorage.getItem('customPatterns')) || {};
-        const storedCustomConfigurations = JSON.parse(localStorage.getItem('customConfigurations')) || {};
+        const storedCustomPatterns = loadNamespacedStorage('customPatterns');
+        const storedCustomConfigurations = loadNamespacedStorage('customConfigurations');
         setCustomPatterns(storedCustomPatterns);
         setCustomConfigurations(storedCustomConfigurations);
-    }, []);
+    }, [safeMode]);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -73,7 +109,7 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
         };
         const updatedCustomPatterns = { ...customPatterns, [newName]: pattern };
         setCustomPatterns(updatedCustomPatterns);
-        localStorage.setItem('customPatterns', JSON.stringify(updatedCustomPatterns));
+        persistNamespacedStorage('customPatterns', updatedCustomPatterns);
         console.log(`Saved zeroed pattern to localStorage: ${newName}`, pattern);
     };
 
@@ -100,7 +136,7 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
         };
         const updatedCustomConfigurations = { ...customConfigurations, [newName]: configuration };
         setCustomConfigurations(updatedCustomConfigurations);
-        localStorage.setItem('customConfigurations', JSON.stringify(updatedCustomConfigurations));
+        persistNamespacedStorage('customConfigurations', updatedCustomConfigurations);
         console.log(`Saved configuration to localStorage: ${newName}`);
     };
 
@@ -125,13 +161,13 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                 const updatedCustomConfigurations = { ...customConfigurations };
                 delete updatedCustomConfigurations[name];
                 setCustomConfigurations(updatedCustomConfigurations);
-                localStorage.setItem('customConfigurations', JSON.stringify(updatedCustomConfigurations));
+                persistNamespacedStorage('customConfigurations', updatedCustomConfigurations);
                 console.log(`Removed configuration from localStorage: ${name}`);
             } else {
                 const updatedCustomPatterns = { ...customPatterns };
                 delete updatedCustomPatterns[name];
                 setCustomPatterns(updatedCustomPatterns);
-                localStorage.setItem('customPatterns', JSON.stringify(updatedCustomPatterns));
+                persistNamespacedStorage('customPatterns', updatedCustomPatterns);
                 console.log(`Removed pattern from localStorage: ${name}`);
             }
         } else {
@@ -143,9 +179,9 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
         const newName = prompt(t('menu.prompts.renamePrompt'), oldName);
         const source = isConfiguration ? customConfigurations : customPatterns;
         const setSource = isConfiguration ? setCustomConfigurations : setCustomPatterns;
-        const storageKey = isConfiguration ? 'customConfigurations' : 'customPatterns';
+        const storageBaseKey = isConfiguration ? 'customConfigurations' : 'customPatterns';
 
-        if (newName && newName !== oldName && !source[newName] && !patterns[newName]) {
+        if (newName && newName !== oldName && !source[newName] && !builtInPatterns[newName]) {
             const entries = Object.entries(source);
             const index = entries.findIndex(([name]) => name === oldName);
 
@@ -158,16 +194,16 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                 ];
                 const updatedSource = Object.fromEntries(updatedEntries);
                 setSource(updatedSource);
-                localStorage.setItem(storageKey, JSON.stringify(updatedSource));
-                console.log(`Renamed ${oldName} to ${newName} in ${storageKey}`);
+                persistNamespacedStorage(storageBaseKey, updatedSource);
+                console.log(`Renamed ${oldName} to ${newName} in ${storageBaseKey}`);
             }
-        } else if (newName && (source[newName] || patterns[newName])) {
+        } else if (newName && (source[newName] || builtInPatterns[newName])) {
             alert(t('menu.prompts.nameExists'));
         }
     };
 
     const handleDragStart = (e, name, isCustom = false, isConfiguration = false) => {
-        const pattern = isConfiguration ? customConfigurations[name] : (isCustom ? customPatterns[name] : patterns[name]);
+        const pattern = isConfiguration ? customConfigurations[name] : (isCustom ? customPatterns[name] : builtInPatterns[name]);
         if (pattern) {
             e.dataTransfer.setData('application/json', JSON.stringify(pattern));
             e.dataTransfer.effectAllowed = 'move';
@@ -271,12 +307,12 @@ const Menu = ({ isOpen, setIsOpen, patterns, grid, loadPattern, loadConfiguratio
                                     </button>
                                 </div>
                                 <ul>
-                                    {Object.entries(patterns).map(([name, { description }]) => (
+                                    {Object.entries(builtInPatterns).map(([name, { description }]) => (
                                         <li key={name} className="mb-2">
                                             <button
                                                 draggable
                                                 onDragStart={(e) => handleDragStart(e, name, false, false)}
-                                                onClick={() => loadPattern(patterns[name], 0, 0)}
+                                                onClick={() => loadPattern(builtInPatterns[name], 0, 0)}
                                                 className="w-full text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move"
                                                 title={t('menu.tooltips.dragPattern')}
                                                 aria-label={t('menu.tooltips.dragPattern')}

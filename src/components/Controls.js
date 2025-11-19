@@ -72,6 +72,8 @@ const Controls = ({
                     <label className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-gray-400">
                         {t('controls.speed')}
                         <Popover
+                            placement="bottom"
+                            alignment="right"
                             trigger="hover"
                             content={
                                 <div className="text-sm text-white bg-gray-700 p-3 rounded-md">
@@ -84,14 +86,24 @@ const Controls = ({
                             </span>
                         </Popover>
                     </label>
-                    <input
-                        type="number"
-                        min="50"
-                        max="2000"
-                        value={speed}
-                        onChange={(e) => changeSpeed(Number(e.target.value))}
-                        className="w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40"
-                    />
+                    <div className="space-y-1">
+                        <input
+                            type="range"
+                            min="50"
+                            max="2000"
+                            step="50"
+                            value={speed}
+                            onChange={(e) => changeSpeed(Number(e.target.value))}
+                            className="w-full accent-blue-500"
+                        />
+                        <div className="flex justify-between text-[11px] text-gray-400">
+                            <span>50ms</span>
+                            <span>2000ms</span>
+                        </div>
+                        <p className="text-center text-sm font-semibold text-blue-300">
+                            {`${Math.round(speed / 50) * 50} ms`}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

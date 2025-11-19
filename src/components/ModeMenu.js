@@ -27,7 +27,16 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
         .trim();
 
     const handleParamChange = (key, value) => {
-        setModeParams(prev => ({ ...prev, [key]: Number(value) }));
+        setModeParams(prev => {
+            const previousValue = prev?.[key];
+            if (typeof previousValue === 'number') {
+                return { ...prev, [key]: Number(value) };
+            }
+            if (typeof previousValue === 'boolean') {
+                return { ...prev, [key]: Boolean(value) };
+            }
+            return { ...prev, [key]: value };
+        });
     };
 
     const openRulesFor = (modeValue) => {
@@ -141,6 +150,8 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                 {paramKeys.length > 0 ? (
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         {paramKeys.map((key) => {
+                                            const currentValue = modeParams[key];
+                                            const isBooleanParam = typeof currentValue === 'boolean';
                                             const labelText = translateOrFallback(
                                                 `modes.${currentMode.value}.params.${key}.label`,
                                                 formatParamLabel(key)
@@ -162,13 +173,29 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                                             {helpText}
                                                         </span>
                                                     )}
-                                                    <input
-                                                        type="number"
-                                                        step="0.001"
-                                                        value={modeParams[key]}
-                                                        onChange={(e) => handleParamChange(key, e.target.value)}
-                                                        className="w-full rounded border border-gray-600 bg-gray-900 px-2 py-2 text-sm text-white outline-none transition focus:border-blue-400 focus:ring-1 focus:ring-blue-400/40"
-                                                    />
+                                                    {isBooleanParam ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleParamChange(key, !currentValue)}
+                                                            className={`rounded-md border px-3 py-2 text-sm font-semibold transition ${
+                                                                currentValue
+                                                                    ? 'border-blue-500 bg-blue-600 text-white hover:bg-blue-500'
+                                                                    : 'border-gray-600 bg-gray-900 text-gray-200 hover:border-blue-400 hover:text-white'
+                                                            }`}
+                                                        >
+                                                            {currentValue
+                                                                ? translateOrFallback('modeMenu.boolean.on', 'On')
+                                                                : translateOrFallback('modeMenu.boolean.off', 'Off')}
+                                                        </button>
+                                                    ) : (
+                                                        <input
+                                                            type="number"
+                                                            step="0.001"
+                                                            value={currentValue}
+                                                            onChange={(e) => handleParamChange(key, e.target.value)}
+                                                            className="w-full rounded border border-gray-600 bg-gray-900 px-2 py-2 text-sm text-white outline-none transition focus:border-blue-400 focus:ring-1 focus:ring-blue-400/40"
+                                                        />
+                                                    )}
                                                 </label>
                                             );
                                         })}

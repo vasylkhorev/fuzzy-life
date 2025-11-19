@@ -1,9 +1,19 @@
-import blinker from './patterns/blinker.json';
-import pulsar from './patterns/pulsar.json';
+import classicBlinker from './patterns/classic/blinker.json';
+import classicPulsar from './patterns/classic/pulsar.json';
+import continuousContinuousBloom from './patterns/continuous/continuous-bloom.json';
+import continuousContinuousRippleBand from './patterns/continuous/continuous-ripple-band.json';
 
-const patterns = {
-  [blinker.name]: blinker,
-  [pulsar.name]: pulsar
+const patternLibrary = {
+    'classic': {
+        [classicBlinker.name]: classicBlinker,
+        [classicPulsar.name]: classicPulsar
+    },
+    'continuous': {
+        [continuousContinuousBloom.name]: continuousContinuousBloom,
+        [continuousContinuousRippleBand.name]: continuousContinuousRippleBand
+    }
 };
 
-export default patterns;
+export const getPatternsForMode = (modeKey = 'classic') => patternLibrary[modeKey] || patternLibrary['classic'] || {};
+
+export default patternLibrary;

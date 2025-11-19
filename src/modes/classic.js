@@ -1,41 +1,21 @@
-// src/modes/ClassicMode.js
+// src/modes/classic.js
 import { GRID_SIZE } from "../config";
+import LifeMode from "./LifeMode";
 
-export const computeNextStateClassic = (grid, row, col, params = {}, generation) => {
-    let liveNeighbors = 0;
-    const dirs = [
-        [-1, -1], [-1, 0], [-1, 1],
-        [0, -1],          [0, 1],
-        [1, -1], [1, 0], [1, 1]
-    ];
-    for (let [dx, dy] of dirs) {
-        const nr = row + dx, nc = col + dy;
-        if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE && grid[nr][nc] >= 0.5) {
-            liveNeighbors++;
-        }
-    }
-    const isAlive = grid[row][col] >= 0.5;
-    if (isAlive && (liveNeighbors < 2 || liveNeighbors > 3)) return 0;
-    if (!isAlive && liveNeighbors === 3) return 1;
-    return grid[row][col]; // Preserve exact value (0 or 1)
+const translations = {
+    en: {
+        label: 'Classic',
+        description: 'Binary cells with standard Conway rules: birth on 3 neighbors, survival on 2-3.',
+        params: {},
+    },
+    sk: {
+        label: 'Klasicky',
+        description: 'Binárne bunky so štandardnými Conwayho pravidlami: zrod pri 3 susedoch, prežitie pri 2-3.',
+        params: {},
+    },
 };
 
-export const renderCellClassic = (ctx, x, y, val, cellSize, generation) => {
-    if (val >= 0.5) {
-        ctx.fillStyle = "black";
-        ctx.fillRect(x, y, cellSize, cellSize);
-    }
-    // No fill for dead cells
-};
-
-export const defaultParams = {};
-
-export const modeInfo = {
-    label: 'Classic',
-    description: 'Binary cells with standard Conway rules: birth on 3 neighbors, survival on 2-3.'
-};
-
-export const rulesHtml = {
+const rulesHtml = {
     en: `
 <div class="space-y-5">
   <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
@@ -69,7 +49,7 @@ export const rulesHtml = {
   </div>
 
   <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
-    <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-3">Rule Breakdown</h5>
+    <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Rule Breakdown</h5>
     <dl class="space-y-3">
       <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
         <dt class="font-semibold text-slate-100">Birth</dt>
@@ -163,7 +143,7 @@ export const rulesHtml = {
       <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
         <dt class="font-semibold text-slate-100">Preľudnenie</dt>
         <dd class="text-slate-300 mt-1 text-sm">
-          Viac ako traja susedia takisto vedú k smrti bunky.
+          Viac ako traja susedia tiež vedú k smrti bunky.
         </dd>
       </div>
     </dl>
@@ -173,9 +153,52 @@ export const rulesHtml = {
     <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Poznámky</h5>
     <p class="text-slate-300">
       Ekvivalent rodiny pravidiel typu life-like B3/S23.
-      Referencia: Conway (1970). Funguje na každej konečnej mriežke; okraje sa tu neprepájajú.
+      Referencia: Conway (1970). Funguje na akejkoľvek konečnej mriežke; okraje sa tu neprepájajú.
     </p>
   </section>
 </div>
 `,
 };
+
+class ClassicMode extends LifeMode {
+    constructor() {
+        super({
+            id: 'classic',
+            label: 'Classic',
+            description: 'Binary cells with standard Conway rules: birth on 3 neighbors, survival on 2-3.',
+            defaultParams: {},
+            rulesHtml,
+            translations,
+        });
+    }
+
+    computeNextState(grid, row, col, params = this.defaultParams) {
+        let liveNeighbors = 0;
+        const dirs = [
+            [-1, -1], [-1, 0], [-1, 1],
+            [0, -1],          [0, 1],
+            [1, -1], [1, 0], [1, 1]
+        ];
+        for (const [dx, dy] of dirs) {
+            const nr = row + dx;
+            const nc = col + dy;
+            if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE && grid[nr][nc] >= 0.5) {
+                liveNeighbors++;
+            }
+        }
+        const isAlive = grid[row][col] >= 0.5;
+        if (isAlive && (liveNeighbors < 2 || liveNeighbors > 3)) return 0;
+        if (!isAlive && liveNeighbors === 3) return 1;
+        return grid[row][col];
+    }
+
+    renderCell(ctx, x, y, val, cellSize) {
+        if (val >= 0.5) {
+            ctx.fillStyle = "black";
+            ctx.fillRect(x, y, cellSize, cellSize);
+        }
+    }
+}
+
+export const classicMode = new ClassicMode();
+export default classicMode;

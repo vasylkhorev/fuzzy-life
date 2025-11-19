@@ -6,13 +6,15 @@ import { AiOutlineInfoCircle, AiOutlineSliders, AiOutlineBars } from "react-icon
 import HelpDialog from './HelpDialog';
 import { useTranslation } from '../i18n';
 
-const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, model, setModel, availableModes, setIsModeMenuOpen, setIsMenuOpen, patterns, renderCell, generation, debugConfig, cellPixelSize, onCellPixelSizeChange }) => {
+const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, model, setModel, availableModes, setIsModeMenuOpen, setIsMenuOpen, renderCell, generation, debugConfig, cellPixelSize, onCellPixelSizeChange }) => {
     const canvasRef = useRef(null);
     const initialCellSizeRef = useRef(cellPixelSize);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [dragging, setDragging] = useState(false);
     const [lastMousePos, setLastMousePos] = useState(null);
     const [isHelpOpen, setIsHelpOpen] = useState(false);
+    const [isSelectingRegion, setIsSelectingRegion] = useState(false);
+    const [selectionRect, setSelectionRect] = useState(null);
 
     const cellSize = cellPixelSize;
     const { t } = useTranslation();
@@ -118,11 +120,34 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
         };
     }, [resetZoomToDefault]);
 
+    const getCanvasRelativePosition = (event) => {
+        const canvas = canvasRef.current;
+        if (!canvas) {
+            return null;
+        }
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top,
+        };
+    };
+
+    const relativeToCellCoords = (relX, relY) => {
+        return {
+            col: Math.floor((relX + offset.x) / cellSize),
+            row: Math.floor((relY + offset.y) / cellSize),
+        };
+    };
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
     const drawGrid = (ctx) => {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        const showCoordinates = Boolean(debugConfig?.enabled && debugConfig?.overlays?.showCellCoordinates);
+        const overlayMode = debugConfig?.cellOverlayMode || 'none';
+        const showCoordinates = overlayMode === 'coordinates';
+        const showIntensity = overlayMode === 'intensity';
 
         const rawStartCol = Math.floor(offset.x / cellSize);
         const rawStartRow = Math.floor(offset.y / cellSize);
@@ -147,7 +172,7 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
                 return;
             }
 
-            if (showCoordinates) {
+            if (showCoordinates || showIntensity) {
                 ctx.font = "8px Arial";
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
@@ -166,14 +191,23 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
 
                     renderCell(ctx, cellX, cellY, val, cellSize, generation);
 
+                    const textColor = val >= 0.5 ? "#f9fafb" : "#111827";
+
                     if (showCoordinates) {
-                        ctx.fillStyle = "#4b5563";
+                        ctx.fillStyle = textColor;
                         const xPos = cellX + cellSize / 2;
                         const yPosTop = cellY + cellSize / 3;
                         const yPosBottom = cellY + (2 * cellSize) / 3;
 
                         ctx.fillText(`${row}`, xPos, yPosTop);
                         ctx.fillText(`${col}`, xPos, yPosBottom);
+                    }
+
+                    if (showIntensity) {
+                        ctx.fillStyle = textColor;
+                        const xPos = cellX + cellSize / 2;
+                        const yPos = cellY + cellSize / 2;
+                        ctx.fillText(val.toFixed(2), xPos, yPos);
                     }
                 }
             }
@@ -220,11 +254,85 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
         drawOutline();
     };
 
+    const startRegionSelection = (event) => {
+        const relative = getCanvasRelativePosition(event);
+        if (!relative) {
+            return;
+        }
+        setIsSelectingRegion(true);
+        setSelectionRect({
+            start: relative,
+            current: relative,
+        });
+        setDragging(false);
+        setLastMousePos(null);
+    };
+
+    const updateRegionSelection = (event) => {
+        if (!selectionRect) {
+            return;
+        }
+        const relative = getCanvasRelativePosition(event);
+        if (!relative) {
+            return;
+        }
+        setSelectionRect((prev) => (prev ? { ...prev, current: relative } : prev));
+    };
+
+    const finalizeRegionSelection = () => {
+        if (!selectionRect) {
+            setIsSelectingRegion(false);
+            setSelectionRect(null);
+            return;
+        }
+        const { start, current } = selectionRect;
+        const minX = Math.min(start.x, current.x);
+        const minY = Math.min(start.y, current.y);
+        const maxX = Math.max(start.x, current.x);
+        const maxY = Math.max(start.y, current.y);
+
+        const startCell = relativeToCellCoords(minX, minY);
+        const endCell = relativeToCellCoords(maxX, maxY);
+
+        const rowStart = clamp(Math.min(startCell.row, endCell.row), 0, GRID_SIZE - 1);
+        const rowEnd = clamp(Math.max(startCell.row, endCell.row), 0, GRID_SIZE - 1);
+        const colStart = clamp(Math.min(startCell.col, endCell.col), 0, GRID_SIZE - 1);
+        const colEnd = clamp(Math.max(startCell.col, endCell.col), 0, GRID_SIZE - 1);
+
+        if (rowEnd < rowStart || colEnd < colStart) {
+            setIsSelectingRegion(false);
+            setSelectionRect(null);
+            return;
+        }
+
+        const newGrid = grid.map((rowData, rowIndex) => {
+            if (rowIndex < rowStart || rowIndex > rowEnd) {
+                return rowData;
+            }
+            return rowData.map((cell, colIndex) =>
+                colIndex >= colStart && colIndex <= colEnd ? 0 : cell
+            );
+        });
+
+        setGrid(newGrid);
+        setIsSelectingRegion(false);
+        setSelectionRect(null);
+    };
+
     const handleMouseDown = (e) => {
+        if (e.shiftKey) {
+            e.preventDefault();
+            startRegionSelection(e);
+            return;
+        }
         setLastMousePos({ x: e.clientX, y: e.clientY });
     };
 
     const handleMouseMove = (e) => {
+        if (isSelectingRegion) {
+            updateRegionSelection(e);
+            return;
+        }
         if (!lastMousePos) return;
 
         const deltaX = e.clientX - lastMousePos.x;
@@ -248,6 +356,10 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
     };
 
     const handleMouseUp = (e) => {
+        if (isSelectingRegion) {
+            finalizeRegionSelection();
+            return;
+        }
         if (!dragging) {
             toggleCell(e);
         }
@@ -309,11 +421,7 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
         if (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length) {
             const currentVal = grid[row][col];
             let newVal = 0;
-            if (model === 'classic') {
-                newVal = currentVal >= 0.5 ? 0 : 1;
-            } else {
-                newVal = currentVal > 0 ? 0 : 0.875; // Toggle to/from high quartile
-            }
+            newVal = currentVal >= 0.5 ? 0 : 1;
             const newGrid = grid.map((rowArray, rIdx) =>
                 rowArray.map((cell, cIdx) => (rIdx === row && cIdx === col ? newVal : cell))
             );
@@ -422,6 +530,17 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
                             cursor: dragging ? "grabbing" : "pointer",
                         }}
                     />
+                    {selectionRect && (
+                        <div
+                            className="absolute pointer-events-none border-2 border-blue-400/80 bg-blue-400/20"
+                            style={{
+                                left: Math.min(selectionRect.start.x, selectionRect.current.x),
+                                top: Math.min(selectionRect.start.y, selectionRect.current.y),
+                                width: Math.abs(selectionRect.start.x - selectionRect.current.x),
+                                height: Math.abs(selectionRect.start.y - selectionRect.current.y),
+                            }}
+                        />
+                    )}
                 </div>
             </div>
             <HelpDialog isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />

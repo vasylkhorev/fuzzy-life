@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { modeTranslations } from '../modes';
 
 const translations = {
     en: {
@@ -129,6 +130,9 @@ const translations = {
                 scroll: 'Scroll',
                 zero: '0',
                 dragPatternCard: 'Drag pattern card',
+                shift: 'Shift',
+                ctrl: 'Ctrl',
+                z: 'Z',
             },
             sections: {
                 navigation: {
@@ -161,6 +165,16 @@ const translations = {
                             description:
                                 'Drag from the Library to preview placement, then release to stamp it into the world.',
                         },
+                        clearSelection: {
+                            action: 'Clear selected region',
+                            description:
+                                'Hold Shift and drag to outline a rectangle, then release to wipe every cell inside it.',
+                        },
+                        undoAction: {
+                            action: 'Undo last action',
+                            description:
+                                'Press Ctrl+Z to revert the most recent edit, whether it was a clear, toggle, or pattern drop.',
+                        },
                     },
                 },
             },
@@ -172,6 +186,10 @@ const translations = {
             rules: 'Rules',
             parameters: 'Parameters',
             instantUpdate: 'Values update instantly',
+            boolean: {
+                on: 'On',
+                off: 'Off',
+            },
             noParameters: 'This mode uses default constants and does not expose any adjustable parameters yet.',
             emptyState: 'Select a mode from the list to view its details.',
         },
@@ -181,32 +199,6 @@ const translations = {
             fallback:
                 '<div class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 text-slate-200">No rules available.</div>',
             close: 'Close',
-        },
-        modes: {
-            classic: {
-                label: 'Classic',
-                description: 'Binary cells with standard Conway rules: birth on 3 neighbors, survival on 2-3.',
-                params: {},
-            },
-            continuous: {
-                label: 'Continuous',
-                description:
-                    'Continuous-valued life energy that tracks Conway-like underpopulation, survival, birth, and overcrowding with smooth transitions.',
-                params: {
-                    decay: {
-                        label: 'Decay',
-                        help: 'Multiplier applied when a cell is dying from starvation or overcrowding. Lower makes deaths harsher; higher leaves more residual energy.',
-                    },
-                    sustainPull: {
-                        label: 'Sustain Pull',
-                        help: 'How quickly surviving cells move toward their equilibrium intensity. Higher values make stable regions settle faster.',
-                    },
-                    birthPush: {
-                        label: 'Birth Push',
-                        help: 'Strength of the nudge toward life when reproduction conditions are met. Higher values create quicker, brighter births.',
-                    },
-                },
-            },
         },
         info: {
             generation: 'Generation:',
@@ -343,6 +335,9 @@ const translations = {
                 scroll: 'Rolovanie',
                 zero: '0',
                 dragPatternCard: 'Potiahnuť kartu vzoru',
+                shift: 'Shift',
+                ctrl: 'Ctrl',
+                z: 'Z',
             },
             sections: {
                 navigation: {
@@ -375,6 +370,16 @@ const translations = {
                             description:
                                 'Pretiahnite z knižnice pre náhľad umiestnenia a uvoľnením ho vložte do sveta.',
                         },
+                        clearSelection: {
+                            action: 'Vyčistiť označenú oblasť',
+                            description:
+                                'Podržte Shift a ťahaním označte obdĺžnik; po pustení sa všetky bunky vnútri vymažú.',
+                        },
+                        undoAction: {
+                            action: 'Vrátiť poslednú akciu',
+                            description:
+                                'Stlačte Ctrl+Z a vrátite najnovšiu úpravu, či už šlo o vymazanie, prepnutie alebo vloženie vzoru.',
+                        },
                     },
                 },
             },
@@ -386,6 +391,10 @@ const translations = {
             rules: 'Pravidlá',
             parameters: 'Parametre',
             instantUpdate: 'Hodnoty sa aktualizujú okamžite',
+            boolean: {
+                on: 'Zapnuté',
+                off: 'Vypnuté',
+            },
             noParameters: 'Tento režim používa predvolené konštanty a momentálne neponúka nastaviteľné parametre.',
             emptyState: 'Vyberte režim zo zoznamu a zobrazia sa jeho detaily.',
         },
@@ -396,32 +405,7 @@ const translations = {
                 '<div class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 text-slate-200">Pravidlá nie sú k dispozícii.</div>',
             close: 'Zavrieť',
         },
-        modes: {
-            classic: {
-                label: 'Klasický',
-                description: 'Binárne bunky so štandardnými Conwayho pravidlami: zrod pri 3 susedoch, prežitie pri 2-3.',
-                params: {},
-            },
-            continuous: {
-                label: 'Kontinuálny',
-                description:
-                    'Kontinuálna životná energia sledujúca Conwayho hladovanie, prežitie, zrod aj preľudnenie s plynulými prechodmi.',
-                params: {
-                    decay: {
-                        label: 'Rozpad',
-                        help: 'Násobiteľ použitý pri odumieraní bunky vplyvom hladu alebo preľudnenia. Nižší štiepi bunky rýchlejšie, vyšší necháva viac zvyškov.',
-                    },
-                    sustainPull: {
-                        label: 'Stabilizačný ťah',
-                        help: 'Určuje, akou rýchlosťou sa prežívajúce bunky približujú k rovnovážnej intenzite. Vyššia hodnota znamená rýchlejšie ustálenie.',
-                    },
-                    birthPush: {
-                        label: 'Impulz zrodu',
-                        help: 'Sila ťahu smerom k životu, keď sú splnené podmienky rozmnožovania. Vyššie hodnoty vytvárajú rýchlejšie a jasnejšie záblesky života.',
-                    },
-                },
-            },
-        },
+
         info: {
             generation: 'Generácia:',
         },
@@ -430,6 +414,16 @@ const translations = {
         },
     },
 };
+
+Object.entries(modeTranslations).forEach(([lang, modesMap]) => {
+    if (!translations[lang]) {
+        translations[lang] = {};
+    }
+    translations[lang].modes = {
+        ...(translations[lang].modes || {}),
+        ...modesMap,
+    };
+});
 
 const SUPPORTED_LANGUAGES = Object.keys(translations);
 const FALLBACK_LANGUAGE = 'en';

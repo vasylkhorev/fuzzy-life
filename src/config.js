@@ -3,10 +3,13 @@ export const GRID_SIZE = 200;
 
 // Shared defaults for app-wide feature toggles.
 export const DEFAULT_DEBUG_CONFIG = {
-    enabled: false,
-    overlays: {
-        showCellCoordinates: true,
-    },
+    /**
+     * Overlay mode used when debugging:
+     * - 'coordinates' renders row/column labels.
+     * - 'intensity' renders the raw cell value (0-1).
+     * - 'none' disables overlays entirely.
+     */
+    cellOverlayMode: 'none',
 };
 
 export const CELL_PIXEL_SIZE = 20;
@@ -90,7 +93,18 @@ export const HOTKEY_SECTIONS = [
                 actionKey: 'hotkeys.sections.editing.shortcuts.dropPattern.action',
                 descriptionKey: 'hotkeys.sections.editing.shortcuts.dropPattern.description',
             },
+            {
+                id: 'clearSelection',
+                keyLabelKeys: ['hotkeys.keyLabels.shift', 'hotkeys.keyLabels.drag'],
+                actionKey: 'hotkeys.sections.editing.shortcuts.clearSelection.action',
+                descriptionKey: 'hotkeys.sections.editing.shortcuts.clearSelection.description',
+            },
+            {
+                id: 'undoAction',
+                keyLabelKeys: ['hotkeys.keyLabels.ctrl', 'hotkeys.keyLabels.z'],
+                actionKey: 'hotkeys.sections.editing.shortcuts.undoAction.action',
+                descriptionKey: 'hotkeys.sections.editing.shortcuts.undoAction.description',
+            },
         ],
     },
 ];
-
