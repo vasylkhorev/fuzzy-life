@@ -56,6 +56,7 @@ const translations = {
                 close: 'Close',
                 savePattern: 'Save pattern to local storage',
                 dragPattern: 'Drag to place on grid or click to load at origin',
+                downloadCurrentPattern: 'Download current grid as JSON pattern',
                 remove: 'Remove',
                 rename: 'Rename',
                 saveConfiguration: 'Save configuration to local storage',

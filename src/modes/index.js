@@ -1,5 +1,5 @@
 // src/modes/index.js
-const modeContext = require.context('./', false, /^(?!.*(index|LifeMode)\.js$).*\.js$/);
+const modeContext = require.context('./', false, /^(?!.*(index|LifeMode|rulesTemplate)\.js$).*\.js$/);
 
 const modeInstances = modeContext.keys().map((key) => {
     const module = modeContext(key);

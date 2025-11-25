@@ -1,6 +1,7 @@
 // src/modes/continuous.js
 import { GRID_SIZE } from "../config";
 import LifeMode from "./LifeMode";
+import { buildRulesByLocale } from "./rulesTemplate";
 
 const defaultParams = {
     decay: 0.45,
@@ -17,151 +18,119 @@ const translations = {
     en: {
         label: 'Continuous',
         description:
-            'Continuous-valued life energy that tracks Conway-like underpopulation, survival, birth, and overcrowding with smooth transitions.',
+            'Smooth-valued Life: cells hold intensity in [0,1] and follow Conway targets (birth on 3, survive on 2-3) with blended updates.',
         params: {
             decay: {
                 label: 'Decay',
-                help: 'Multiplier applied when a cell is dying from starvation or overcrowding. Lower makes deaths harsher; higher leaves more residual energy.',
+                help: 'How much a cell fades when the neighbor sum S is outside 2–3. Lower = faster drop, higher = slower, softer fade.',
             },
             sustainPull: {
                 label: 'Sustain Pull',
-                help: 'How quickly surviving cells move toward their equilibrium intensity. Higher values make stable regions settle faster.',
+                help: 'How fast alive cells with neighbor sum S in 2–3 are pulled toward their target intensity.',
             },
             birthPush: {
                 label: 'Birth Push',
-                help: 'Strength of the nudge toward life when reproduction conditions are met. Higher values create quicker, brighter births.',
+                help: 'How strongly dead cells are pushed upward when the neighbor sum S is close to 3.',
             },
         },
     },
     sk: {
         label: 'Kontinuálny',
         description:
-            'Kontinuálna životná energia sledujúca Conwayho hladovanie, prežitie, zrod aj preľudnenie s plynulými prechodmi.',
+            'Plynulý Life: bunky držia intenzitu v [0,1] a kopírujú Conwayho ciele (zrod pri 3, prežitie pri 2-3) s plynulými zmenami.',
         params: {
             decay: {
-                label: 'Rozpad',
-                help: 'Násobiteľ použitý pri odumieraní bunky vplyvom hladu alebo preľudnenia. Nižšie štiepi bunky rýchlejšie, vyššie necháva viac zvyškov.',
+                label: 'Decay',
+                help: 'Ako silno bunka zoslabne, keď je súčet intenzít susedov S mimo pásma 2–3. Nižšia hodnota = rýchlejšie vyhasínanie, vyššia = pomalšie, jemnejšie klesanie.',
             },
             sustainPull: {
-                label: 'Stabilizačný ťah',
-                help: 'Určuje, akou rýchlosťou sa prežívajúce bunky približujú k rovnovážnej intenzite. Vyššia hodnota znamená rýchlejšie ustálenie.',
+                label: 'Sustain Pull',
+                help: 'Ako rýchlo sa živé bunky so súčtom susedov S v pásme 2–3 priťahujú k svojej cieľovej intenzite.',
             },
             birthPush: {
-                label: 'Impulz zrodu',
-                help: 'Sila ťahu smerom k životu, keď sú splnené podmienky rozmnožovania. Vyššie hodnoty vytvárajú rýchlejšie a jasnejšie záblesky života.',
+                label: 'Birth Push',
+                help: 'Ako silno sa mŕtve bunky posunú smerom k životu, keď je súčet susedov S blízko 3.',
             },
         },
     },
 };
 
-const rulesHtml = {
-    en: `
-<div class="space-y-4">
-  <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
-    <h4 class="text-lg font-semibold text-slate-100 mb-2">Overview</h4>
-    <p class="text-slate-300">
-      Each cell stores a life intensity \\( G(i,j) \\in [0,1] \\). Updates reuse the Conway ideas - underpopulation, survival,
-      overcrowding, and reproduction - but blend values instead of toggling between 0 and 1.
-    </p>
-  </section>
 
-  <section class="rounded-lg border border-slate-700/70 bg-slate-800/50 p-4 shadow-inner">
-    <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Neighborhood Metrics</h5>
-    <p class="text-slate-300">
-      Moore neighbors contribute their current intensity. The sum \\( S = \\sum_{neigh} G \\) replaces the live-neighbor count
-      (range 0-8) and the mean \\( \\bar{G} = \\frac{S}{k} \\) provides a smooth target.
-    </p>
-  </section>
-
-  <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
-    <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-3">Rule Breakdown</h5>
-    <dl class="space-y-3">
-      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
-        <dt class="font-semibold text-slate-100">Underpopulation</dt>
-        <dd class="text-slate-300 mt-1 text-sm">
-          If \\( S &lt; 2 \\) the cell is starved and decays by multiplying its value with <span class="font-mono text-slate-200">decay</span>.
-        </dd>
-      </div>
-      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
-        <dt class="font-semibold text-slate-100">Survival</dt>
-        <dd class="text-slate-300 mt-1 text-sm">
-          Alive cells (\\( G \\ge 0.5 \\)) with \\( 2 \\le S \\le 3 \\) ease toward a steady target, nudged by
-          <span class="font-mono text-slate-200">sustainPull</span>.
-        </dd>
-      </div>
-      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
-        <dt class="font-semibold text-slate-100">Overpopulation</dt>
-        <dd class="text-slate-300 mt-1 text-sm">
-          If \\( S > 3 \\) the cell collapses using the same decay rule, mirroring Conway's overcrowding death.
-        </dd>
-      </div>
-      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
-        <dt class="font-semibold text-slate-100">Reproduction</dt>
-        <dd class="text-slate-300 mt-1 text-sm">
-          When the neighbor sum sits near \\( S = 3 \\) the cell is nudged toward life using <span class="font-mono text-slate-200">birthPush</span>.
-        </dd>
-      </div>
-    </dl>
-  </section>
-</div>
-`,
-    sk: `
-<div class="space-y-4">
-  <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
-    <h4 class="text-lg font-semibold text-slate-100 mb-2">Prehľad</h4>
-    <p class="text-slate-300">
-      Každá bunka ukladá intenzitu života \\( G(i,j) \\in [0,1] \\). Aktualizácie kopírujú Conwayho myšlienky – hladovanie, prežitie,
-      zrod aj preľudnenie – ale hodnoty miešajú namiesto prepínania medzi 0 a 1.
-    </p>
-  </section>
-
-  <section class="rounded-lg border border-slate-700/70 bg-slate-800/50 p-4 shadow-inner">
-    <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-2">Metri ky okolia</h5>
-    <p class="text-slate-300">
-      Mooreho susedia prispievajú svojou aktuálnou intenzitou. Súčet \\( S = \\sum_{neigh} G \\) nahrádza počet živých susedov
-      (rozsah 0-8) a priemer \\( \\bar{G} = \\frac{S}{k} \\) poskytuje plynulý cieľ.
-    </p>
-  </section>
-
-  <section class="rounded-lg border border-slate-700/70 bg-slate-800/60 p-4 shadow-inner">
-    <h5 class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-3">Rozpis pravidiel</h5>
-    <dl class="space-y-3">
-      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
-        <dt class="font-semibold text-slate-100">Podpopulácia</dt>
-        <dd class="text-slate-300 mt-1 text-sm">
-          Ak \\( S < 2 \\), bunka hladovie a znižuje sa pomocou <span class="font-mono text-slate-200">decay</span>.
-        </dd>
-      </div>
-      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
-        <dt class="font-semibold text-slate-100">Prežitie</dt>
-        <dd class="text-slate-300 mt-1 text-sm">
-          Živé bunky s \\( 2 \\le S \\le 3 \\) sa približujú k stabilnej hodnote podľa parametra <span class="font-mono text-slate-200">sustainPull</span>.
-        </dd>
-      </div>
-      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
-        <dt class="font-semibold text-slate-100">Preľudnenie</dt>
-        <dd class="text-slate-300 mt-1 text-sm">
-          Ak \\( S > 3 \\), bunka kolabuje s rovnakým rozpadovým pravidlom ako pri hladovaní.
-        </dd>
-      </div>
-      <div class="rounded-md bg-slate-900/60 p-3 border border-slate-700/60">
-        <dt class="font-semibold text-slate-100">Rozmnožovanie</dt>
-        <dd class="text-slate-300 mt-1 text-sm">
-          Keď sa súčet susedov blíži k \\( S = 3 \\), bunka je posúvaná k životu pomocou <span class="font-mono text-slate-200">birthPush</span>.
-        </dd>
-      </div>
-    </dl>
-  </section>
-</div>
-`,
+const rulesContent = {
+    en: {
+        overview: {
+            title: 'Overview',
+            body: 'Each cell stores an intensity \\( G(i,j) \\in [0,1] \\). Underpopulation, survival, overcrowding, and reproduction stay on the Conway B3/S23 targets, but values blend instead of flipping between 0 and 1.',
+        },
+        sections: [
+            {
+                title: 'Neighborhood Metrics',
+                body: 'Moore neighbors contribute their current intensity. The sum \\( S = \\sum_{neigh} G \\) replaces the live-neighbor count (range 0-8) and the mean \\( \\bar{G} = \\frac{S}{k} \\) provides a smooth target.',
+                variant: 'secondary',
+            },
+        ],
+        breakdown: {
+            title: 'Rule Breakdown',
+            items: [
+                { title: 'Underpopulation', body: 'If \\( S < 2 \\) the cell decays by multiplying its value with decay.' },
+                { title: 'Survival', body: 'Alive cells (\\( G \\ge 0.5 \\)) with \\( 2 \\le S \\le 3 \\) move toward a steady intensity using sustainPull.' },
+                { title: 'Overpopulation', body: 'If \\( S > 3 \\) the cell decays with the same factor.' },
+                { title: 'Reproduction', body: 'When \\( S \\) is near 3 and the cell is dead, birthPush nudges it upward.' },
+            ],
+        },
+        listSections: [
+            {
+                title: 'Parameters',
+                items: [
+                    '<strong>Decay</strong> — how hard values drop when S is outside 2-3.',
+                    '<strong>Sustain Pull</strong> — how quickly alive cells in 2-3 settle to their target.',
+                    '<strong>Birth Push</strong> — how strongly near-3 sums lift dead cells.',
+                ],
+            },
+        ],
+    },
+    sk: {
+        overview: {
+            title: 'Prehľad',
+            body: 'Každá bunka drží intenzitu \\( G(i,j) \\in [0,1] \\). Hlad, prežitie, preľudnenie aj zrod ostávajú podľa B3/S23, len sa miešajú hodnoty namiesto prepínania 0/1.',
+        },
+        sections: [
+            {
+                title: 'Metriky okolia',
+                body: 'Mooreho susedia prispievajú aktuálnou intenzitou. Súčet \\( S = \\sum_{neigh} G \\) nahrádza počet živých susedov (0-8) a priemer \\( \\bar{G} = \\frac{S}{k} \\) dáva plynulý cieľ.',
+                variant: 'secondary',
+            },
+        ],
+        breakdown: {
+            title: 'Rozpis pravidiel',
+            items: [
+                { title: 'Podpopulácia', body: 'Ak \\( S < 2 \\), bunka sa znižuje pomocou faktora decay.' },
+                { title: 'Prežitie', body: 'Živé bunky s \\( 2 \\le S \\le 3 \\) sa posúvajú k stabilnej intenzite podľa sustainPull.' },
+                { title: 'Preľudnenie', body: 'Ak \\( S > 3 \\), bunka rovnako slabne tým istým faktorom.' },
+                { title: 'Rozmnožovanie', body: 'Keď je \\( S \\) pri 3 a bunka je mŕtva, birthPush ju posunie k životu.' },
+            ],
+        },
+        listSections: [
+            {
+                title: 'Parametre',
+                items: [
+                    '<strong>Decay</strong> — ako rýchlo klesá hodnota mimo pásma 2-3.',
+                    '<strong>Sustain Pull</strong> — ako rýchlo sa živé bunky v pásme 2-3 ustália.',
+                    '<strong>Birth Push</strong> — sila, ktorou blízkosť S=3 zdvihne mŕtve bunky.',
+                ],
+            },
+        ],
+    },
 };
+
+const rulesHtml = buildRulesByLocale(rulesContent);
 
 class ContinuousMode extends LifeMode {
     constructor() {
         super({
             id: 'continuous',
             label: 'Continuous',
-            description: 'Continuous-valued life energy that blends underpopulation, survival, birth, and overcrowding with smooth transitions.',
+            description: 'Smooth-valued Life: cells hold intensity in [0,1] and follow Conway targets (birth on 3, survive on 2-3) with blended updates.',
             defaultParams,
             rulesHtml,
             translations,

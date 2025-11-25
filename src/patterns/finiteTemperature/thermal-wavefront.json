@@ -1,0 +1,9 @@
+{
+  "name": "Thermal Wavefront",
+  "cells": [
+    [1, 0], [1, 1], [1, 2],
+    [0, 2], [2, 2],
+    [2, 3], [0, 3]
+  ],
+  "description": "Asymmetric front that often emits angled waves whose spread is sensitive to temperature."
+}

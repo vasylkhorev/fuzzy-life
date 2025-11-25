@@ -1,0 +1,10 @@
+{
+  "name": "Quartile Lantern",
+  "cells": [
+    [1, 1], [1, 2], [1, 3],
+    [2, 1], [2, 3],
+    [3, 1], [3, 2], [3, 3],
+    [0, 2], [4, 2]
+  ],
+  "description": "Compact lantern shape that flickers between bright and dim quartile levels."
+}

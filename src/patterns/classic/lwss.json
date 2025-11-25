@@ -1,0 +1,10 @@
+{
+  "name": "Lightweight Spaceship",
+  "cells": [
+    [0, 1], [0, 4],
+    [1, 0],
+    [2, 0], [2, 4],
+    [3, 0], [3, 1], [3, 2], [3, 3]
+  ],
+  "description": "Fast-moving spaceship that slides horizontally every four generations."
+}

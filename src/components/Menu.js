@@ -1,6 +1,6 @@
 // src/components/Menu.js
 import React, { useState, useEffect, useRef } from 'react';
-import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiOutlineClose } from "react-icons/ai";
+import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiOutlineClose, AiOutlineFileText } from "react-icons/ai";
 import { CELL_PIXEL_SIZE } from '../config';
 import { useTranslation } from '../i18n';
 
@@ -76,7 +76,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
         input.click();
     };
 
-    const handleSavePattern = () => {
+    const getNormalizedPattern = () => {
         const liveCells = [];
         grid.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
@@ -84,10 +84,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
             });
         });
 
-        if (liveCells.length === 0) {
-            console.log(t('menu.messages.noLiveCells'));
-            return;
-        }
+        if (liveCells.length === 0) return null;
 
         const minRow = Math.min(...liveCells.map(([row]) => row));
         const minCol = Math.min(...liveCells.map(([, col]) => col));
@@ -107,10 +104,19 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
             cells: zeroedCells,
             description: t('menu.generatedNames.patternDescription', { timestamp })
         };
-        const updatedCustomPatterns = { ...customPatterns, [newName]: pattern };
+        return pattern;
+    };
+
+    const handleSavePattern = () => {
+        const pattern = getNormalizedPattern();
+        if (!pattern) {
+            console.log(t('menu.messages.noLiveCells'));
+            return;
+        }
+        const updatedCustomPatterns = { ...customPatterns, [pattern.name]: pattern };
         setCustomPatterns(updatedCustomPatterns);
         persistNamespacedStorage('customPatterns', updatedCustomPatterns);
-        console.log(`Saved zeroed pattern to localStorage: ${newName}`, pattern);
+        console.log(`Saved zeroed pattern to localStorage: ${pattern.name}`, pattern);
     };
 
     const handleSaveConfiguration = () => {
@@ -256,6 +262,45 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
         }
     };
 
+    const sanitizeFileName = (name = '') =>
+        name.replace(/[\\/:*?"<>|]+/g, '').trim().replace(/\s+/g, '-') || 'pattern';
+
+    const formatPatternJson = (pattern) => {
+        if (!pattern) return '';
+        const inlineCells = JSON.stringify(pattern.cells || []);
+        const token = '__INLINE_CELLS__';
+        const ordered = {
+            ...pattern,
+            name: pattern.name,
+            description: pattern.description,
+            cells: token
+        };
+        const withToken = JSON.stringify(ordered, null, 2);
+        return withToken.replace(`"${token}"`, inlineCells);
+    };
+
+    const handleDownloadCurrentPattern = () => {
+        const pattern = getNormalizedPattern();
+        if (!pattern) {
+            console.log(t('menu.messages.noLiveCells'));
+            return;
+        }
+        try {
+            const fileName = `${sanitizeFileName(pattern.name)}.json`;
+            const blob = new Blob([formatPatternJson(pattern)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Failed to download current pattern', error);
+        }
+    };
+
     return (
         <>
             {isOpen && (
@@ -297,23 +342,33 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                             <div>
                                 <div className="flex items-center justify-between w-full mb-4">
                                     <h2 className="text-lg font-bold">{t('menu.patternsSectionTitle')}</h2>
-                                    <button
-                                        onClick={handleSavePattern}
-                                        className="p-2 bg-blue-600 hover:bg-blue-500 rounded flex items-center justify-center"
-                                        title={t('menu.tooltips.savePattern')}
-                                        aria-label={t('menu.tooltips.savePattern')}
-                                    >
-                                        <AiOutlineDownload size={16} />
-                                    </button>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={handleDownloadCurrentPattern}
+                                            className="p-2 bg-slate-700 hover:bg-slate-600 rounded flex items-center justify-center"
+                                            title={t('menu.tooltips.downloadCurrentPattern', 'Download current pattern as JSON')}
+                                            aria-label={t('menu.tooltips.downloadCurrentPattern', 'Download current pattern as JSON')}
+                                        >
+                                            <AiOutlineFileText size={16} />
+                                        </button>
+                                        <button
+                                            onClick={handleSavePattern}
+                                            className="p-2 bg-blue-600 hover:bg-blue-500 rounded flex items-center justify-center"
+                                            title={t('menu.tooltips.savePattern')}
+                                            aria-label={t('menu.tooltips.savePattern')}
+                                        >
+                                            <AiOutlineDownload size={16} />
+                                        </button>
+                                    </div>
                                 </div>
                                 <ul>
                                     {Object.entries(builtInPatterns).map(([name, { description }]) => (
-                                        <li key={name} className="mb-2">
+                                        <li key={name} className="mb-2 flex items-center gap-2">
                                             <button
                                                 draggable
                                                 onDragStart={(e) => handleDragStart(e, name, false, false)}
                                                 onClick={() => loadPattern(builtInPatterns[name], 0, 0)}
-                                                className="w-full text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move"
+                                                className="flex-1 text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move whitespace-normal break-words"
                                                 title={t('menu.tooltips.dragPattern')}
                                                 aria-label={t('menu.tooltips.dragPattern')}
                                             >

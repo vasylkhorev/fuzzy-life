@@ -163,21 +163,23 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                             return (
                                                 <label
                                                     key={key}
-                                                    className="flex flex-col gap-2 rounded-md border border-gray-700 bg-gray-900 p-4 text-sm text-gray-200"
+                                                    className="flex h-full flex-col gap-3 rounded-md border border-gray-700 bg-gray-900 p-4 text-sm text-gray-200"
                                                 >
-                                                    <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-                                                        {labelText}
-                                                    </span>
-                                                    {helpText && (
-                                                        <span className="text-xs leading-snug text-gray-400">
-                                                            {helpText}
+                                                    <div className="space-y-2">
+                                                        <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                                            {labelText}
                                                         </span>
-                                                    )}
+                                                        {helpText && (
+                                                            <span className="block min-h-[72px] text-xs leading-snug text-gray-400">
+                                                                {helpText}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     {isBooleanParam ? (
                                                         <button
                                                             type="button"
                                                             onClick={() => handleParamChange(key, !currentValue)}
-                                                            className={`rounded-md border px-3 py-2 text-sm font-semibold transition ${
+                                                            className={`mt-auto rounded-md border px-3 py-2 text-sm font-semibold transition ${
                                                                 currentValue
                                                                     ? 'border-blue-500 bg-blue-600 text-white hover:bg-blue-500'
                                                                     : 'border-gray-600 bg-gray-900 text-gray-200 hover:border-blue-400 hover:text-white'
@@ -193,7 +195,7 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                                             step="0.001"
                                                             value={currentValue}
                                                             onChange={(e) => handleParamChange(key, e.target.value)}
-                                                            className="w-full rounded border border-gray-600 bg-gray-900 px-2 py-2 text-sm text-white outline-none transition focus:border-blue-400 focus:ring-1 focus:ring-blue-400/40"
+                                                            className="mt-auto w-full rounded border border-gray-600 bg-gray-900 px-2 py-2 text-sm text-white outline-none transition focus:border-blue-400 focus:ring-1 focus:ring-blue-400/40"
                                                         />
                                                     )}
                                                 </label>
