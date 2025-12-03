@@ -1,9 +1,0 @@
-{
-  "name": "Quartile Racer",
-  "cells": [
-    [1, 0], [1, 1], [1, 2],
-    [0, 2], [2, 2],
-    [2, 3]
-  ],
-  "description": "Asymmetric seed that often produces a lopsided wave racing across the grid."
-}

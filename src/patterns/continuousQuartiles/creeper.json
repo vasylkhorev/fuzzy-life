@@ -1,7 +1,5 @@
 {
-  "name": "Quartile Glider",
-  "cells": [
-    [0, 1], [1, 2], [2, 0], [2, 1], [2, 2]
-  ],
+  "name": "Creeper",
+  "cells": [[0,0],[0,2],[1,1],[2,0],[2,2]],
   "description": "Classic glider layout adapted to the stepped quartile rule; drifts with chunky motion."
 }
