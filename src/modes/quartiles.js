@@ -8,12 +8,12 @@ const QUARTILES = [0, 0.25, 0.5, 0.75, 1];
 
 const translations = {
     en: {
-        label: 'Continuous (Quartiles)',
+        label: 'Quartiles',
         description: 'Parameter-free, quartile-stepped take on Conway that eases toward birth/death in 0.25 increments.',
         params: {},
     },
     sk: {
-        label: 'Kontinuálny (kvartily)',
+        label: 'Kvartily',
         description:
             'Bezparametrická kvartilová verzia Conwayovej hry života, v ktorej sa intenzita buniek mení po krokoch 0.25.',
         params: {},

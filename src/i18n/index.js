@@ -37,7 +37,8 @@ const translations = {
         grid: {
             libraryButton: 'Library',
             libraryButtonTitle: 'Patterns & configurations',
-            title: "Conway's Game of Life",
+            title: 'Game of Life',
+            activeMode: 'Mode: {{mode}}',
             modesButton: 'Modes',
             modesButtonTitle: 'Modes panel',
             helpButtonTitle: 'How to use',
@@ -243,7 +244,8 @@ const translations = {
         grid: {
             libraryButton: 'Knižnica',
             libraryButtonTitle: 'Vzory a konfigurácie',
-            title: 'Conwayova hra života',
+            title: 'Hra života',
+            activeMode: 'Režim: {{mode}}',
             modesButton: 'Režimy',
             modesButtonTitle: 'Panel režimov',
             helpButtonTitle: 'Ako používať',

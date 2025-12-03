@@ -89,20 +89,35 @@ const Controls = ({
                     <div className="space-y-1">
                         <input
                             type="range"
-                            min="50"
+                            min="1"
                             max="2000"
-                            step="50"
+                            step="1"
                             value={speed}
                             onChange={(e) => changeSpeed(Number(e.target.value))}
                             className="w-full accent-blue-500"
                         />
                         <div className="flex justify-between text-[11px] text-gray-400">
-                            <span>50ms</span>
+                            <span>1ms</span>
                             <span>2000ms</span>
                         </div>
-                        <p className="text-center text-sm font-semibold text-blue-300">
-                            {`${Math.round(speed / 50) * 50} ms`}
-                        </p>
+                        <div className="flex items-center justify-center space-x-2">
+                            <label className="text-[11px] uppercase tracking-wide text-gray-400">
+                                ms
+                            </label>
+                            <input
+                                type="number"
+                                min="1"
+                                max="2000"
+                                value={speed}
+                                onChange={(e) => {
+                                    const next = Number(e.target.value);
+                                    if (!Number.isNaN(next)) {
+                                        changeSpeed(Math.min(2000, Math.max(1, next)));
+                                    }
+                                }}
+                                className="w-20 rounded border border-gray-700 bg-gray-800 px-2 py-1 text-center text-sm font-semibold text-blue-300 focus:border-blue-500 focus:outline-none"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

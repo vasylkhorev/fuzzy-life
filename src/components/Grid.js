@@ -19,6 +19,18 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
     const cellSize = cellPixelSize;
     const { t } = useTranslation();
 
+    const getModeLabel = () => {
+        const translationKey = `modes.${model}.label`;
+        const translated = t(translationKey);
+        if (translated && translated !== translationKey) {
+            return translated;
+        }
+        const fallback = availableModes?.find(({ value }) => value === model)?.label;
+        return fallback || model;
+    };
+
+    const activeModeLabel = getModeLabel();
+
     const [canvasWidth, setCanvasWidth] = useState(0);
     const [canvasHeight, setCanvasHeight] = useState(0);
 
@@ -480,7 +492,7 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
 
     return (
         <div className="app h-full bg-gray-900 text-white">
-            <div className="relative flex items-center justify-center border-b border-gray-700 bg-gray-800/95 px-6 py-4 text-2xl font-semibold">
+            <div className="relative flex items-center justify-center border-b border-gray-700 bg-gray-800/95 px-5 py-3 text-lg font-semibold">
                 <div className="absolute left-4 flex items-center space-x-2">
                     <button
                         onClick={() => setIsMenuOpen(true)}
@@ -492,8 +504,14 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
                         <span className="hidden sm:inline">{t('grid.libraryButton')}</span>
                     </button>
                 </div>
-                <h1 className="text-center uppercase text-gray-100">{t('grid.title')}</h1>
+                <div className="flex flex-col items-center text-sm sm:text-base leading-tight space-y-1">
+                    <h1 className="text-gray-100 text-lg sm:text-xl font-semibold leading-none">{t('grid.title')}</h1>
+                </div>
                 <div className="absolute right-4 flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 rounded-full bg-gray-700/90 px-3 py-1 text-[11px] sm:text-xs font-semibold text-gray-100 shadow">
+                        <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden />
+                        <span className="whitespace-nowrap">{t('grid.activeMode', { mode: activeModeLabel })}</span>
+                    </div>
                     <button
                         onClick={() => setIsModeMenuOpen(true)}
                         className="px-3 py-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center space-x-2 text-sm font-medium transition"
