@@ -14,6 +14,9 @@ const Controls = ({
     generation,
     onDragHandleMouseDown,
     isDragging,
+    testPeriodicity,
+    isTestingPeriodicity,
+    detectedPeriod,
 }) => {
     const { t } = useTranslation();
 
@@ -43,6 +46,21 @@ const Controls = ({
                     <span className="text-lg font-semibold text-blue-400">{generation}</span>
                 </div>
 
+                {detectedPeriod !== null && (
+                    <div className="flex items-center justify-between text-sm rounded-md bg-green-900/50 border border-green-700 px-3 py-2">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-green-300">
+                            {t('controls.period')}
+                        </span>
+                        <span className="text-lg font-semibold text-green-400">{detectedPeriod}</span>
+                    </div>
+                )}
+
+                {isTestingPeriodicity && detectedPeriod === null && (
+                    <div className="text-xs text-yellow-400 text-center py-1">
+                        {t('controls.testingPeriodicity')}
+                    </div>
+                )}
+
                 <div className="flex gap-2">
                     <button
                         onClick={nextGeneration}
@@ -67,6 +85,19 @@ const Controls = ({
                         {t('controls.clear')}
                     </button>
                 </div>
+
+                {testPeriodicity && (
+                    <button
+                        onClick={testPeriodicity}
+                        className={`w-full rounded-md px-3 py-2 text-sm font-semibold text-white transition ${
+                            isTestingPeriodicity
+                                ? 'bg-yellow-600 hover:bg-yellow-500'
+                                : 'bg-purple-600 hover:bg-purple-500'
+                        }`}
+                    >
+                        {t(isTestingPeriodicity ? 'controls.stopTesting' : 'controls.testPeriodicity')}
+                    </button>
+                )}
 
                 <div className="space-y-2">
                     <label className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-gray-400">

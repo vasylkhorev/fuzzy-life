@@ -33,6 +33,10 @@ const translations = {
             speed: 'Speed',
             speedUnits: 'ms',
             speedTooltip: 'Period (milliseconds) between generations. Lower values run faster.',
+            testPeriodicity: 'Test Periodicity',
+            stopTesting: 'Stop Testing',
+            testingPeriodicity: 'Testing for periodicity...',
+            period: 'Period',
         },
         grid: {
             libraryButton: 'Library',
@@ -240,6 +244,10 @@ const translations = {
             speed: 'Rýchlosť',
             speedUnits: 'ms',
             speedTooltip: 'Interval (v milisekundách) medzi generáciami. Nižšie hodnoty znamenajú rýchlejší beh.',
+            testPeriodicity: 'Testovať periodicitu',
+            stopTesting: 'Zastaviť testovanie',
+            testingPeriodicity: 'Testovanie periodicity...',
+            period: 'Perióda',
         },
         grid: {
             libraryButton: 'Knižnica',

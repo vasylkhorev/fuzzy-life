@@ -50,9 +50,15 @@ const App = () => {
     const [isDraggingControls, setIsDraggingControls] = useState(false);
     const [controlDragCoords, setControlDragCoords] = useState({ x: 0, y: 0 });
     const [cellPixelSize, setCellPixelSize] = useState(CELL_PIXEL_SIZE);
+    const [isTestingPeriodicity, setIsTestingPeriodicity] = useState(false);
+    const [detectedPeriod, setDetectedPeriod] = useState(null);
     const controlsRef = useRef(null);
     const playAreaRef = useRef(null);
     const dragOffsetRef = useRef({ x: 0, y: 0 });
+    const testingHistoryRef = useRef([]);
+    const testingIntervalRef = useRef(null);
+    const testGenerationRef = useRef(0);
+    const maxTestingHistorySize = 2000;
     const debugConfig = DEFAULT_DEBUG_CONFIG;
     const { t } = useTranslation();
 
@@ -112,7 +118,14 @@ const App = () => {
     const clearGrid = () => {
         applyGridChange(Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0)));
         setIsRunning(false);
+        setIsTestingPeriodicity(false);
         setGeneration(0);
+        setDetectedPeriod(null);
+        testingHistoryRef.current = [];
+        if (testingIntervalRef.current) {
+            clearInterval(testingIntervalRef.current);
+            testingIntervalRef.current = null;
+        }
     };
     const nextGeneration = () => {
         const mode = modes[model] || modes.classic;
@@ -126,6 +139,79 @@ const App = () => {
         setGeneration(prev => prev + 1);
     };
 
+    const testPeriodicity = useCallback(() => {
+        if (isTestingPeriodicity) {
+            // Stop testing
+            setIsTestingPeriodicity(false);
+            if (testingIntervalRef.current) {
+                clearInterval(testingIntervalRef.current);
+                testingIntervalRef.current = null;
+            }
+            return;
+        }
+
+        // Start testing
+        setIsTestingPeriodicity(true);
+        setIsRunning(false); // Stop normal simulation if running
+        setDetectedPeriod(null);
+        testingHistoryRef.current = [];
+        testGenerationRef.current = generation;
+        
+        const initialGrid = cloneGrid(grid);
+        testingHistoryRef.current.push({ grid: initialGrid, generation: testGenerationRef.current });
+
+        const testNextGeneration = () => {
+            const mode = modes[model] || modes.classic;
+            const currentGrid = gridRef.current;
+            
+            // Compute next generation
+            const nextGrid = currentGrid.map((row, rowIndex) =>
+                row.map((cell, colIndex) =>
+                    mode.computeNextState(currentGrid, rowIndex, colIndex, modeParams, testGenerationRef.current)
+                )
+            );
+
+            testGenerationRef.current += 1;
+            const nextGridSnapshot = cloneGrid(nextGrid);
+
+            // Check for periodicity
+            for (let i = testingHistoryRef.current.length - 1; i >= 0; i--) {
+                const { grid: savedGrid, generation: savedGen } = testingHistoryRef.current[i];
+                if (gridsEqual(nextGridSnapshot, savedGrid)) {
+                    const period = testGenerationRef.current - savedGen;
+                    setDetectedPeriod(period);
+                    setIsTestingPeriodicity(false);
+                    if (testingIntervalRef.current) {
+                        clearInterval(testingIntervalRef.current);
+                        testingIntervalRef.current = null;
+                    }
+                    return;
+                }
+            }
+
+            // Store snapshot
+            testingHistoryRef.current.push({ grid: nextGridSnapshot, generation: testGenerationRef.current });
+            if (testingHistoryRef.current.length > maxTestingHistorySize) {
+                testingHistoryRef.current.shift();
+            }
+
+            // Update grid visually (but don't update generation counter)
+            setGridState(nextGrid);
+
+            // Check if we've exceeded a reasonable limit
+            if (testGenerationRef.current > maxTestingHistorySize) {
+                setIsTestingPeriodicity(false);
+                if (testingIntervalRef.current) {
+                    clearInterval(testingIntervalRef.current);
+                    testingIntervalRef.current = null;
+                }
+                setDetectedPeriod(null);
+            }
+        };
+
+        testingIntervalRef.current = setInterval(testNextGeneration, 10); // Fast testing
+    }, [isTestingPeriodicity, generation, grid, model, modeParams, cloneGrid]);
+
     useEffect(() => {
         let interval;
         if (isRunning) {
@@ -133,6 +219,14 @@ const App = () => {
         }
         return () => clearInterval(interval);
     }, [isRunning, speed, grid, model, modeParams]);
+
+    useEffect(() => {
+        return () => {
+            if (testingIntervalRef.current) {
+                clearInterval(testingIntervalRef.current);
+            }
+        };
+    }, []);
 
     const loadPattern = (pattern, rowOffset, colOffset) => {
         console.log('Loading pattern at:', { rowOffset, colOffset }, pattern);
@@ -352,6 +446,9 @@ const App = () => {
                             generation={generation}
                             onDragHandleMouseDown={handleControlDragStart}
                             isDragging={isDraggingControls}
+                            testPeriodicity={testPeriodicity}
+                            isTestingPeriodicity={isTestingPeriodicity}
+                            detectedPeriod={detectedPeriod}
                         />
                     </div>
                 </div>
