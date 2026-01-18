@@ -1,6 +1,6 @@
 // src/components/Menu.js
 import React, { useState, useEffect, useRef } from 'react';
-import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiOutlineClose, AiOutlineFileText } from "react-icons/ai";
+import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { CELL_PIXEL_SIZE } from '../config';
 import { useTranslation } from '../i18n';
 
@@ -349,7 +349,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                             title={t('menu.tooltips.downloadCurrentPattern', 'Download current pattern as JSON')}
                                             aria-label={t('menu.tooltips.downloadCurrentPattern', 'Download current pattern as JSON')}
                                         >
-                                            <AiOutlineFileText size={16} />
+                                            <AiOutlineDownload size={16} />
                                         </button>
                                         <button
                                             onClick={handleSavePattern}
@@ -357,7 +357,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                             title={t('menu.tooltips.savePattern')}
                                             aria-label={t('menu.tooltips.savePattern')}
                                         >
-                                            <AiOutlineDownload size={16} />
+                                            <AiOutlineSave size={16} />
                                         </button>
                                     </div>
                                 </div>
