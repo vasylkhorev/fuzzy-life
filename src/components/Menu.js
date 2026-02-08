@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { CELL_PIXEL_SIZE } from '../config';
 import { useTranslation } from '../i18n';
+import { modes } from '../modes';
 
 const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPattern, loadConfiguration, loadConfigurationFromFile, cellPixelSize = CELL_PIXEL_SIZE }) => {
     const [customPatterns, setCustomPatterns] = useState({});
@@ -64,8 +65,20 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
             }
         };
 
+        const handleGlobalDragEnd = () => {
+            const preview = document.querySelector('.drag-preview');
+            if (preview && preview.parentNode) {
+                preview.parentNode.removeChild(preview);
+            }
+        };
+
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        document.addEventListener('dragend', handleGlobalDragEnd);
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('dragend', handleGlobalDragEnd);
+        };
     }, [isOpen, setIsOpen]);
 
     const handleLoadClick = () => {
@@ -77,18 +90,29 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
     };
 
     const getNormalizedPattern = () => {
-        const liveCells = [];
-        grid.forEach((row, rowIndex) => {
-            row.forEach((cell, colIndex) => {
-                if (cell >= 0.5) liveCells.push([rowIndex, colIndex]);
-            });
+        const currentMode = modes[safeMode] || modes.classic;
+        const cells = currentMode.serializeCells(grid, false); // Patterns: exclude zeros
+
+        if (cells.length === 0) return null;
+
+        // Normalize coordinates (zero them)
+        let minRow, minCol;
+        if (Array.isArray(cells[0])) {
+            // Array format [row, col]
+            minRow = Math.min(...cells.map(([row]) => row));
+            minCol = Math.min(...cells.map(([, col]) => col));
+        } else {
+            // Object format {r, c, v}
+            minRow = Math.min(...cells.map(cell => cell.r));
+            minCol = Math.min(...cells.map(cell => cell.c));
+        }
+
+        const zeroedCells = cells.map(cell => {
+            if (Array.isArray(cell)) {
+                return [cell[0] - minRow, cell[1] - minCol];
+            }
+            return { r: cell.r - minRow, c: cell.c - minCol, v: cell.v };
         });
-
-        if (liveCells.length === 0) return null;
-
-        const minRow = Math.min(...liveCells.map(([row]) => row));
-        const minCol = Math.min(...liveCells.map(([, col]) => col));
-        const zeroedCells = liveCells.map(([row, col]) => [row - minRow, col - minCol]);
 
         const now = new Date();
         const day = String(now.getDate()).padStart(2, '0');
@@ -120,12 +144,9 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
     };
 
     const handleSaveConfiguration = () => {
-        const liveCells = [];
-        grid.forEach((row, rowIndex) => {
-            row.forEach((cell, colIndex) => {
-                if (cell >= 0.5) liveCells.push([rowIndex, colIndex]);
-            });
-        });
+        const currentMode = modes[safeMode] || modes.classic;
+        const cells = currentMode.serializeCells(grid, true); // Configurations: include zeros
+        
         const now = new Date();
         const day = String(now.getDate()).padStart(2, '0');
         const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -137,7 +158,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
 
         const configuration = {
             name: newName,
-            cells: liveCells,
+            cells: cells,
             description: t('menu.generatedNames.configurationDescription', { timestamp })
         };
         const updatedCustomConfigurations = { ...customConfigurations, [newName]: configuration };
@@ -214,15 +235,23 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
             e.dataTransfer.setData('application/json', JSON.stringify(pattern));
             e.dataTransfer.effectAllowed = 'move';
 
+            // Create a completely transparent drag image to hide it
             const emptyImage = new Image();
+            emptyImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
             e.dataTransfer.setDragImage(emptyImage, 0, 0);
 
             const cellSize = Math.max(1, cellPixelSize || CELL_PIXEL_SIZE);
             const preview = document.createElement('canvas');
             preview.className = 'drag-preview';
 
-            const rows = Math.max(...pattern.cells.map(([row]) => row)) + 1;
-            const cols = Math.max(...pattern.cells.map(([, col]) => col)) + 1;
+            const rows = Math.max(...pattern.cells.map(cell => {
+                if (Array.isArray(cell)) return cell[0];
+                return cell.r !== undefined ? cell.r : cell.row;
+            })) + 1;
+            const cols = Math.max(...pattern.cells.map(cell => {
+                if (Array.isArray(cell)) return cell[1];
+                return cell.c !== undefined ? cell.c : cell.col;
+            })) + 1;
 
             if (rows <= 0 || cols <= 0) {
                 return;
@@ -253,12 +282,30 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
 
             ctx.fillStyle = 'rgba(156, 163, 175, 0.45)';
             ctx.strokeStyle = 'rgba(75, 85, 99, 0.35)';
-            pattern.cells.forEach(([row, col]) => {
-                ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
-                ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
+            pattern.cells.forEach((cell) => {
+                let row, col;
+                if (Array.isArray(cell)) {
+                    [row, col] = cell;
+                } else if (cell && typeof cell === 'object') {
+                    row = cell.r !== undefined ? cell.r : cell.row;
+                    col = cell.c !== undefined ? cell.c : cell.col;
+                } else {
+                    return;
+                }
+                if (row !== undefined && col !== undefined) {
+                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                    ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                }
             });
 
             document.body.appendChild(preview);
+        }
+    };
+
+    const handleDragEnd = () => {
+        const preview = document.querySelector('.drag-preview');
+        if (preview && preview.parentNode) {
+            preview.parentNode.removeChild(preview);
         }
     };
 
@@ -367,6 +414,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                             <button
                                                 draggable
                                                 onDragStart={(e) => handleDragStart(e, name, false, false)}
+                                                onDragEnd={handleDragEnd}
                                                 onClick={() => loadPattern(builtInPatterns[name], 0, 0)}
                                                 className="flex-1 text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move whitespace-normal break-words"
                                                 title={t('menu.tooltips.dragPattern')}
@@ -392,6 +440,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                                 <button
                                                     draggable
                                                     onDragStart={(e) => handleDragStart(e, name, true, false)}
+                                                    onDragEnd={handleDragEnd}
                                                     onClick={() => handleLoadCustomPattern(name)}
                                                     className="flex-1 text-left whitespace-normal break-all pr-2 bg-gray-700 hover:bg-gray-600 rounded p-2 cursor-move"
                                                     title={t('menu.tooltips.dragPattern')}

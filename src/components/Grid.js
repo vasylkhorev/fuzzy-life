@@ -432,8 +432,25 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
         console.log("Clicked cell: ", `[${row}, ${col}]`);
         if (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length) {
             const currentVal = grid[row][col];
-            let newVal = 0;
-            newVal = currentVal >= 0.5 ? 0 : 1;
+            let newVal;
+
+            // Mode-specific toggling:
+            // - default: binary toggle 0 <-> 1 (threshold at 0.5)
+            // - halfLife: cycle 0 -> 0.5 -> 1 -> 0
+            if (model === 'halfLife') {
+                // Snap-ish to one of {0, 0.5, 1} then advance.
+                const snapped =
+                    currentVal < 0.25 ? 0
+                        : currentVal < 0.75 ? 0.5
+                            : 1;
+
+                if (snapped === 0) newVal = 0.5;
+                else if (snapped === 0.5) newVal = 1;
+                else newVal = 0;
+            } else {
+                newVal = currentVal >= 0.5 ? 0 : 1;
+            }
+
             const newGrid = grid.map((rowArray, rIdx) =>
                 rowArray.map((cell, cIdx) => (rIdx === row && cIdx === col ? newVal : cell))
             );
@@ -462,8 +479,14 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
             const rect = canvasRef.current.getBoundingClientRect();
             const preview = document.querySelector('.drag-preview');
 
-            const rows = Math.max(...pattern.cells.map(([row]) => row)) + 1;
-            const cols = Math.max(...pattern.cells.map(([, col]) => col)) + 1;
+            const rows = Math.max(...pattern.cells.map(cell => {
+                if (Array.isArray(cell)) return cell[0];
+                return cell.r !== undefined ? cell.r : cell.row;
+            })) + 1;
+            const cols = Math.max(...pattern.cells.map(cell => {
+                if (Array.isArray(cell)) return cell[1];
+                return cell.c !== undefined ? cell.c : cell.col;
+            })) + 1;
 
             const centerX = (cols * cellSize) / 2;
             const centerY = (rows * cellSize) / 2;
@@ -484,10 +507,10 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
 
     const handleDragEnd = () => {
         const preview = document.querySelector('.drag-preview');
-        if (preview) {
-            document.body.removeChild(preview);
+        if (preview && preview.parentNode) {
+            preview.parentNode.removeChild(preview);
         }
-        console.log("Drag ended");
+        console.log("Drag ended - preview cleaned up");
     };
 
     return (
