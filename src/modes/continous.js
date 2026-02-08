@@ -196,6 +196,34 @@ class ContinuousMode extends LifeMode {
             ctx.fillRect(x, y, cellSize, cellSize);
         }
     }
+
+    serializeCells(grid, includeZeros = false) {
+        const cells = [];
+        grid.forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+                if (cell > 0 || includeZeros) {
+                    cells.push({ r: rowIndex, c: colIndex, v: cell });
+                }
+            });
+        });
+        return cells;
+    }
+
+    parseCells(cells) {
+        return cells.map(cell => {
+            if (Array.isArray(cell)) {
+                const [row, col] = cell;
+                return [row, col, 1.0];
+            }
+            if (cell && typeof cell === 'object') {
+                const row = cell.r !== undefined ? cell.r : cell.row;
+                const col = cell.c !== undefined ? cell.c : cell.col;
+                const value = cell.v !== undefined ? cell.v : 1.0;
+                return [row, col, value];
+            }
+            return null;
+        }).filter(Boolean);
+    }
 }
 
 export const continuousMode = new ContinuousMode();

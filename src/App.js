@@ -39,7 +39,21 @@ const App = () => {
     const gridRef = useRef(grid);
     const [speed, setSpeed] = useState(500);
     const [generation, setGeneration] = useState(0);
-    const [model, setModel] = useState('classic');
+    const [model, setModel] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        const modeParam = params.get('mode');
+        return modes[modeParam] ? modeParam : 'classic';
+    });
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const currentMode = params.get('mode');
+        if (currentMode !== model) {
+            params.set('mode', model);
+            window.history.replaceState(null, '', `?${params.toString()}`);
+        }
+    }, [model]);
+
     const [modeParams, setModeParams] = useState(() => modes.classic.getDefaultParams());
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
@@ -156,14 +170,14 @@ const App = () => {
         setDetectedPeriod(null);
         testingHistoryRef.current = [];
         testGenerationRef.current = generation;
-        
+
         const initialGrid = cloneGrid(grid);
         testingHistoryRef.current.push({ grid: initialGrid, generation: testGenerationRef.current });
 
         const testNextGeneration = () => {
             const mode = modes[model] || modes.classic;
             const currentGrid = gridRef.current;
-            
+
             // Compute next generation
             const nextGrid = currentGrid.map((row, rowIndex) =>
                 row.map((cell, colIndex) =>
@@ -235,12 +249,18 @@ const App = () => {
             return;
         }
 
-        const shiftedCells = pattern.cells.map(([row, col]) => [row + rowOffset, col + colOffset]);
+        const currentMode = modes[model] || modes.classic;
+        const parsedCells = currentMode.parseCells(pattern.cells);
+
         applyGridChange((prevGrid) => {
             const newGrid = prevGrid.map(row => [...row]);
-            shiftedCells.forEach(([row, col]) => {
-                if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
-                    newGrid[row][col] = 1;
+
+            parsedCells.forEach(([row, col, value]) => {
+                const finalRow = row + rowOffset;
+                const finalCol = col + colOffset;
+
+                if (finalRow >= 0 && finalRow < GRID_SIZE && finalCol >= 0 && finalCol < GRID_SIZE) {
+                    newGrid[finalRow][finalCol] = value;
                 }
             });
             return newGrid;
@@ -255,11 +275,16 @@ const App = () => {
             console.error('Invalid configuration data:', config);
             return;
         }
+
+        const currentMode = modes[model] || modes.classic;
+        const parsedCells = currentMode.parseCells(config.cells);
+
         applyGridChange(() => {
             const newGrid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
-            config.cells.forEach(([row, col]) => {
+
+            parsedCells.forEach(([row, col, value]) => {
                 if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
-                    newGrid[row][col] = 1;
+                    newGrid[row][col] = value;
                 }
             });
             return newGrid;
@@ -413,7 +438,7 @@ const App = () => {
             <div className="relative flex flex-1 flex-col bg-gray-900" ref={playAreaRef}>
                 <Grid
                     grid={grid}
-                        setGrid={applyGridChange}
+                    setGrid={applyGridChange}
                     isRunning={isRunning}
                     speed={speed}
                     nextGeneration={nextGeneration}

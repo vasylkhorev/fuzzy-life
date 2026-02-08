@@ -52,6 +52,27 @@ export class LifeMode {
             parameterHelp: this.parameterHelp,
         };
     }
+
+    /**
+     * Serialize grid cells to pattern format.
+     * @param {Array<Array<number>>} grid - The grid to serialize
+     * @param {boolean} includeZeros - Whether to include zero-value cells (for configurations)
+     * @returns {Array} Array of cell data in mode-specific format
+     */
+    // eslint-disable-next-line class-methods-use-this
+    serializeCells(grid, includeZeros = false) {
+        throw new Error('serializeCells must be implemented by a mode subclass.');
+    }
+
+    /**
+     * Parse pattern/configuration cells and return array of [row, col, value] tuples.
+     * @param {Array} cells - Cell data in mode-specific format
+     * @returns {Array<[number, number, number]>} Array of [row, col, value] tuples
+     */
+    // eslint-disable-next-line class-methods-use-this
+    parseCells(cells) {
+        throw new Error('parseCells must be implemented by a mode subclass.');
+    }
 }
 
 export default LifeMode;

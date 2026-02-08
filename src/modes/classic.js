@@ -133,6 +133,34 @@ class ClassicMode extends LifeMode {
             ctx.fillRect(x, y, cellSize, cellSize);
         }
     }
+
+    serializeCells(grid, includeZeros = false) {
+        const cells = [];
+        grid.forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+                if (cell >= 0.5 || (includeZeros && cell === 0)) {
+                    cells.push([rowIndex, colIndex]);
+                }
+            });
+        });
+        return cells;
+    }
+
+    parseCells(cells) {
+        return cells.map(cell => {
+            if (Array.isArray(cell)) {
+                const [row, col] = cell;
+                return [row, col, 1.0];
+            }
+            // Support object format for backward compatibility
+            if (cell && typeof cell === 'object') {
+                const row = cell.r !== undefined ? cell.r : cell.row;
+                const col = cell.c !== undefined ? cell.c : cell.col;
+                return [row, col, 1.0];
+            }
+            return null;
+        }).filter(Boolean);
+    }
 }
 
 export const classicMode = new ClassicMode();
