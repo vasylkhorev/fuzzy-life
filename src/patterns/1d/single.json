@@ -1,0 +1,5 @@
+{
+  "name": "Single Cell",
+  "description": "A single live cell - the simplest starting configuration",
+  "cells": [[0, 0]]
+}

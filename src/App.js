@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Controls from './components/Controls';
 import Grid from './components/Grid';
+import Grid1D from './components/Grid1D';
 import Menu from './components/Menu';
 import ModeMenu from './components/ModeMenu';
 import { GRID_SIZE, DEFAULT_DEBUG_CONFIG, CELL_PIXEL_SIZE } from "./config";
@@ -139,6 +140,10 @@ const App = () => {
         if (testingIntervalRef.current) {
             clearInterval(testingIntervalRef.current);
             testingIntervalRef.current = null;
+        }
+        // Reset 1D mode specific state if needed
+        if (model === '1d') {
+            // The Grid1D component will handle resetting its own state
         }
     };
     const nextGeneration = () => {
@@ -436,26 +441,49 @@ const App = () => {
                 cellPixelSize={cellPixelSize}
             />
             <div className="relative flex flex-1 flex-col bg-gray-900" ref={playAreaRef}>
-                <Grid
-                    grid={grid}
-                    setGrid={applyGridChange}
-                    isRunning={isRunning}
-                    speed={speed}
-                    nextGeneration={nextGeneration}
-                    onOffsetChange={setCanvasOffset}
-                    onDimensionsChange={setCanvasDimensions}
-                    loadPattern={loadPattern}
-                    model={model}
-                    setModel={setModel}
-                    availableModes={availableModes}
-                    setIsModeMenuOpen={setIsModeMenuOpen}
-                    setIsMenuOpen={setIsMenuOpen}
-                    renderCell={modes[model]?.renderCell || modes.classic.renderCell}
-                    cellPixelSize={cellPixelSize}
-                    onCellPixelSizeChange={setCellPixelSize}
-                    generation={generation}
-                    debugConfig={debugConfig}
-                />
+                {model === '1d' ? (
+                    <Grid1D
+                        grid={grid}
+                        setGrid={applyGridChange}
+                        isRunning={isRunning}
+                        speed={speed}
+                        nextGeneration={nextGeneration}
+                        onOffsetChange={setCanvasOffset}
+                        onDimensionsChange={setCanvasDimensions}
+                        loadPattern={loadPattern}
+                        model={model}
+                        setModel={setModel}
+                        availableModes={availableModes}
+                        setIsModeMenuOpen={setIsModeMenuOpen}
+                        setIsMenuOpen={setIsMenuOpen}
+                        renderCell={modes[model]?.renderCell || modes.classic.renderCell}
+                        cellPixelSize={cellPixelSize}
+                        onCellPixelSizeChange={setCellPixelSize}
+                        generation={generation}
+                        debugConfig={debugConfig}
+                    />
+                ) : (
+                    <Grid
+                        grid={grid}
+                        setGrid={applyGridChange}
+                        isRunning={isRunning}
+                        speed={speed}
+                        nextGeneration={nextGeneration}
+                        onOffsetChange={setCanvasOffset}
+                        onDimensionsChange={setCanvasDimensions}
+                        loadPattern={loadPattern}
+                        model={model}
+                        setModel={setModel}
+                        availableModes={availableModes}
+                        setIsModeMenuOpen={setIsModeMenuOpen}
+                        setIsMenuOpen={setIsMenuOpen}
+                        renderCell={modes[model]?.renderCell || modes.classic.renderCell}
+                        cellPixelSize={cellPixelSize}
+                        onCellPixelSizeChange={setCellPixelSize}
+                        generation={generation}
+                        debugConfig={debugConfig}
+                    />
+                )}
                 <div
                     className="pointer-events-none absolute z-30"
                     style={controlContainerStyle}

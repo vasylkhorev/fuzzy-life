@@ -1,0 +1,5 @@
+{
+  "name": "Garden of Eden 101",
+  "description": "The simplest Garden of Eden configuration (101) - has no predecessor",
+  "cells": [[0, 0], [0, 1], [0, 2]]
+}
