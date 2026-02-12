@@ -84,27 +84,27 @@ const translations = {
             },
         },
         help: {
-            title: 'How to Use the Game',
+            title: 'How to use the game',
             subtitle:
                 'Master the controls, explore patterns, and keep the simulation flowing - everything you need for fast iteration lives here.',
             close: 'Close',
-            shortcutsTitle: 'Shortcuts & Gestures',
+            shortcutsTitle: 'Shortcuts & gestures',
             languageHeading: 'Language',
             languageDescription: 'Switch the interface language instantly. Preferences are saved automatically.',
             sections: {
                 simulationBasics: {
-                    title: 'Simulation Basics',
+                    title: 'Simulation basics',
                     bullets: {
                         runPause: {
-                            label: 'Run & Pause',
+                            label: 'Run & pause',
                             body: 'Use the Start/Stop button in the floating controls to toggle the simulation without clearing the board.',
                         },
                         singleStep: {
-                            label: 'Single Step',
+                            label: 'Toggle cell state',
                             body: 'Press Step to advance exactly one generation - perfect for debugging patterns or inspecting fuzzy transitions.',
                         },
                         clearGrid: {
-                            label: 'Clear Grid',
+                            label: 'Clear selected region',
                             body: 'Reset the world instantly with Clear. This keeps the current mode, speed, and camera position intact.',
                         },
                     },
@@ -113,15 +113,15 @@ const translations = {
                     title: 'Library & Files',
                     bullets: {
                         patternsTab: {
-                            label: 'Patterns Tab',
+                            label: 'Patterns tab',
                             body: 'Drag any pattern onto the grid to drop it where you like. Saved patterns are normalized to their top-left cell.',
                         },
                         configurationsTab: {
-                            label: 'Configurations Tab',
+                            label: 'Configurations tab',
                             body: 'Click a configuration to replace the entire board. Use the upload icon to import `.json` exports.',
                         },
                         localStorage: {
-                            label: 'Local Storage',
+                            label: 'Local storage',
                             body: 'Custom saves live in your browser. Clearing site data removes them, so export important work regularly.',
                         },
                     },
@@ -145,7 +145,7 @@ const translations = {
                     title: 'Navigation',
                     shortcuts: {
                         panCamera: {
-                            action: 'Pan the camera',
+                            action: 'Pan camera',
                             description: 'Move around large boards while keeping your zoom level intact.',
                         },
                         zoomAtCursor: {
@@ -162,22 +162,22 @@ const translations = {
                     title: 'Editing',
                     shortcuts: {
                         toggleCell: {
-                            action: 'Toggle cell state',
+                            action: 'Toggle Cell',
                             description:
                                 'Activate or deactivate a single cell. In fuzzy modes, toggles jump between off and a high starting value.',
                         },
                         dropPattern: {
-                            action: 'Drop pattern',
+                            label: 'Drop pattern',
                             description:
                                 'Drag from the Library to preview placement, then release to stamp it into the world.',
                         },
                         clearSelection: {
-                            action: 'Clear selected region',
+                            action: 'Clear Selection',
                             description:
                                 'Hold Shift and drag to outline a rectangle, then release to wipe every cell inside it.',
                         },
                         undoAction: {
-                            action: 'Undo last action',
+                            label: 'Undo last action',
                             description:
                                 'Press Ctrl+Z to revert the most recent edit, whether it was a clear, toggle, or pattern drop.',
                         },
@@ -190,6 +190,7 @@ const translations = {
             subtitle: 'Switch behaviours and fine-tune how the simulation evolves.',
             closeTitle: 'Close modes panel',
             rules: 'Rules',
+            weights: 'Weights',
             parameters: 'Parameters',
             instantUpdate: 'Values update instantly',
             boolean: {
@@ -198,6 +199,12 @@ const translations = {
             },
             noParameters: 'This mode uses default constants and does not expose any adjustable parameters yet.',
             emptyState: 'Select a mode from the list to view its details.',
+            '1dInfo': {
+                title: 'Advanced Configuration',
+                weights: 'Use the Weights button above to configure neighborhood weights, size, and threshold settings.',
+            },
+            configureWeights: 'Configure weights',
+            '1dWeightsHelp': 'Configure neighborhood weights, size, threshold, and rules for 1D cellular automaton.',
         },
         modeRules: {
             title: '{{mode}} Rules',
@@ -211,6 +218,32 @@ const translations = {
         },
         alerts: {
             invalidConfigurationFile: 'Invalid configuration file.',
+        },
+        weightEditor: {
+            title: 'Weight Editor',
+            subtitle: 'Click on cells to set their weights',
+            center: 'Center',
+            legend: 'Weight Intensity',
+            neighborhoodSize: 'Neighborhood Size',
+            neighborhoodSizeHelp: 'Neighbors on each side',
+            symmetric: 'Symmetric Weights',
+            symmetricHelp: 'Keep left and right weights equal (mirror symmetry)',
+            birthRules: 'Birth Rules',
+            birthRulesHelp: 'Number of neighbors for birth (comma-separated)',
+            survivalRules: 'Survival Rules',
+            survivalRulesHelp: 'Number of neighbors for survival (comma-separated)',
+            threshold: 'Weight Threshold',
+            thresholdHelp: 'Minimum sum for birth/survival',
+            currentSum: 'Current weighted sum depends on active cells',
+            howItWorks: 'How it works',
+            info1: 'Each neighbor cell contributes its weight when alive',
+            info2: 'The center cell (X) is the cell being evaluated',
+            info3: 'Birth: dead cell becomes alive if weighted sum ≥ threshold',
+            info4: 'Survival: live cell stays alive if weighted sum ≥ threshold',
+            info5: 'Neighborhood size determines how many neighbors on each side',
+            reset: 'Reset to Default',
+            cancel: 'Cancel',
+            apply: 'Apply',
         },
     },
     sk: {
@@ -400,6 +433,7 @@ const translations = {
             subtitle: 'Prepínajte správanie a dolaďte, ako sa simulácia vyvíja.',
             closeTitle: 'Zavrieť panel režimov',
             rules: 'Pravidlá',
+            weights: 'Váhy',
             parameters: 'Parametre',
             instantUpdate: 'Hodnoty sa aktualizujú okamžite',
             boolean: {
@@ -408,6 +442,12 @@ const translations = {
             },
             noParameters: 'Tento režim používa predvolené konštanty a momentálne neponúka nastaviteľné parametre.',
             emptyState: 'Vyberte režim zo zoznamu a zobrazia sa jeho detaily.',
+            '1dInfo': {
+                title: 'Pokročilá Konfigurácia',
+                weights: 'Použite tlačidlo Váhy hore pre konfiguráciu váh susedstva, veľkosti a nastavenia prahu.',
+            },
+            configureWeights: 'Konfigurovať váhy',
+            '1dWeightsHelp': 'Konfigurujte váhy susedstva, veľkosť, prah a pravidlá pre 1D celulárny automat.',
         },
         modeRules: {
             title: 'Pravidlá režimu {{mode}}',
@@ -422,6 +462,37 @@ const translations = {
         },
         alerts: {
             invalidConfigurationFile: 'Neplatný súbor konfigurácie.',
+        },
+        weightEditor: {
+            title: 'Editor Váh',
+            subtitle: 'Kliknite na bunky pre nastavenie ich váh',
+            center: 'Stred',
+            legend: 'Intenzita váh',
+            neighborhoodSize: 'Veľkosť susedstva',
+            neighborhoodSizeHelp: 'Susedov na každej strane',
+            symmetric: 'Symetrické váhy',
+            symmetricHelp: 'Udržiavať ľavé a pravé váhy rovnaké (zrkadlová symetria)',
+            birthRules: 'Pravidlá zrodu',
+            birthRulesHelp: 'Počet susedov pre zrod (oddelené čiarkou)',
+            survivalRules: 'Pravidlá prežitia',
+            survivalRulesHelp: 'Počet susedov pre prežitie (oddelené čiarkou)',
+            threshold: 'Prah váh',
+            thresholdHelp: 'Minimálny súčet pre zrod/prežitie',
+            currentSum: 'Aktuálny vážený súčet závisí od aktívnych buniek',
+            howItWorks: 'Ako to funguje',
+            info1: 'Každá susedná bunka prispieva svojou váhou, ak je živá',
+            info2: 'Stredová bunka (X) je bunka, ktorá sa vyhodnocuje',
+            info3: 'Zrod: mŕtva bunka ožije, ak vážený súčet ≥ prah',
+            info4: 'Prežitie: živá bunka prežije, ak vážený súčet ≥ prah',
+            info5: 'Veľkosť susedstva určuje počet susedov na každej strane',
+            reset: 'Obnoviť predvolené',
+            cancel: 'Zrušiť',
+            apply: 'Použiť',
+        },
+        modes: {
+            halfLife: {
+                label: 'HalfLife',
+            },
         },
     },
 };

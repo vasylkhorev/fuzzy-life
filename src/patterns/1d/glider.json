@@ -1,0 +1,5 @@
+{
+  "name": "Glider",
+  "description": "Simple glider pattern with 4 cells in a line. Creates moving patterns in 1D automaton.",
+  "cells": [[0, 0], [0, 2], [0, 3], [0, 4]]
+}

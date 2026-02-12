@@ -23,7 +23,7 @@ const translations = {
         params: {},
     },
     sk: {
-        label: 'Polčas',
+        label: 'HalfLife',
         description: 'Trojstavový režim: bunky sa prepínajú medzi 0, 0.5 a 1 podľa Conwayho pravidiel (celočíselná renormalizácia).',
         params: {},
     },

@@ -10,7 +10,31 @@ const translations = {
         params: {
             rule: {
                 label: 'Rule Code',
-                help: 'Outer totalistic rule code (default: 624). Try different codes for varied behaviors.',
+                help: 'Outer totalistic rule code (0-1023). Format: BBBBBBBBBB_SSSSSSSSSS where B=birth bits, S=survival bits. Try different codes for varied behaviors.',
+            },
+            birthRules: {
+                label: 'Birth Rules',
+                help: 'Number of Y-neighbors required for birth (comma-separated, e.g., "2,3").',
+            },
+            survivalRules: {
+                label: 'Survival Rules', 
+                help: 'Number of Y-neighbors required for survival (comma-separated, e.g., "2,4").',
+            },
+            neighborhoodSize: {
+                label: 'Neighborhood Size',
+                help: 'Number of neighbors on each side of center cell. Size 2 = YYXYY (5 cells total), size 3 = YYYXYYY (7 cells total), etc.',
+            },
+            useWeights: {
+                label: 'Use Weights',
+                help: 'Enable weighted neighbor calculation instead of simple counting.',
+            },
+            symmetric: {
+                label: 'Symmetric',
+                help: 'Keep left and right weights equal (mirror symmetry).',
+            },
+            weightThreshold: {
+                label: 'Weight Threshold',
+                help: 'Minimum weighted sum for birth/survival when using weights.',
             },
         },
     },
@@ -20,7 +44,31 @@ const translations = {
         params: {
             rule: {
                 label: 'Kód pravidla',
-                help: 'Kód vonkajšieho totálneho pravidla (predvolené: 624). Skúste rôzne kódy pre rozmanité správanie.',
+                help: 'Kód vonkajšieho totálneho pravidla (0-1023). Formát: BBBBBBBBBB_SSSSSSSSSS kde B=bity zrodu, S=bity prežitia. Skúste rôzne kódy pre rozmanité správanie.',
+            },
+            birthRules: {
+                label: 'Pravidlá zrodu',
+                help: 'Počet Y-susedov potrebných pre zrod (oddelené čiarkou, napr. "2,3").',
+            },
+            survivalRules: {
+                label: 'Pravidlá prežitia', 
+                help: 'Počet Y-susedov potrebných pre prežitie (oddelené čiarkou, napr. "2,4").',
+            },
+            neighborhoodSize: {
+                label: 'Veľkosť Susedstva',
+                help: 'Počet susedov na každej strane stredovej bunky. Veľkosť 2 = YYXYY (5 buniek celkovo), veľkosť 3 = YYYXYYY (7 buniek celkovo), atď.',
+            },
+            useWeights: {
+                label: 'Použiť Váhy',
+                help: 'Povoliť vážený výpočet susedov namiesto jednoduchého počítania.',
+            },
+            symmetric: {
+                label: 'Symetrické',
+                help: 'Udržiavať ľavé a pravé váhy rovnaké (zrkadlová symetria).',
+            },
+            weightThreshold: {
+                label: 'Prah Váhy',
+                help: 'Minimálny vážený súčet pre zrod/prežitie pri použití váh.',
             },
         },
     },
@@ -58,10 +106,10 @@ const rulesContent = {
         breakdown: {
             title: 'Rule Components',
             items: [
-                { title: 'Birth Condition', body: 'Dead cell (X=0) becomes alive if exactly 2 or 3 of the 4 Y-neighbors are alive.' },
-                { title: 'Survival Condition', body: 'Living cell (X=1) stays alive if exactly 2 or 4 of the 4 Y-neighbors are alive.' },
-                { title: 'Death Condition', body: 'Cell dies if neighbor count is 0, 1, or when alive with 3 neighbors.' },
-                { title: 'Wolfram Classification', body: 'This is outer totalistic code 624, resembling Wolfram\'s code 20 behavior.' },
+                { title: 'Birth condition', body: 'Dead cell (X=0) becomes alive if exactly 2 or 3 of the 4 Y-neighbors are alive.' },
+                { title: 'Survival condition', body: 'Living cell (X=1) stays alive if exactly 2 or 4 of the 4 Y-neighbors are alive.' },
+                { title: 'Death condition', body: 'Cell dies if neighbor count is 0, 1, or when alive with 3 neighbors.' },
+                { title: 'Wolfram classification', body: 'This is outer totalistic code 624, resembling Wolfram\'s code 20 behavior.' },
             ],
         },
         notes: {
@@ -100,10 +148,10 @@ const rulesContent = {
         breakdown: {
             title: 'Komponenty Pravidla',
             items: [
-                { title: 'Podmienka Zrodu', body: 'Mŕtva bunka (X=0) ožije ak presne 2 alebo 3 z 4 Y-susedov sú živé.' },
-                { title: 'Podmienka Prežitia', body: 'Živá bunka (X=1) zostane živá ak presne 2 alebo 4 z 4 Y-susedov sú živé.' },
-                { title: 'Podmienka Smrti', body: 'Bunka zomrie ak počet susedov je 0, 1, alebo keď je živá s 3 susedmi.' },
-                { title: 'Wolframova Klasifikácia', body: 'Toto je vonkajší totálny kód 624, podobný Wolframovmu správaniu kódu 20.' },
+                { title: 'Podmienka zrodu', body: 'Mŕtva bunka (X=0) ožije ak presne 2 alebo 3 z 4 Y-susedov sú živé.' },
+                { title: 'Podmienka prežitia', body: 'Živá bunka (X=1) zostane živá ak presne 2 alebo 4 z 4 Y-susedov sú živé.' },
+                { title: 'Podmienka smrti', body: 'Bunka zomrie ak počet susedov je 0, 1, alebo keď je živá s 3 susedmi.' },
+                { title: 'Wolframova klasifikácia', body: 'Toto je vonkajší totálny kód 624, podobný Wolframovmu správaniu kódu 20.' },
             ],
         },
         notes: {
@@ -120,10 +168,24 @@ class Mode1D extends LifeMode {
         super({
             id: '1d',
             label: '1D',
-            description: 'One-dimensional cellular automaton with YYXYY neighborhood (outer totalistic rule 624, k=2, r=2).',
-            defaultParams: { rule: 624 },
+            description: 'One-dimensional cellular automaton with configurable neighborhood size.',
+            defaultParams: { 
+                rule: 624,
+                birthRules: "2,3",
+                survivalRules: "2,4",
+                neighborhoodSize: 2,
+                useWeights: false,
+                symmetric: true,
+                weightThreshold: 2.0
+            },
             parameterHelp: {
-                rule: 'Outer totalistic rule code (0-1023). Default 624.',
+                rule: 'Outer totalistic rule code (0-1023). Format: BBBBBBBBBB_SSSSSSSSSS where B=birth bits, S=survival bits. Default 624 (birth: 0001001100, survival: 0010011100).',
+                birthRules: 'Number of Y-neighbors required for birth (comma-separated). Default "2,3" means birth with 2 or 3 neighbors.',
+                survivalRules: 'Number of Y-neighbors required for survival (comma-separated). Default "2,4" means survival with 2 or 4 neighbors.',
+                neighborhoodSize: 'Number of neighbors on each side. Size 2 = YYXYY, size 3 = YYYXYYY, etc.',
+                useWeights: 'Enable weighted neighbor calculation instead of simple counting.',
+                symmetric: 'Keep left and right weights equal (mirror symmetry).',
+                weightThreshold: 'Minimum weighted sum for birth/survival when using weights.',
             },
             rulesHtml,
             translations,
@@ -131,30 +193,99 @@ class Mode1D extends LifeMode {
     }
 
     computeNextState(grid, row, col, params = this.defaultParams) {
-        const rule = params.rule || 624;
+        const useWeights = params.useWeights || false;
+        const neighborhoodSize = params.neighborhoodSize || 2;
+        const birthRules = params.birthRules || "2,3";
+        const survivalRules = params.survivalRules || "2,4";
+        
+        // Parse birth and survival rules
+        const birthConditions = birthRules.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+        const survivalConditions = survivalRules.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
         
         // For 1D automaton, only compute the top row (row 0)
         if (row === 0) {
-            // Count Y-neighbors (excluding the center cell X)
-            let yNeighbors = 0;
-            const positions = [-2, -1, 1, 2]; // Y positions in YYXYY
-            
-            for (const offset of positions) {
-                const nc = col + offset;
-                if (nc >= 0 && nc < GRID_SIZE && grid[0][nc] >= 0.5) {
-                    yNeighbors++;
-                }
-            }
-            
             const isAlive = grid[0][col] >= 0.5;
             
-            // Apply rule 624: Birth if 2-3 Y-neighbors, Survival if 2-4 Y-neighbors
-            if (!isAlive && (yNeighbors === 2 || yNeighbors === 3)) return 1;
-            if (isAlive && (yNeighbors === 2 || yNeighbors === 4)) return 1;
+            if (useWeights) {
+                // Weighted calculation with dynamic neighborhood
+                const threshold = params.weightThreshold || 2.0;
+                
+                let weightedSum = 0;
+                
+                // Generate neighbor positions based on neighborhood size
+                for (let offset = -neighborhoodSize; offset <= neighborhoodSize; offset++) {
+                    if (offset === 0) continue; // Skip center cell
+                    
+                    const nc = col + offset;
+                    if (nc >= 0 && nc < GRID_SIZE && grid[0][nc] >= 0.5) {
+                        // Get weight for this position (default to 1.0 if not specified)
+                        const weightKey = `weight${offset > 0 ? 'Plus' : 'Minus'}${Math.abs(offset)}`;
+                        const weight = params[weightKey] || 1.0;
+                        weightedSum += weight;
+                    }
+                }
+                
+                // Apply threshold-based rule
+                if (!isAlive && weightedSum >= threshold) {
+                    return 1; // Birth
+                }
+                if (isAlive && weightedSum >= threshold) {
+                    return 1; // Survival
+                }
+            } else {
+                // Traditional counting method with dynamic neighborhood
+                let neighborCount = 0;
+                
+                // Count neighbors based on neighborhood size
+                for (let offset = -neighborhoodSize; offset <= neighborhoodSize; offset++) {
+                    if (offset === 0) continue; // Skip center cell
+                    
+                    const nc = col + offset;
+                    if (nc >= 0 && nc < GRID_SIZE && grid[0][nc] >= 0.5) {
+                        neighborCount++;
+                    }
+                }
+                
+                // Check birth condition (dead cell becomes alive)
+                if (!isAlive && birthConditions.includes(neighborCount)) {
+                    return 1;
+                }
+                
+                // Check survival condition (live cell stays alive)
+                if (isAlive && survivalConditions.includes(neighborCount)) {
+                    return 1;
+                }
+            }
         }
         
         // For 1D mode, all other rows should remain 0
         return 0;
+    }
+
+    // Helper method to decode rule into human-readable format
+    decodeRule(rule = 624) {
+        rule = Math.max(0, Math.min(1023, Math.floor(rule)));
+        const birthBits = (rule >> 10) & 0x3FF;
+        const survivalBits = rule & 0x3FF;
+        
+        const birthConditions = [];
+        const survivalConditions = [];
+        
+        for (let i = 0; i <= 4; i++) {
+            if (birthBits & (1 << i)) {
+                birthConditions.push(i);
+            }
+            if (survivalBits & (1 << i)) {
+                survivalConditions.push(i);
+            }
+        }
+        
+        return {
+            rule,
+            birth: birthConditions,
+            survival: survivalConditions,
+            description: `B${birthConditions.join('')}/S${survivalConditions.join('')}`
+        };
     }
 
     renderCell(ctx, x, y, val, cellSize, generation = 0) {

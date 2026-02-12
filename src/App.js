@@ -67,6 +67,7 @@ const App = () => {
     const [cellPixelSize, setCellPixelSize] = useState(CELL_PIXEL_SIZE);
     const [isTestingPeriodicity, setIsTestingPeriodicity] = useState(false);
     const [detectedPeriod, setDetectedPeriod] = useState(null);
+    const [selectedPattern, setSelectedPattern] = useState(null);
     const controlsRef = useRef(null);
     const playAreaRef = useRef(null);
     const dragOffsetRef = useRef({ x: 0, y: 0 });
@@ -439,6 +440,8 @@ const App = () => {
                 loadConfiguration={loadConfiguration}
                 loadConfigurationFromFile={handleLoadConfigurationFromFile}
                 cellPixelSize={cellPixelSize}
+                selectedPattern={selectedPattern}
+                setSelectedPattern={setSelectedPattern}
             />
             <div className="relative flex flex-1 flex-col bg-gray-900" ref={playAreaRef}>
                 {model === '1d' ? (
@@ -461,6 +464,8 @@ const App = () => {
                         onCellPixelSizeChange={setCellPixelSize}
                         generation={generation}
                         debugConfig={debugConfig}
+                        selectedPattern={selectedPattern}
+                        setSelectedPattern={setSelectedPattern}
                     />
                 ) : (
                     <Grid

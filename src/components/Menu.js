@@ -1,11 +1,11 @@
 // src/components/Menu.js
 import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiOutlineClose, AiOutlineSave } from "react-icons/ai";
-import { CELL_PIXEL_SIZE } from '../config';
+import { CELL_PIXEL_SIZE, GRID_SIZE } from '../config';
 import { useTranslation } from '../i18n';
 import { modes } from '../modes';
 
-const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPattern, loadConfiguration, loadConfigurationFromFile, cellPixelSize = CELL_PIXEL_SIZE }) => {
+const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPattern, loadConfiguration, loadConfigurationFromFile, cellPixelSize = CELL_PIXEL_SIZE, selectedPattern, setSelectedPattern }) => {
     const [customPatterns, setCustomPatterns] = useState({});
     const [customConfigurations, setCustomConfigurations] = useState({});
     const [activeTab, setActiveTab] = useState('patterns'); // 'patterns' or 'configurations'
@@ -16,6 +16,12 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
     const builtInPatterns = patterns || {};
 
     const getStorageKey = (baseKey) => `${baseKey}:${safeMode}`;
+
+    const getPatternWidth = (pattern) => {
+        if (!pattern || !pattern.cells) return 1;
+        const cols = pattern.cells.map(([row, col]) => col);
+        return Math.max(...cols) - Math.min(...cols) + 1;
+    };
 
     const loadNamespacedStorage = (baseKey) => {
         if (typeof window === 'undefined' || !window.localStorage) {
@@ -415,10 +421,18 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                                 draggable
                                                 onDragStart={(e) => handleDragStart(e, name, false, false)}
                                                 onDragEnd={handleDragEnd}
-                                                onClick={() => loadPattern(builtInPatterns[name], 0, 0)}
+                                                onClick={() => {
+    const pattern = { ...builtInPatterns[name], name };
+    // Simple approach: place at center of visible area
+    // For 1D mode, this should work regardless of scroll position
+    const centerCol = Math.floor(GRID_SIZE / 2);
+    const patternWidth = getPatternWidth(pattern);
+    const colOffset = centerCol - Math.floor(patternWidth / 2);
+    loadPattern(pattern, 0, colOffset);
+}}
                                                 className="flex-1 text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move whitespace-normal break-words"
-                                                title={t('menu.tooltips.dragPattern')}
-                                                aria-label={t('menu.tooltips.dragPattern')}
+                                                title={t('menu.tooltips.clickPattern', 'Click to place pattern in center')}
+                                                aria-label={t('menu.tooltips.clickPattern', 'Click to place pattern in center')}
                                             >
                                                 {name}
                                             </button>

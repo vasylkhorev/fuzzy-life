@@ -24,7 +24,9 @@ const Grid1D = ({
     generation, 
     debugConfig, 
     cellPixelSize, 
-    onCellPixelSizeChange 
+    onCellPixelSizeChange,
+    selectedPattern,
+    setSelectedPattern
 }) => {
     const canvasRef = useRef(null);
     const initialCellSizeRef = useRef(cellPixelSize);
@@ -571,7 +573,9 @@ const Grid1D = ({
             // Also update the actual grid to reflect the change
             const newGrid = grid.map((rowArray, rIdx) => {
                 if (rIdx === 0) {
-                    return rowArray.map((cell, cIdx) => (cIdx === col ? newVal : cell));
+                    const newRow = [...rowArray];
+                    newRow[col] = newVal;
+                    return newRow;
                 }
                 return rowArray;
             });

@@ -1,13 +1,15 @@
 // src/components/ModeMenu.js
 import React, { useState } from 'react';
-import { AiOutlineClose, AiOutlineFileText, AiOutlineCheckCircle } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineFileText, AiOutlineCheckCircle, AiOutlineEdit } from "react-icons/ai";
 import RulesDialog from './RulesDialog';
+import WeightEditorModal from './WeightEditorModal';
 import { availableModes } from '../modes';
 import { useTranslation } from '../i18n';
 
 const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParams }) => {
     const [showRules, setShowRules] = useState(false);
     const [selectedModelForRules, setSelectedModelForRules] = useState(model);
+    const [showWeightEditor, setShowWeightEditor] = useState(false);
     const { t } = useTranslation();
 
     const translateOrFallback = (key, fallbackValue = '') => {
@@ -19,6 +21,17 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
 
     const currentMode = availableModes.find(m => m.value === model);
     const paramKeys = Object.keys(modeParams || {});
+    
+    // Filter parameters for 1D mode - show only configure weights
+    const getVisibleParams = () => {
+        if (model === '1d') {
+            // For 1D mode, don't show any regular parameters
+            return [];
+        }
+        return paramKeys;
+    };
+    
+    const visibleParamKeys = getVisibleParams();
 
     const formatParamLabel = (rawKey = '') => rawKey
         .replace(/([a-z\d])([A-Z])/g, '$1 $2')
@@ -44,11 +57,59 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
         setShowRules(true);
     };
 
+    const openWeightEditor = () => {
+        setShowWeightEditor(true);
+    };
+
     const closeRules = () => setShowRules(false);
+    const closeWeightEditor = () => setShowWeightEditor(false);
+
+    const handleWeightsChange = (newWeights) => {
+        setModeParams(prev => ({
+            ...prev,
+            ...newWeights
+        }));
+    };
+
+    const handleThresholdChange = (newThreshold) => {
+        setModeParams(prev => ({
+            ...prev,
+            weightThreshold: newThreshold
+        }));
+    };
+
+    const handleNeighborhoodSizeChange = (newSize) => {
+        setModeParams(prev => ({
+            ...prev,
+            neighborhoodSize: newSize
+        }));
+    };
+
+    const handleSymmetricChange = (newSymmetric) => {
+        setModeParams(prev => ({
+            ...prev,
+            symmetric: newSymmetric
+        }));
+    };
+
+    const handleBirthRulesChange = (newBirthRules) => {
+        setModeParams(prev => ({
+            ...prev,
+            birthRules: newBirthRules
+        }));
+    };
+
+    const handleSurvivalRulesChange = (newSurvivalRules) => {
+        setModeParams(prev => ({
+            ...prev,
+            survivalRules: newSurvivalRules
+        }));
+    };
 
     const closeMenu = () => {
         setIsOpen(false);
         setShowRules(false);
+        setShowWeightEditor(false);
     };
 
     return (
@@ -124,14 +185,16 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                             );
                                         })()}
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => openRulesFor(currentMode.value)}
-                                        className="inline-flex items-center gap-2 text-sm font-medium text-blue-300 transition hover:text-white"
-                                    >
-                                        <AiOutlineFileText size={15} />
-                                        {translateOrFallback('modeMenu.rules', 'Rules')}
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => openRulesFor(currentMode.value)}
+                                            className="inline-flex items-center gap-2 text-sm font-medium text-blue-300 transition hover:text-white"
+                                        >
+                                            <AiOutlineFileText size={15} />
+                                            {translateOrFallback('modeMenu.rules', 'Rules')}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -140,16 +203,16 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                     <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
                                         {translateOrFallback('modeMenu.parameters', 'Parameters').toUpperCase()}
                                     </h4>
-                                    {paramKeys.length > 0 && (
+                                    {visibleParamKeys.length > 0 && (
                                         <span className="text-xs text-gray-500">
                                             {translateOrFallback('modeMenu.instantUpdate', 'Values update instantly')}
                                         </span>
                                     )}
                                 </div>
 
-                                {paramKeys.length > 0 ? (
+                                {visibleParamKeys.length > 0 ? (
                                     <div className="grid gap-4 sm:grid-cols-2">
-                                        {paramKeys.map((key) => {
+                                        {visibleParamKeys.map((key) => {
                                             const currentValue = modeParams[key];
                                             const isBooleanParam = typeof currentValue === 'boolean';
                                             const labelText = translateOrFallback(
@@ -179,10 +242,10 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                                         <button
                                                             type="button"
                                                             onClick={() => handleParamChange(key, !currentValue)}
-                                                            className={`mt-auto rounded-md border px-3 py-2 text-sm font-semibold transition ${
+                                                            className={`mt-auto w-full rounded border px-3 py-2 text-sm font-medium outline-none transition focus:ring-1 focus:ring-blue-400/40 ${
                                                                 currentValue
-                                                                    ? 'border-blue-500 bg-blue-600 text-white hover:bg-blue-500'
-                                                                    : 'border-gray-600 bg-gray-900 text-gray-200 hover:border-blue-400 hover:text-white'
+                                                                    ? 'border-blue-500 bg-blue-600 text-white hover:bg-blue-700'
+                                                                    : 'border-gray-600 bg-gray-900 text-gray-300 hover:bg-gray-800'
                                                             }`}
                                                         >
                                                             {currentValue
@@ -198,9 +261,33 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                                             className="mt-auto w-full rounded border border-gray-600 bg-gray-900 px-2 py-2 text-sm text-white outline-none transition focus:border-blue-400 focus:ring-1 focus:ring-blue-400/40"
                                                         />
                                                     )}
+                                                    
+                                                    {/* Add weight editor link for useWeights parameter */}
+                                                    {key === 'useWeights' && currentValue && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={openWeightEditor}
+                                                            className="mt-2 w-full rounded border border-green-600 bg-green-600/20 px-2 py-1 text-xs font-medium text-green-300 outline-none transition hover:bg-green-600/30 focus:ring-1 focus:ring-green-400/40"
+                                                        >
+                                                            {translateOrFallback('modeMenu.configureWeights', 'Configure Weights')} →
+                                                        </button>
+                                                    )}
                                                 </label>
                                             );
                                         })}
+                                    </div>
+                                ) : model === '1d' ? (
+                                    <div className="space-y-4">
+                                        <button
+                                            type="button"
+                                            onClick={openWeightEditor}
+                                            className="w-full rounded border border-green-600 bg-green-600/20 px-4 py-3 text-sm font-medium text-green-300 outline-none transition hover:bg-green-600/30 focus:ring-1 focus:ring-green-400/40"
+                                        >
+                                            {translateOrFallback('modeMenu.configureWeights', 'Configure Weights')} →
+                                        </button>
+                                        <p className="text-xs text-gray-400">
+                                            {translateOrFallback('modeMenu.1dWeightsHelp', 'Configure neighborhood weights, size, threshold, and rules for the 1D cellular automaton.')}
+                                        </p>
                                     </div>
                                 ) : (
                                     <p className="rounded-md border border-dashed border-gray-600 bg-gray-900 p-4 text-sm text-gray-400">
@@ -211,25 +298,41 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                     </p>
                                 )}
                             </div>
-                        </div>
-                    ) : (
-                        <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-800/60 p-6 text-sm text-gray-400">
-                            {translateOrFallback(
-                                'modeMenu.emptyState',
-                                'Select a mode from the list to view its details.'
-                            )}
-                        </div>
-                    )}
-                </section>
-            </aside>
+                    </div>
+                ) : (
+                    <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-800/60 p-6 text-sm text-gray-400">
+                        {translateOrFallback(
+                            'modeMenu.emptyState',
+                            'Select a mode from the list to view its details.'
+                        )}
+                    </div>
+                )}
+            </section>
+</aside>
 
-            <RulesDialog
-                isOpen={showRules}
-                onClose={closeRules}
-                model={selectedModelForRules}
-                modeInfo={availableModes.find(m => m.value === selectedModelForRules)}
-            />
-        </React.Fragment>
+        <RulesDialog
+            isOpen={showRules}
+            onClose={closeRules}
+            model={selectedModelForRules}
+            modeInfo={availableModes.find(m => m.value === selectedModelForRules)}
+        />
+        <WeightEditorModal
+            isOpen={showWeightEditor}
+            onClose={closeWeightEditor}
+            weights={modeParams}
+            threshold={modeParams.weightThreshold}
+            neighborhoodSize={modeParams.neighborhoodSize}
+            symmetric={modeParams.symmetric}
+            birthRules={modeParams.birthRules}
+            survivalRules={modeParams.survivalRules}
+            onWeightsChange={handleWeightsChange}
+            onThresholdChange={handleThresholdChange}
+            onNeighborhoodSizeChange={handleNeighborhoodSizeChange}
+            onSymmetricChange={handleSymmetricChange}
+            onBirthRulesChange={handleBirthRulesChange}
+            onSurvivalRulesChange={handleSurvivalRulesChange}
+        />
+    </React.Fragment>
     );
 };
 
