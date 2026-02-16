@@ -1,70 +1,49 @@
-# Getting Started with Create React App
+# Fuzzy Life
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Prehľad projektu
 
-## Available Scripts
+"Fuzzy Life" je interaktívna, webová simulácia Conwayovej Hry života a jej mnohých variantov. Aplikácia poskytuje vizuálne a interaktívne prostredie na skúmanie emergentného správania celulárnych automatov. Názov "fuzzy" odkazuje na zahrnutie režimov, ktoré používajú spojité stavy (napr. hodnoty medzi 0 a 1) a pravdepodobnostné pravidlá, na rozdiel od striktne binárnej povahy klasickej Hry života.
 
-In the project directory, you can run:
+Aplikácia je postavená ako single-page aplikácia (SPA) pomocou Reactu. Ponúka posúvateľnú a priblížiteľnú mriežku, rôzne simulačné režimy, knižnicu preddefinovaných vzorov a možnosť pre používateľov ukladať a načítať vlastné výtvory. Používateľské rozhranie je navrhnuté tak, aby bolo intuitívne a užívateľsky prívetivé, s jasnými ovládacími prvkami a informatívnymi dialógovými oknami. Aplikácia je tiež internacionalizovaná s podporou angličtiny a slovenčiny.
 
-### `npm start`
+## Technológie
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+*   **Frontend Framework:** React
+*   **Nástroj na buildovanie:** Create React App
+*   **Štýlovanie:**
+    *   Tailwind CSS: Pre utilitárne CSS.
+    *   Styled Components: Pre štýly špecifické pre komponenty.
+*   **Správa stavu:**
+    *   React Hooks (`useState`, `useEffect`, `useRef`, `useCallback`): Pre stav na úrovni komponentov.
+    *   Zustand: Pre globálnu správu stavu.
+    *   RxJS: Pre správu komplexných asynchrónnych udalostí.
+*   **Grafika:** HTML5 Canvas API
+*   **Internationalizácia:** `i18next` a `react-i18next`
+*   **Ďalšie knižnice:**
+    *   `react-draggable`: Pre presúvateľné UI prvky.
+    *   `react-icons`: Pre ikony.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Vlastnosti
 
-### `npm test`
+*   **Interaktívna Mriežka:** Posúvateľná a priblížiteľná mriežka pre vizualizáciu celulárnych automatov.
+*   **Rôzne Simulačné Režimy:**
+    *   **Klasický:** Štandardná Conwayova Hra života (B3/S23).
+    *   **Spojitý (Continuous):** "Fuzzy" verzia Hry života so spojitými stavmi buniek medzi 0 a 1.
+    *   **1D:** Jednorozmerný celulárny automat s Wolframovými pravidlami.
+    *   **Half-Life:** Trojstavový režim s diskrétnymi hodnotami buniek 0, 0.5, 1.
+    *   **Vlastný Half-Life:** Prispôsobiteľná verzia Half-Life režimu.
+    *   **Quartiles:** Päťstavový režim s diskrétnymi hodnotami buniek 0, 0.25, 0.5, 0.75, 1.
+    *   **Konečná Teplota (Finite Temperature):** Model spojitého stavu založený na logistickej energetickej funkcii.
+*   **Správa Vzorov:** Knižnica preddefinovaných vzorov a možnosť ukladať a načítať vlastné konfigurácie.
+*   **Ukladanie a Načítanie:** Možnosť ukladať aktuálny stav mriežky a konfigurácie.
+*   **Medzinárodná Podpora:** Aplikácia je internacionalizovaná s podporou anglického a slovenského jazyka.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Informácie o diplomovej práci
 
-### `npm run build`
+Táto aplikácia je súčasťou diplomovej práce s názvom "Fuzzy Life", ktorú vypracoval Bc. Vasyl Khorev v roku 2026 na Ústave informatiky v Košiciach pod vedením prof. RNDr. Stanislava Krajčiho, PhD.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Abstract práce:
+"Fuzzy Life" je interaktívna webová aplikácia, ktorá simuluje Conwayovu Hru života a jej rozšírené varianty. Používa spojité stavy a pravdepodobnostné pravidlá, čím presahuje binárnu povahu klasickej Hry života. Aplikácia, vyvinutá v Reacte, ponúka vizuálne prostredie s prispôsobiteľnou mriežkou, rôznymi simulačnými režimami a možnosťou ukladania vzorov. Cieľom je intuitívne skúmanie celulárnych automatov s podporou anglického a slovenského jazyka.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Kľúčové slová: lorem ipsum, dolor, sit amet
