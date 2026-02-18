@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./Grid.css";
 import { GRID_SIZE, CELL_PIXEL_MAX, CELL_PIXEL_SIZE } from "../config";
-import { AiOutlineInfoCircle, AiOutlineSliders, AiOutlineBars } from "react-icons/ai";
+import { AiOutlineInfoCircle, AiOutlineSliders, AiOutlineBars, AiOutlineExperiment } from "react-icons/ai";
 import HelpDialog from './HelpDialog';
 import { useTranslation } from '../i18n';
 
@@ -20,6 +20,7 @@ const Grid1D = ({
     availableModes,
     setIsModeMenuOpen,
     setIsMenuOpen,
+    onOpenPatternSearch,
     renderCell,
     generation,
     debugConfig,
@@ -679,6 +680,18 @@ const Grid1D = ({
                     >
                         <AiOutlineSliders size={16} />
                         <span className="hidden sm:inline">{t('grid.modesButton')}</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenPatternSearch();
+                        }}
+                        className="p-2 rounded bg-gray-700 hover:bg-gray-500 transition flex items-center justify-center"
+                        title={t('grid.patternSearchButtonTitle')}
+                        aria-label={t('grid.patternSearchButtonTitle')}
+                    >
+                        <AiOutlineExperiment size={20} />
                     </button>
                     <button
                         onClick={() => setIsHelpOpen(true)}

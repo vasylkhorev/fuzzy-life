@@ -600,6 +600,7 @@ const App = () => {
                         availableModes={availableModes}
                         setIsModeMenuOpen={setIsModeMenuOpen}
                         setIsMenuOpen={setIsMenuOpen}
+                        onOpenPatternSearch={() => setIsPatternSearchOpen(true)}
                         renderCell={modes[model]?.renderCell || modes.classic.renderCell}
                         cellPixelSize={cellPixelSize}
                         onCellPixelSizeChange={setCellPixelSize}
@@ -623,6 +624,7 @@ const App = () => {
                         availableModes={availableModes}
                         setIsModeMenuOpen={setIsModeMenuOpen}
                         setIsMenuOpen={setIsMenuOpen}
+                        onOpenPatternSearch={() => setIsPatternSearchOpen(true)}
                         renderCell={modes[model]?.renderCell || modes.classic.renderCell}
                         cellPixelSize={cellPixelSize}
                         onCellPixelSizeChange={setCellPixelSize}
@@ -659,7 +661,6 @@ const App = () => {
                 setModel={setModel}
                 modeParams={modeParams}
                 setModeParams={setModeParams}
-                onOpenPatternSearch={() => setIsPatternSearchOpen(true)}
             />
             <PatternSearchModal
                 isOpen={isPatternSearchOpen}
@@ -667,7 +668,6 @@ const App = () => {
                 mode={model}
                 modeParams={modeParams}
                 onLoadPattern={loadPattern}
-                setModeParams={setModeParams}
             />
         </div>
     );

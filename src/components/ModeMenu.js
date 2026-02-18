@@ -6,7 +6,7 @@ import WeightEditorModal from './WeightEditorModal';
 import { availableModes } from '../modes';
 import { useTranslation } from '../i18n';
 
-const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParams, onOpenPatternSearch }) => {
+const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParams }) => {
     const [showRules, setShowRules] = useState(false);
     const [selectedModelForRules, setSelectedModelForRules] = useState(model);
     const [showWeightEditor, setShowWeightEditor] = useState(false);
@@ -276,17 +276,6 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                         >
                                             {translateOrFallback('modeMenu.configureWeights', 'Configure Weights')} →
                                         </button>
-                                        <button
-                                            type="button"
-                                            onClick={onOpenPatternSearch}
-                                            className="w-full rounded border border-blue-600 bg-blue-600/20 px-4 py-3 text-sm font-medium text-blue-300 outline-none transition hover:bg-blue-600/30 focus:ring-1 focus:ring-blue-400/40"
-                                        >
-                                            <AiOutlineFileText className="inline mr-2" size={16} />
-                                            {translateOrFallback('modeMenu.patternSearch', 'Pattern Search')}
-                                        </button>
-                                        <p className="text-xs text-gray-400">
-                                            {translateOrFallback('modeMenu.1dSearchHelp', 'Automatically search for oscillators and gliders in 1D cellular automata.')}
-                                        </p>
                                     </div>
                                 ) : (
                                     <p className="rounded-md border border-dashed border-gray-600 bg-gray-900 p-4 text-sm text-gray-400">

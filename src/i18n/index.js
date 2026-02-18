@@ -46,6 +46,8 @@ const translations = {
             modesButton: 'Modes',
             modesButtonTitle: 'Modes panel',
             helpButtonTitle: 'How to use',
+            patternSearchButton: 'Search',
+            patternSearchButtonTitle: 'Pattern Search',
         },
         menu: {
             headingEyebrow: 'Library',
@@ -246,19 +248,10 @@ const translations = {
             apply: 'Apply',
         },
         patternSearch: {
-            title: '1D Pattern Searcher',
-            currentSettings: 'Current Settings',
-            neighborhood: 'Neighborhood (Radius {{radius}})',
-            weights: 'Weights',
-            intensity: 'Intensity',
-            tabs: {
-                search: 'Search Patterns',
-                explore: 'Rule Explorer',
-            },
+            title: 'Pattern Searcher',
             config: {
                 patternWidth: 'Pattern Width',
                 searchWidth: 'Search Width',
-                explorationWidth: 'Exploration Width',
                 maxGen: 'Max Gen',
                 strategy: 'Strategy',
                 strategies: {
@@ -268,8 +261,6 @@ const translations = {
                 startSearch: 'Start Search',
                 stopSearch: 'Stop Search',
                 clearResults: 'Clear Results',
-                startExploration: 'Start Exploration',
-                stopExploration: 'Stop Exploration',
             },
             filters: {
                 title: 'Filters',
@@ -277,6 +268,7 @@ const translations = {
                 all: 'All',
                 gliders: 'Gliders',
                 oscillators: 'Oscillators',
+                stillLifes: 'Still Life',
                 minP: 'Min P',
                 maxP: 'Max P',
                 shift: 'Shift',
@@ -285,26 +277,14 @@ const translations = {
                 trials: 'Trials',
                 found: 'Found',
                 searching: 'Searching...',
-                rulesExplored: 'Rules Explored',
-                bestScore: 'Best Score',
-                exploring: 'Exploring...',
             },
             results: {
                 noPatternsFound: 'No patterns found matching filters.',
                 noPatternsYet: 'No patterns found yet. Adjust width or generations and start searching.',
-                noRules: 'No interesting rules found yet. Start exploring to find rules with rich behavior.',
-                topRules: 'Top Rules',
                 load: 'Load',
-                apply: 'Apply Rule',
-                score: 'Score',
-                found: 'Found',
-                gliders: 'Gliders',
-                birth: 'Birth',
-                survival: 'Survival',
             },
             info: {
                 searchFooter: 'Searcher checks for repeating trimmed bitstrings across generations. Gliders are detected by spatial shift between repetitions.',
-                exploreFooter: 'Explorer generates random rules and runs mini-searches to identify those with high yield of complex patterns.',
             }
         },
     },
@@ -352,6 +332,8 @@ const translations = {
             modesButton: 'Režimy',
             modesButtonTitle: 'Panel režimov',
             helpButtonTitle: 'Ako používať',
+            patternSearchButton: 'Hľadať',
+            patternSearchButtonTitle: 'Hľadanie vzorov',
         },
         menu: {
             headingEyebrow: 'Knižnica',
@@ -552,19 +534,10 @@ const translations = {
             apply: 'Použiť',
         },
         patternSearch: {
-            title: '1D Hľadač vzorov',
-            currentSettings: 'Aktuálne nastavenia',
-            neighborhood: 'Susedstvo (Rádius {{radius}})',
-            weights: 'Váhy',
-            intensity: 'Intenzita',
-            tabs: {
-                search: 'Hľadať vzory',
-                explore: 'Rule Explorer',
-            },
+            title: 'Hľadač vzorov',
             config: {
                 patternWidth: 'Šírka vzoru',
                 searchWidth: 'Šírka hľadania',
-                explorationWidth: 'Šírka skúmania',
                 maxGen: 'Max. gen.',
                 strategy: 'Stratégia',
                 strategies: {
@@ -574,8 +547,6 @@ const translations = {
                 startSearch: 'Spustiť hľadanie',
                 stopSearch: 'Zastaviť hľadanie',
                 clearResults: 'Vymazať výsledky',
-                startExploration: 'Spustiť',
-                stopExploration: 'Zastaviť',
             },
             filters: {
                 title: 'Filtre',
@@ -583,6 +554,7 @@ const translations = {
                 all: 'Všetky',
                 gliders: 'Klzáky',
                 oscillators: 'Oscilátory',
+                stillLifes: 'Statický vzor',
                 minP: 'Min. P',
                 maxP: 'Max. P',
                 shift: 'Posun',
@@ -591,26 +563,14 @@ const translations = {
                 trials: 'Pokusy',
                 found: 'Nájdené',
                 searching: 'Hľadám...',
-                rulesExplored: 'Preskúmané pravidlá',
-                bestScore: 'Najlepšie skóre',
-                exploring: 'Skúmam...',
             },
             results: {
                 noPatternsFound: 'Nenašli sa žiadne vzory zodpovedajúce filtrom.',
                 noPatternsYet: 'Zatiaľ sa nenašli žiadne vzory. Upravte šírku alebo generácie a spustite hľadanie.',
-                noRules: 'Zatiaľ sa nenašli žiadne zaujímavé pravidlá. Spustite skúmanie pre nájdenie pravidiel s bohatým správaním.',
-                topRules: 'Najlepšie pravidlá',
                 load: 'Načítať',
-                apply: 'Použiť pravidlo',
-                score: 'Skóre',
-                found: 'Nájdené',
-                gliders: 'Klzáky',
-                birth: 'Zrod',
-                survival: 'Prežitie',
             },
             info: {
                 searchFooter: 'Hľadač kontroluje opakované orezané reťazce bitov naprieč generáciami. Klzáky sú detegované priestorovým posunom medzi opakovaniami.',
-                exploreFooter: 'Prieskumník generuje náhodné pravidlá a spúšťa mini-hľadania, aby identifikoval tie s vysokým výnosom komplexných vzorov.',
             }
         },
         modes: {
