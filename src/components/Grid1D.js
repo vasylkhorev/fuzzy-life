@@ -6,24 +6,24 @@ import { AiOutlineInfoCircle, AiOutlineSliders, AiOutlineBars } from "react-icon
 import HelpDialog from './HelpDialog';
 import { useTranslation } from '../i18n';
 
-const Grid1D = ({ 
-    grid, 
-    setGrid, 
-    isRunning, 
-    speed, 
+const Grid1D = ({
+    grid,
+    setGrid,
+    isRunning,
+    speed,
     nextGeneration,
-    onOffsetChange, 
-    onDimensionsChange, 
-    loadPattern, 
-    model, 
-    setModel, 
-    availableModes, 
-    setIsModeMenuOpen, 
-    setIsMenuOpen, 
-    renderCell, 
-    generation, 
-    debugConfig, 
-    cellPixelSize, 
+    onOffsetChange,
+    onDimensionsChange,
+    loadPattern,
+    model,
+    setModel,
+    availableModes,
+    setIsModeMenuOpen,
+    setIsMenuOpen,
+    renderCell,
+    generation,
+    debugConfig,
+    cellPixelSize,
     onCellPixelSizeChange,
     selectedPattern,
     setSelectedPattern
@@ -98,9 +98,9 @@ const Grid1D = ({
         const canvas = canvasRef.current;
         const ctx = canvas?.getContext("2d");
         if (ctx) {
-            console.log("Drawing grid:", { 
-                canvasWidth, 
-                canvasHeight, 
+            console.log("Drawing grid:", {
+                canvasWidth,
+                canvasHeight,
                 generationHistoryLength: generationHistory.length,
                 totalRows: generationHistory.length + 2,
                 totalHeight: (generationHistory.length + 2) * cellSize,
@@ -130,7 +130,7 @@ const Grid1D = ({
             const sidePanelWidth = 50; // Match the side panel width
             const gridWidth = GRID_SIZE * baseCellSize;
             const totalWidth = sidePanelWidth + gridWidth;
-            
+
             const centerGridX = (GRID_SIZE / 2) * baseCellSize + sidePanelWidth;
             const centerCanvasX = width / 2;
 
@@ -246,7 +246,7 @@ const Grid1D = ({
         // Draw side panel background for row numbers (outside clipping region)
         ctx.fillStyle = '#f9fafb';
         ctx.fillRect(0, 0, sidePanelWidth, canvasHeight);
-        
+
         // Draw border between side panel and grid
         ctx.strokeStyle = '#e5e7eb';
         ctx.lineWidth = 1;
@@ -266,7 +266,7 @@ const Grid1D = ({
                 // Fill black cell
                 ctx.fillStyle = "black";
                 ctx.fillRect(x, y, cellSize, cellSize);
-                
+
                 // Add white highlight/border to make it stand out from grid
                 ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 0.5;
@@ -283,13 +283,13 @@ const Grid1D = ({
         if (rowStart <= 0) {
             ctx.fillStyle = '#f3f4f6';
             ctx.fillRect(boardOriginX, boardOriginY, boardPixelWidth, cellSize);
-            
+
             // Draw label for configuration row
             ctx.fillStyle = '#374151';
             ctx.font = "bold 12px sans-serif";
             ctx.textAlign = "left";
             ctx.textBaseline = "middle";
-            ctx.fillText("STARTING CONFIGURATION", boardOriginX + 5, boardOriginY + cellSize/2);
+            ctx.fillText("STARTING CONFIGURATION", boardOriginX + 5, boardOriginY + cellSize / 2);
         }
 
         // Draw all grid lines first (like regular grid)
@@ -329,7 +329,7 @@ const Grid1D = ({
         generationHistory.forEach((genRow, genIndex) => {
             const currentRow = genIndex + 1; // +1 because: row 0 is config
             const rowY = currentRow * cellSize - offset.y;
-            
+
             // Only draw if this row is visible and within canvas bounds
             if (currentRow >= rowStart && currentRow <= rowStart + visibleRows && rowY >= -cellSize && rowY <= canvasHeight) {
                 // Draw generation number at the right edge of visible viewport
@@ -337,7 +337,7 @@ const Grid1D = ({
                 ctx.font = "10px monospace";
                 ctx.textAlign = "left";
                 ctx.textBaseline = "middle";
-                ctx.fillText(`Gen ${genIndex + 1}`, canvasWidth - 5, rowY + cellSize/2);
+                ctx.fillText(`Gen ${genIndex + 1}`, canvasWidth - 5, rowY + cellSize / 2);
 
                 // Draw cells for this generation
                 for (let col = colStart; col < colEnd; col++) {
@@ -356,7 +356,7 @@ const Grid1D = ({
             if (borderHeight > 0) {
                 ctx.strokeStyle = "rgba(71, 85, 105, 0.6)";
                 ctx.lineWidth = 2;
-                
+
                 // Draw left, top, and right borders only (no bottom)
                 ctx.beginPath();
                 // Left border (start of grid area, after side panel)
@@ -368,7 +368,7 @@ const Grid1D = ({
                 // Right border
                 ctx.moveTo(Math.min(sidePanelWidth + boardPixelWidth, canvasWidth), borderY);
                 ctx.lineTo(Math.min(sidePanelWidth + boardPixelWidth, canvasWidth), borderY + borderHeight);
-                
+
                 ctx.stroke();
                 ctx.lineWidth = 1;
             }
@@ -383,14 +383,14 @@ const Grid1D = ({
             ctx.font = "bold 12px monospace"; // Slightly larger and bold
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillText("0", sidePanelWidth / 2, boardOriginY + cellSize/2);
+            ctx.fillText("0", sidePanelWidth / 2, boardOriginY + cellSize / 2);
         }
 
         // Draw row numbers for generation history
         generationHistory.forEach((genRow, genIndex) => {
             const currentRow = genIndex + 1; // +1 because: row 0 is config
             const rowY = currentRow * cellSize - offset.y;
-            
+
             // Only draw if this row is visible and within canvas bounds
             if (currentRow >= rowStart && currentRow <= rowStart + visibleRows && rowY >= -cellSize && rowY <= canvasHeight) {
                 // Draw row number in side panel
@@ -398,7 +398,7 @@ const Grid1D = ({
                 ctx.font = "bold 12px monospace"; // Slightly larger and bold
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
-                ctx.fillText(currentRow.toString(), sidePanelWidth / 2, rowY + cellSize/2);
+                ctx.fillText(currentRow.toString(), sidePanelWidth / 2, rowY + cellSize / 2);
             }
         });
     };
@@ -424,7 +424,7 @@ const Grid1D = ({
                 const totalHeight = totalRows * cellSize;
                 const bottomPadding = canvasHeight / 2; // Add half page of padding at bottom
                 const contentHeight = totalHeight + bottomPadding;
-                
+
                 // Allow scrolling if content is taller than canvas
                 const maxScrollY = Math.max(0, contentHeight - canvasHeight);
 
@@ -432,18 +432,18 @@ const Grid1D = ({
                     x: prev.x - deltaX,
                     y: Math.max(0, Math.min(prev.y - deltaY, maxScrollY)),
                 };
-                
-                console.log("Scrolling:", { 
-                    deltaY, 
-                    prevY: prev.y, 
-                    newY: newOffset.y, 
-                    totalHeight, 
+
+                console.log("Scrolling:", {
+                    deltaY,
+                    prevY: prev.y,
+                    newY: newOffset.y,
+                    totalHeight,
                     contentHeight,
-                    canvasHeight, 
+                    canvasHeight,
                     maxScrollY,
                     dragging
                 });
-                
+
                 if (onOffsetChange) {
                     onOffsetChange(newOffset);
                 }
@@ -466,17 +466,17 @@ const Grid1D = ({
         if (!e.altKey) {
             // Vertical scrolling
             e.preventDefault();
-            
+
             const delta = e.deltaY;
             const scrollAmount = delta * 0.5; // Adjust scroll speed
-            
+
             setOffset((prev) => {
                 // Calculate total content height including padding
                 const totalRows = generationHistory.length + 2;
                 const totalHeight = totalRows * cellSize;
                 const bottomPadding = canvasHeight / 2; // Add half page of padding at bottom
                 const contentHeight = totalHeight + bottomPadding;
-                
+
                 // Allow scrolling if content is taller than canvas
                 const maxScrollY = Math.max(0, contentHeight - canvasHeight);
 
@@ -484,18 +484,18 @@ const Grid1D = ({
                     x: prev.x,
                     y: Math.max(0, Math.min(prev.y + scrollAmount, maxScrollY)),
                 };
-                
-                console.log("Wheel scrolling:", { 
-                    delta, 
-                    scrollAmount, 
-                    prevY: prev.y, 
-                    newY: newOffset.y, 
-                    totalHeight, 
+
+                console.log("Wheel scrolling:", {
+                    delta,
+                    scrollAmount,
+                    prevY: prev.y,
+                    newY: newOffset.y,
+                    totalHeight,
                     contentHeight,
-                    canvasHeight, 
-                    maxScrollY 
+                    canvasHeight,
+                    maxScrollY
                 });
-                
+
                 if (onOffsetChange) {
                     onOffsetChange(newOffset);
                 }
@@ -555,9 +555,9 @@ const Grid1D = ({
 
         const col = Math.floor((x + offset.x - sidePanelWidth) / cellSize);
         const row = Math.floor((y + offset.y) / cellSize); // Account for vertical offset
-        
+
         console.log("Click detected:", { x, y, col, row, isRunning });
-        
+
         // Only allow clicking on the configuration row (row 0) when not running
         if (row === 0 && !isRunning && col >= 0 && col < GRID_SIZE) {
             const currentVal = startingConfig[col] || 0;
@@ -603,7 +603,7 @@ const Grid1D = ({
             const pattern = JSON.parse(patternData);
             const rect = canvasRef.current.getBoundingClientRect();
             const sidePanelWidth = 50;
-            
+
             const rows = Math.max(...pattern.cells.map(cell => {
                 if (Array.isArray(cell)) return cell[0];
                 return cell.r !== undefined ? cell.r : cell.row;
@@ -646,7 +646,11 @@ const Grid1D = ({
             <div className="relative flex items-center justify-center border-b border-gray-700 bg-gray-800/95 px-5 py-3 text-lg font-semibold">
                 <div className="absolute left-4 flex items-center space-x-2">
                     <button
-                        onClick={() => setIsMenuOpen(true)}
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsMenuOpen(true);
+                        }}
                         className="px-3 py-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center space-x-2 text-sm font-medium"
                         title={t('grid.libraryButtonTitle')}
                         aria-label={t('grid.libraryButtonTitle')}
@@ -664,7 +668,11 @@ const Grid1D = ({
                         <span className="whitespace-nowrap">{t('grid.activeMode', { mode: activeModeLabel })}</span>
                     </div>
                     <button
-                        onClick={() => setIsModeMenuOpen(true)}
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsModeMenuOpen(true);
+                        }}
                         className="px-3 py-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center space-x-2 text-sm font-medium transition"
                         title={t('grid.modesButtonTitle')}
                         aria-label={t('grid.modesButtonTitle')}
@@ -683,7 +691,7 @@ const Grid1D = ({
                 </div>
             </div>
             <div className="main-panel">
-                <div 
+                <div
                     className="canvas-container"
                     onDragOver={handleDragOver}
                     onDrop={handleDrop}

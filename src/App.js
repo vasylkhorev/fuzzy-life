@@ -5,6 +5,7 @@ import Grid from './components/Grid';
 import Grid1D from './components/Grid1D';
 import Menu from './components/Menu';
 import ModeMenu from './components/ModeMenu';
+import PatternSearchModal from './components/PatternSearchModal';
 import { GRID_SIZE, DEFAULT_DEBUG_CONFIG, CELL_PIXEL_SIZE } from "./config";
 import { getPatternsForMode } from './generated-patterns';
 import { modes, availableModes } from './modes';
@@ -42,20 +43,140 @@ const App = () => {
     const [generation, setGeneration] = useState(0);
     const [model, setModel] = useState(() => {
         const params = new URLSearchParams(window.location.search);
-        const modeParam = params.get('mode');
+        const modeParam = params.get('m') || params.get('mode');
         return modes[modeParam] ? modeParam : 'classic';
+    });
+
+    const [modeParams, setModeParams] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        const modeParam = params.get('m') || params.get('mode') || 'classic';
+        const targetMode = modes[modeParam] || modes.classic;
+        const defaultParams = targetMode.getDefaultParams();
+
+        if (modeParam === '1d') {
+            const merged = { ...defaultParams };
+
+            // Explicitly define long keys for 1D mode
+            const longKeys = ['neighborhoodSize', 'birthRules', 'survivalRules', 'symmetric'];
+            const keyMap = {
+                n: 'neighborhoodSize',
+                b: 'birthRules',
+                s: 'survivalRules',
+                y: 'symmetric'
+            };
+
+            // Parse short and long keys
+            params.forEach((value, key) => {
+                if (key === 'm' || key === 'mode') return;
+
+                const longKey = keyMap[key] || key;
+                if (longKeys.includes(longKey) || longKey.startsWith('weight')) {
+                    const defaultValue = merged[longKey];
+                    if (typeof defaultValue === 'number') {
+                        merged[longKey] = parseFloat(value);
+                    } else if (typeof defaultValue === 'boolean') {
+                        merged[longKey] = value === 'true' || value === '1';
+                    } else if (longKey.startsWith('weight')) {
+                        // For weights not in defaults yet
+                        merged[longKey] = parseFloat(value);
+                    } else {
+                        merged[longKey] = value;
+                    }
+                }
+            });
+
+            // Parse combined weight string 'w=1,1,1,1...' (overrides individual weights)
+            const weightString = params.get('w');
+            if (weightString) {
+                const weights = weightString.split(',').map(parseFloat);
+                weights.forEach((w, i) => {
+                    const radius = Math.floor(i / 2) + 1;
+                    const isPlus = i % 2 === 1;
+                    const key = `weight${isPlus ? 'Plus' : 'Minus'}${radius}`;
+                    merged[key] = w;
+                });
+            }
+
+            return merged;
+        }
+
+        return defaultParams;
     });
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        const currentMode = params.get('mode');
-        if (currentMode !== model) {
-            params.set('mode', model);
-            window.history.replaceState(null, '', `?${params.toString()}`);
-        }
-    }, [model]);
+        const currentModeInUrl = params.get('m') || params.get('mode');
 
-    const [modeParams, setModeParams] = useState(() => modes.classic.getDefaultParams());
+        // Update mode if it changed (prefer short key 'm')
+        if (currentModeInUrl !== model) {
+            params.set('m', model);
+            params.delete('mode');
+        }
+
+        const nextMode = modes[model] || modes.classic;
+        const defaults = nextMode.getDefaultParams();
+
+        if (model === '1d') {
+            const keyMap = {
+                neighborhoodSize: 'n',
+                birthRules: 'b',
+                survivalRules: 's',
+                symmetric: 'y'
+            };
+
+            // 1. Sync basic params (n, b, s, y)
+            Object.entries(keyMap).forEach(([longKey, shortKey]) => {
+                const value = modeParams[longKey];
+                const defaultValue = defaults[longKey];
+
+                if (value !== undefined && value !== defaultValue) {
+                    params.set(shortKey, value.toString());
+                } else {
+                    params.delete(shortKey);
+                }
+                params.delete(longKey); // Always clean up legacy long key
+            });
+
+            // 2. Sync weights (w)
+            const neighborhoodSize = Number(modeParams.neighborhoodSize) || 2;
+            const weightValues = [];
+            for (let i = 1; i <= neighborhoodSize; i++) {
+                weightValues.push(modeParams[`weightMinus${i}`] ?? 1);
+                weightValues.push(modeParams[`weightPlus${i}`] ?? 1);
+            }
+
+            const isAllDefault = weightValues.every(v => v === 1);
+            if (!isAllDefault) {
+                params.set('w', weightValues.join(','));
+            } else {
+                params.delete('w');
+            }
+
+            // 3. Clean up individual weight keys if they exist in URL
+            const allKeys = Array.from(params.keys());
+            allKeys.forEach(key => {
+                if (key.startsWith('weightMin') || key.startsWith('weightPlu')) {
+                    params.delete(key);
+                }
+            });
+        } else {
+            // Non-1D mode: clean up ALL 1D-specific params
+            const keysToRemove = ['n', 'b', 's', 'y', 'w'];
+            keysToRemove.forEach(k => params.delete(k));
+
+            // Also clean up any keys starting with 'weight'
+            Array.from(params.keys()).forEach(key => {
+                if (key.startsWith('weight')) params.delete(key);
+            });
+        }
+
+        const newUrlParams = params.toString();
+        const currentUrlParams = new URLSearchParams(window.location.search).toString();
+
+        if (currentUrlParams !== newUrlParams) {
+            window.history.replaceState(null, '', `?${newUrlParams}`);
+        }
+    }, [model, modeParams]);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
     const [canvasOffset, setCanvasOffset] = useState({ x: 0, y: 0 });
@@ -66,6 +187,7 @@ const App = () => {
     const [controlDragCoords, setControlDragCoords] = useState({ x: 0, y: 0 });
     const [cellPixelSize, setCellPixelSize] = useState(CELL_PIXEL_SIZE);
     const [isTestingPeriodicity, setIsTestingPeriodicity] = useState(false);
+    const [isPatternSearchOpen, setIsPatternSearchOpen] = useState(false);
     const [detectedPeriod, setDetectedPeriod] = useState(null);
     const [selectedPattern, setSelectedPattern] = useState(null);
     const controlsRef = useRef(null);
@@ -79,8 +201,21 @@ const App = () => {
     const { t } = useTranslation();
 
     useEffect(() => {
+        // Only update modeParams if the mode has actually changed to something different
+        // than what is currently reflected in the URL.
         const nextMode = modes[model] || modes.classic;
-        setModeParams(nextMode.getDefaultParams());
+        const currentDefaults = nextMode.getDefaultParams();
+
+        const params = new URLSearchParams(window.location.search);
+        const currentModeInUrl = params.get('m') || params.get('mode');
+
+        // Safety: If there's no mode in URL, and we are classic, we are likely at initial state.
+        // If they differ, we reset to defaults for the NEW mode.
+        const effectiveUrlMode = currentModeInUrl || 'classic';
+
+        if (effectiveUrlMode !== model) {
+            setModeParams(currentDefaults);
+        }
     }, [model]);
     useEffect(() => {
         gridRef.current = grid;
@@ -248,8 +383,9 @@ const App = () => {
         };
     }, []);
 
-    const loadPattern = (pattern, rowOffset, colOffset) => {
-        console.log('Loading pattern at:', { rowOffset, colOffset }, pattern);
+    const loadPattern = (pattern, rowOffset, colOffset, options = {}) => {
+        const { clearBefore = false } = options;
+        console.log('Loading pattern at:', { rowOffset, colOffset, clearBefore }, pattern);
         if (!pattern || !pattern.cells) {
             console.error('Invalid pattern data:', pattern);
             return;
@@ -259,7 +395,12 @@ const App = () => {
         const parsedCells = currentMode.parseCells(pattern.cells);
 
         applyGridChange((prevGrid) => {
-            const newGrid = prevGrid.map(row => [...row]);
+            let newGrid;
+            if (clearBefore) {
+                newGrid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
+            } else {
+                newGrid = prevGrid.map(row => [...row]);
+            }
 
             parsedCells.forEach(([row, col, value]) => {
                 const finalRow = row + rowOffset;
@@ -517,6 +658,15 @@ const App = () => {
                 model={model}
                 setModel={setModel}
                 modeParams={modeParams}
+                setModeParams={setModeParams}
+                onOpenPatternSearch={() => setIsPatternSearchOpen(true)}
+            />
+            <PatternSearchModal
+                isOpen={isPatternSearchOpen}
+                onClose={() => setIsPatternSearchOpen(false)}
+                mode={model}
+                modeParams={modeParams}
+                onLoadPattern={loadPattern}
                 setModeParams={setModeParams}
             />
         </div>

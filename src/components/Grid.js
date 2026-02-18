@@ -518,7 +518,11 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
             <div className="relative flex items-center justify-center border-b border-gray-700 bg-gray-800/95 px-5 py-3 text-lg font-semibold">
                 <div className="absolute left-4 flex items-center space-x-2">
                     <button
-                        onClick={() => setIsMenuOpen(true)}
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsMenuOpen(true);
+                        }}
                         className="px-3 py-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center space-x-2 text-sm font-medium"
                         title={t('grid.libraryButtonTitle')}
                         aria-label={t('grid.libraryButtonTitle')}
@@ -536,7 +540,11 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
                         <span className="whitespace-nowrap">{t('grid.activeMode', { mode: activeModeLabel })}</span>
                     </div>
                     <button
-                        onClick={() => setIsModeMenuOpen(true)}
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsModeMenuOpen(true);
+                        }}
                         className="px-3 py-2 bg-gray-700 hover:bg-gray-500 rounded flex items-center space-x-2 text-sm font-medium transition"
                         title={t('grid.modesButtonTitle')}
                         aria-label={t('grid.modesButtonTitle')}

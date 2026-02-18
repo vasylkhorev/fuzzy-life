@@ -17,7 +17,7 @@ const translations = {
                 help: 'Number of Y-neighbors required for birth (comma-separated, e.g., "2,3").',
             },
             survivalRules: {
-                label: 'Survival Rules', 
+                label: 'Survival Rules',
                 help: 'Number of Y-neighbors required for survival (comma-separated, e.g., "2,4").',
             },
             neighborhoodSize: {
@@ -51,7 +51,7 @@ const translations = {
                 help: 'Počet Y-susedov potrebných pre zrod (oddelené čiarkou, napr. "2,3").',
             },
             survivalRules: {
-                label: 'Pravidlá prežitia', 
+                label: 'Pravidlá prežitia',
                 help: 'Počet Y-susedov potrebných pre prežitie (oddelené čiarkou, napr. "2,4").',
             },
             neighborhoodSize: {
@@ -169,14 +169,12 @@ class Mode1D extends LifeMode {
             id: '1d',
             label: '1D',
             description: 'One-dimensional cellular automaton with configurable neighborhood size.',
-            defaultParams: { 
+            defaultParams: {
                 rule: 624,
                 birthRules: "2,3",
                 survivalRules: "2,4",
                 neighborhoodSize: 2,
-                useWeights: false,
-                symmetric: true,
-                weightThreshold: 2.0
+                symmetric: true
             },
             parameterHelp: {
                 rule: 'Outer totalistic rule code (0-1023). Format: BBBBBBBBBB_SSSSSSSSSS where B=birth bits, S=survival bits. Default 624 (birth: 0001001100, survival: 0010011100).',
@@ -190,76 +188,101 @@ class Mode1D extends LifeMode {
             rulesHtml,
             translations,
         });
+        this.cache = {};
+    }
+
+    _getEffectiveParams(params) {
+        const key = `${params.birthRules}|${params.survivalRules}|${params.neighborhoodSize}|${params.symmetric}|${params.w || ''}`;
+        if (this.cache[key]) return this.cache[key];
+
+        const neighborhoodSize = params.neighborhoodSize || 2;
+
+        const parseRules = (str) => {
+            if (!str) return [];
+            return str.split(',').map(part => {
+                if (part.includes('-')) {
+                    const [min, max] = part.split('-').map(s => parseFloat(s.trim()));
+                    if (!isNaN(min) && !isNaN(max)) return { min, max };
+                }
+                const val = parseFloat(part.trim());
+                if (!isNaN(val)) return { min: val, max: val };
+                return null;
+            }).filter(Boolean);
+        };
+
+        const birthRanges = parseRules(params.birthRules || "2,3");
+        const survivalRanges = parseRules(params.survivalRules || "2,4");
+
+        const weights = [];
+        let allWeightsOne = true;
+        for (let offset = -neighborhoodSize; offset <= neighborhoodSize; offset++) {
+            if (offset === 0) continue;
+            const weightKey = `weight${offset > 0 ? 'Plus' : 'Minus'}${Math.abs(offset)}`;
+            const w = params[weightKey] !== undefined ? params[weightKey] : 1.0;
+            weights.push({ offset, w });
+            if (Math.abs(w - 1.0) > 0.0001) allWeightsOne = false;
+        }
+
+        const effective = {
+            birthRanges,
+            survivalRanges,
+            weights,
+            allWeightsOne,
+            neighborhoodSize,
+            // Check if all rules are integers for further optimization
+            allRulesIntegers: [...birthRanges, ...survivalRanges].every(r => Number.isInteger(r.min) && Number.isInteger(r.max))
+        };
+
+        this.cache[key] = effective;
+        return effective;
+    }
+
+    _checkRules(val, ranges) {
+        for (let i = 0; i < ranges.length; i++) {
+            const r = ranges[i];
+            // Use small epsilon for precision if needed, but here exact range is better
+            if (val >= r.min && val <= r.max) return true;
+        }
+        return false;
     }
 
     computeNextState(grid, row, col, params = this.defaultParams) {
-        const useWeights = params.useWeights || false;
-        const neighborhoodSize = params.neighborhoodSize || 2;
-        const birthRules = params.birthRules || "2,3";
-        const survivalRules = params.survivalRules || "2,4";
-        
-        // Parse birth and survival rules
-        const birthConditions = birthRules.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
-        const survivalConditions = survivalRules.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
-        
-        // For 1D automaton, only compute the top row (row 0)
-        if (row === 0) {
-            const isAlive = grid[0][col] >= 0.5;
-            
-            if (useWeights) {
-                // Weighted calculation with dynamic neighborhood
-                const threshold = params.weightThreshold || 2.0;
-                
-                let weightedSum = 0;
-                
-                // Generate neighbor positions based on neighborhood size
-                for (let offset = -neighborhoodSize; offset <= neighborhoodSize; offset++) {
-                    if (offset === 0) continue; // Skip center cell
-                    
-                    const nc = col + offset;
-                    if (nc >= 0 && nc < GRID_SIZE && grid[0][nc] >= 0.5) {
-                        // Get weight for this position (default to 1.0 if not specified)
-                        const weightKey = `weight${offset > 0 ? 'Plus' : 'Minus'}${Math.abs(offset)}`;
-                        const weight = params[weightKey] || 1.0;
-                        weightedSum += weight;
-                    }
+        if (row !== 0) return 0;
+
+        const ep = this._getEffectiveParams(params);
+        const gridRow = grid[0];
+        const rowLen = gridRow.length;
+        const isAlive = gridRow[col] >= 0.5;
+
+        // Neighbor count/sum
+        let weightedSum = 0;
+        if (ep.allWeightsOne) {
+            // Fast neighbor counting
+            const r = ep.neighborhoodSize;
+            for (let i = -r; i <= r; i++) {
+                if (i === 0) continue;
+                const nc = col + i;
+                if (nc >= 0 && nc < rowLen && gridRow[nc] >= 0.5) {
+                    weightedSum++;
                 }
-                
-                // Apply threshold-based rule
-                if (!isAlive && weightedSum >= threshold) {
-                    return 1; // Birth
-                }
-                if (isAlive && weightedSum >= threshold) {
-                    return 1; // Survival
-                }
-            } else {
-                // Traditional counting method with dynamic neighborhood
-                let neighborCount = 0;
-                
-                // Count neighbors based on neighborhood size
-                for (let offset = -neighborhoodSize; offset <= neighborhoodSize; offset++) {
-                    if (offset === 0) continue; // Skip center cell
-                    
-                    const nc = col + offset;
-                    if (nc >= 0 && nc < GRID_SIZE && grid[0][nc] >= 0.5) {
-                        neighborCount++;
-                    }
-                }
-                
-                // Check birth condition (dead cell becomes alive)
-                if (!isAlive && birthConditions.includes(neighborCount)) {
-                    return 1;
-                }
-                
-                // Check survival condition (live cell stays alive)
-                if (isAlive && survivalConditions.includes(neighborCount)) {
-                    return 1;
+            }
+        } else {
+            // Full weighted sum
+            for (let i = 0; i < ep.weights.length; i++) {
+                const weight = ep.weights[i];
+                const nc = col + weight.offset;
+                if (nc >= 0 && nc < rowLen && gridRow[nc] >= 0.5) {
+                    weightedSum += weight.w;
                 }
             }
         }
-        
-        // For 1D mode, all other rows should remain 0
-        return 0;
+
+        // Apply rules
+        if (!isAlive) {
+            return this._checkRules(weightedSum, ep.birthRanges) ? 1 : 0;
+        } else {
+            return this._checkRules(weightedSum, ep.survivalRanges) ? 1 : 0;
+        }
     }
 
     // Helper method to decode rule into human-readable format
@@ -267,10 +290,10 @@ class Mode1D extends LifeMode {
         rule = Math.max(0, Math.min(1023, Math.floor(rule)));
         const birthBits = (rule >> 10) & 0x3FF;
         const survivalBits = rule & 0x3FF;
-        
+
         const birthConditions = [];
         const survivalConditions = [];
-        
+
         for (let i = 0; i <= 4; i++) {
             if (birthBits & (1 << i)) {
                 birthConditions.push(i);
@@ -279,7 +302,7 @@ class Mode1D extends LifeMode {
                 survivalConditions.push(i);
             }
         }
-        
+
         return {
             rule,
             birth: birthConditions,
@@ -290,14 +313,14 @@ class Mode1D extends LifeMode {
 
     renderCell(ctx, x, y, val, cellSize, generation = 0) {
         const currentRow = Math.floor(y / cellSize);
-        
+
         // Only render cells on the top row (current generation)
         if (val >= 0.5 && currentRow === 0) {
             // Current generation - render as filled rectangles
             ctx.fillStyle = "black";
             ctx.fillRect(x + 2, y + 2, cellSize - 4, cellSize - 4);
         }
-        
+
         // Draw grid lines for the 1D area
         ctx.strokeStyle = "#e0e0e0";
         ctx.lineWidth = 0.5;

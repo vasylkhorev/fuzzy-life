@@ -6,7 +6,7 @@ import WeightEditorModal from './WeightEditorModal';
 import { availableModes } from '../modes';
 import { useTranslation } from '../i18n';
 
-const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParams }) => {
+const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParams, onOpenPatternSearch }) => {
     const [showRules, setShowRules] = useState(false);
     const [selectedModelForRules, setSelectedModelForRules] = useState(model);
     const [showWeightEditor, setShowWeightEditor] = useState(false);
@@ -21,7 +21,7 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
 
     const currentMode = availableModes.find(m => m.value === model);
     const paramKeys = Object.keys(modeParams || {});
-    
+
     // Filter parameters for 1D mode - show only configure weights
     const getVisibleParams = () => {
         if (model === '1d') {
@@ -30,7 +30,7 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
         }
         return paramKeys;
     };
-    
+
     const visibleParamKeys = getVisibleParams();
 
     const formatParamLabel = (rawKey = '') => rawKey
@@ -68,13 +68,6 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
         setModeParams(prev => ({
             ...prev,
             ...newWeights
-        }));
-    };
-
-    const handleThresholdChange = (newThreshold) => {
-        setModeParams(prev => ({
-            ...prev,
-            weightThreshold: newThreshold
         }));
     };
 
@@ -144,11 +137,10 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                     key={value}
                                     type="button"
                                     onClick={() => setModel(value)}
-                                    className={`inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-semibold transition ${
-                                        isActive
-                                            ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
-                                            : 'border-gray-700 bg-gray-800 text-gray-200 hover:border-blue-500 hover:text-white'
-                                    }`}
+                                    className={`inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-semibold transition ${isActive
+                                        ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                                        : 'border-gray-700 bg-gray-800 text-gray-200 hover:border-blue-500 hover:text-white'
+                                        }`}
                                 >
                                     <span>{optionLabel}</span>
                                     {isActive && <AiOutlineCheckCircle size={13} className="text-white" />}
@@ -242,11 +234,10 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                                         <button
                                                             type="button"
                                                             onClick={() => handleParamChange(key, !currentValue)}
-                                                            className={`mt-auto w-full rounded border px-3 py-2 text-sm font-medium outline-none transition focus:ring-1 focus:ring-blue-400/40 ${
-                                                                currentValue
-                                                                    ? 'border-blue-500 bg-blue-600 text-white hover:bg-blue-700'
-                                                                    : 'border-gray-600 bg-gray-900 text-gray-300 hover:bg-gray-800'
-                                                            }`}
+                                                            className={`mt-auto w-full rounded border px-3 py-2 text-sm font-medium outline-none transition focus:ring-1 focus:ring-blue-400/40 ${currentValue
+                                                                ? 'border-blue-500 bg-blue-600 text-white hover:bg-blue-700'
+                                                                : 'border-gray-600 bg-gray-900 text-gray-300 hover:bg-gray-800'
+                                                                }`}
                                                         >
                                                             {currentValue
                                                                 ? translateOrFallback('modeMenu.boolean.on', 'On')
@@ -261,7 +252,7 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                                             className="mt-auto w-full rounded border border-gray-600 bg-gray-900 px-2 py-2 text-sm text-white outline-none transition focus:border-blue-400 focus:ring-1 focus:ring-blue-400/40"
                                                         />
                                                     )}
-                                                    
+
                                                     {/* Add weight editor link for useWeights parameter */}
                                                     {key === 'useWeights' && currentValue && (
                                                         <button
@@ -285,8 +276,16 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                         >
                                             {translateOrFallback('modeMenu.configureWeights', 'Configure Weights')} →
                                         </button>
+                                        <button
+                                            type="button"
+                                            onClick={onOpenPatternSearch}
+                                            className="w-full rounded border border-blue-600 bg-blue-600/20 px-4 py-3 text-sm font-medium text-blue-300 outline-none transition hover:bg-blue-600/30 focus:ring-1 focus:ring-blue-400/40"
+                                        >
+                                            <AiOutlineFileText className="inline mr-2" size={16} />
+                                            {translateOrFallback('modeMenu.patternSearch', 'Pattern Search')}
+                                        </button>
                                         <p className="text-xs text-gray-400">
-                                            {translateOrFallback('modeMenu.1dWeightsHelp', 'Configure neighborhood weights, size, threshold, and rules for the 1D cellular automaton.')}
+                                            {translateOrFallback('modeMenu.1dSearchHelp', 'Automatically search for oscillators and gliders in 1D cellular automata.')}
                                         </p>
                                     </div>
                                 ) : (
@@ -298,41 +297,40 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                     </p>
                                 )}
                             </div>
-                    </div>
-                ) : (
-                    <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-800/60 p-6 text-sm text-gray-400">
-                        {translateOrFallback(
-                            'modeMenu.emptyState',
-                            'Select a mode from the list to view its details.'
-                        )}
-                    </div>
-                )}
-            </section>
-</aside>
+                        </div>
+                    ) : (
+                        <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-800/60 p-6 text-sm text-gray-400">
+                            {translateOrFallback(
+                                'modeMenu.emptyState',
+                                'Select a mode from the list to view its details.'
+                            )}
+                        </div>
+                    )}
+                </section>
+            </aside>
 
-        <RulesDialog
-            isOpen={showRules}
-            onClose={closeRules}
-            model={selectedModelForRules}
-            modeInfo={availableModes.find(m => m.value === selectedModelForRules)}
-        />
-        <WeightEditorModal
-            isOpen={showWeightEditor}
-            onClose={closeWeightEditor}
-            weights={modeParams}
-            threshold={modeParams.weightThreshold}
-            neighborhoodSize={modeParams.neighborhoodSize}
-            symmetric={modeParams.symmetric}
-            birthRules={modeParams.birthRules}
-            survivalRules={modeParams.survivalRules}
-            onWeightsChange={handleWeightsChange}
-            onThresholdChange={handleThresholdChange}
-            onNeighborhoodSizeChange={handleNeighborhoodSizeChange}
-            onSymmetricChange={handleSymmetricChange}
-            onBirthRulesChange={handleBirthRulesChange}
-            onSurvivalRulesChange={handleSurvivalRulesChange}
-        />
-    </React.Fragment>
+            <RulesDialog
+                isOpen={showRules}
+                onClose={closeRules}
+                model={selectedModelForRules}
+                modeInfo={availableModes.find(m => m.value === selectedModelForRules)}
+            />
+            <WeightEditorModal
+                isOpen={showWeightEditor}
+                onClose={closeWeightEditor}
+                neighborhoodSize={modeParams.neighborhoodSize}
+                weights={modeParams} // Pass modeParams which contains weightMinus1, etc.
+                symmetric={modeParams.symmetric}
+                birthRules={modeParams.birthRules}
+                survivalRules={modeParams.survivalRules}
+                params={modeParams}
+                onWeightsChange={handleWeightsChange}
+                onNeighborhoodSizeChange={handleNeighborhoodSizeChange}
+                onSymmetricChange={handleSymmetricChange}
+                onBirthRulesChange={handleBirthRulesChange}
+                onSurvivalRulesChange={handleSurvivalRulesChange}
+            />
+        </React.Fragment>
     );
 };
 

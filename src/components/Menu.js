@@ -80,7 +80,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
 
         document.addEventListener('mousedown', handleClickOutside);
         document.addEventListener('dragend', handleGlobalDragEnd);
-        
+
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
             document.removeEventListener('dragend', handleGlobalDragEnd);
@@ -152,7 +152,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
     const handleSaveConfiguration = () => {
         const currentMode = modes[safeMode] || modes.classic;
         const cells = currentMode.serializeCells(grid, true); // Configurations: include zeros
-        
+
         const now = new Date();
         const day = String(now.getDate()).padStart(2, '0');
         const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -176,7 +176,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
     const handleLoadCustomPattern = (name) => {
         const pattern = customPatterns[name];
         if (pattern) {
-            loadPattern(pattern, 0, 0);
+            loadPattern(pattern, 0, 0, { clearBefore: true });
         }
     };
 
@@ -357,17 +357,17 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
     return (
         <>
             {isOpen && (
-                <div className="fixed inset-y-0 left-0 z-40 w-80 bg-slate-900 text-white transform translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto shadow-xl border-r border-slate-800" ref={menuRef}>
-                    <div className="flex items-center justify-between border-b border-slate-800 px-4 py-4">
+                <div className="fixed inset-y-0 left-0 z-40 w-80 bg-gray-900 text-white transform translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto shadow-xl border-r border-gray-800" ref={menuRef}>
+                    <div className="flex items-center justify-between border-b border-gray-800 px-4 py-4">
                         <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">
+                            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-gray-400">
                                 {t('menu.headingEyebrow')}
                             </p>
                             <h2 className="text-lg font-semibold text-white">{t('menu.headingTitle')}</h2>
                         </div>
                         <button
                             onClick={() => setIsOpen(false)}
-                            className="rounded-md border border-slate-700 p-1 text-slate-300 transition hover:border-slate-500 hover:text-white"
+                            className="rounded-md border border-gray-700 p-1 text-gray-300 transition hover:border-gray-500 hover:text-white"
                             title={t('menu.tooltips.close')}
                             aria-label={t('menu.tooltips.close')}
                         >
@@ -398,7 +398,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                     <div className="flex gap-2">
                                         <button
                                             onClick={handleDownloadCurrentPattern}
-                                            className="p-2 bg-slate-700 hover:bg-slate-600 rounded flex items-center justify-center"
+                                            className="p-2 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center"
                                             title={t('menu.tooltips.downloadCurrentPattern', 'Download current pattern as JSON')}
                                             aria-label={t('menu.tooltips.downloadCurrentPattern', 'Download current pattern as JSON')}
                                         >
@@ -422,14 +422,12 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                                 onDragStart={(e) => handleDragStart(e, name, false, false)}
                                                 onDragEnd={handleDragEnd}
                                                 onClick={() => {
-    const pattern = { ...builtInPatterns[name], name };
-    // Simple approach: place at center of visible area
-    // For 1D mode, this should work regardless of scroll position
-    const centerCol = Math.floor(GRID_SIZE / 2);
-    const patternWidth = getPatternWidth(pattern);
-    const colOffset = centerCol - Math.floor(patternWidth / 2);
-    loadPattern(pattern, 0, colOffset);
-}}
+                                                    const pattern = { ...builtInPatterns[name], name };
+                                                    const centerCol = Math.floor(GRID_SIZE / 2);
+                                                    const patternWidth = getPatternWidth(pattern);
+                                                    const colOffset = centerCol - Math.floor(patternWidth / 2);
+                                                    loadPattern(pattern, 0, colOffset, { clearBefore: true });
+                                                }}
                                                 className="flex-1 text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move whitespace-normal break-words"
                                                 title={t('menu.tooltips.clickPattern', 'Click to place pattern in center')}
                                                 aria-label={t('menu.tooltips.clickPattern', 'Click to place pattern in center')}
@@ -445,11 +443,11 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                             <div className="w-full border-b border-gray-300"></div>
                                         </div>
                                         <div className="relative flex justify-center">
-                                            <span className="bg-slate-900 px-4 text-sm">{t('menu.customSectionLabel')}</span>
+                                            <span className="bg-gray-900 px-4 text-sm">{t('menu.customSectionLabel')}</span>
                                         </div>
                                     </div>
                                     <ul>
-                                        {Object.entries(customPatterns).map(([name, {description}]) => (
+                                        {Object.entries(customPatterns).map(([name, { description }]) => (
                                             <li key={name} className="mb-2 flex items-center space-x-2">
                                                 <button
                                                     draggable
@@ -469,7 +467,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                                         title={t('menu.tooltips.remove')}
                                                         aria-label={t('menu.tooltips.remove')}
                                                     >
-                                                        <AiOutlineDelete size={16}/>
+                                                        <AiOutlineDelete size={16} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleRename(name, false)}
@@ -477,7 +475,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                                         title={t('menu.tooltips.rename')}
                                                         aria-label={t('menu.tooltips.rename')}
                                                     >
-                                                        <AiOutlineEdit size={16}/>
+                                                        <AiOutlineEdit size={16} />
                                                     </button>
                                                 </div>
                                             </li>
