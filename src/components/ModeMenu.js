@@ -1,6 +1,6 @@
 // src/components/ModeMenu.js
 import React, { useState } from 'react';
-import { AiOutlineClose, AiOutlineFileText, AiOutlineCheckCircle, AiOutlineEdit } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineFileText, AiOutlineCheckCircle, AiOutlineEdit, AiOutlineReload } from "react-icons/ai";
 import RulesDialog from './RulesDialog';
 import WeightEditorModal from './WeightEditorModal';
 import { availableModes } from '../modes';
@@ -195,11 +195,26 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                     <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
                                         {translateOrFallback('modeMenu.parameters', 'Parameters').toUpperCase()}
                                     </h4>
-                                    {visibleParamKeys.length > 0 && (
-                                        <span className="text-xs text-gray-500">
-                                            {translateOrFallback('modeMenu.instantUpdate', 'Values update instantly')}
-                                        </span>
-                                    )}
+                                    <div className="flex items-center gap-3">
+                                        {visibleParamKeys.length > 0 && (
+                                            <span className="text-xs text-gray-500 hidden sm:inline-block">
+                                                {translateOrFallback('modeMenu.instantUpdate', 'Values update instantly')}
+                                            </span>
+                                        )}
+                                        {visibleParamKeys.length > 0 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const defaults = currentMode.getDefaultParams();
+                                                    setModeParams(defaults);
+                                                }}
+                                                className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded transition"
+                                                title={translateOrFallback('modeMenu.resetDefaults', 'Reset to Defaults')}
+                                            >
+                                                <AiOutlineReload size={16} />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {visibleParamKeys.length > 0 ? (
@@ -243,6 +258,13 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                                                 ? translateOrFallback('modeMenu.boolean.on', 'On')
                                                                 : translateOrFallback('modeMenu.boolean.off', 'Off')}
                                                         </button>
+                                                    ) : typeof currentValue === 'string' ? (
+                                                        <input
+                                                            type="text"
+                                                            value={currentValue}
+                                                            onChange={(e) => handleParamChange(key, e.target.value)}
+                                                            className="mt-auto w-full rounded border border-gray-600 bg-gray-900 px-2 py-2 text-sm text-white outline-none transition focus:border-blue-400 focus:ring-1 focus:ring-blue-400/40"
+                                                        />
                                                     ) : (
                                                         <input
                                                             type="number"

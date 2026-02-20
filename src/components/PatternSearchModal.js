@@ -22,11 +22,14 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
     // ─── 1D helpers ──────────────────────────────────────────────
 
     const getTrimmedString1D = (row) => {
-        const first = row.indexOf(1);
+        const first = row.findIndex(v => v > 0);
         if (first === -1) return { s: '', offset: 0 };
-        const last = row.lastIndexOf(1);
+        let last = -1;
+        for (let i = row.length - 1; i >= 0; i--) {
+            if (row[i] > 0) { last = i; break; }
+        }
         return {
-            s: row.slice(first, last + 1).join(''),
+            s: row.slice(first, last + 1).map(v => v.toFixed(3)).join(','),
             offset: first
         };
     };
@@ -49,7 +52,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                 const prev = history.get(s);
                 const period = gen - prev.gen;
                 const shift = offset - prev.offset;
-                const canonicalRow = s.split('').map(Number);
+                const canonicalRow = s.split(',').map(Number);
 
                 return {
                     type: shift === 0 ? 'oscillator' : 'glider',
@@ -79,7 +82,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         let minR = GRID_SIZE, maxR = -1, minC = GRID_SIZE, maxC = -1;
         for (let r = 0; r < GRID_SIZE; r++) {
             for (let c = 0; c < GRID_SIZE; c++) {
-                if (grid[r][c] >= 0.5) {
+                if (grid[r][c] > 0) {
                     if (r < minR) minR = r;
                     if (r > maxR) maxR = r;
                     if (c < minC) minC = c;
@@ -97,9 +100,9 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         for (let r = bbox.minR; r <= bbox.maxR; r++) {
             const row = [];
             for (let c = bbox.minC; c <= bbox.maxC; c++) {
-                row.push(grid[r][c] >= 0.5 ? 1 : 0);
+                row.push(grid[r][c].toFixed(3)); // use fixed precision to avoid floating point mismatch
             }
-            rows.push(row.join(''));
+            rows.push(row.join(','));
         }
         return rows.join('|');
     };
@@ -129,7 +132,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
             for (let r = initialBBox.minR; r <= initialBBox.maxR; r++) {
                 const row = [];
                 for (let c = initialBBox.minC; c <= initialBBox.maxC; c++) {
-                    row.push(grid[r][c] >= 0.5 ? 1 : 0);
+                    row.push(grid[r][c]);
                 }
                 initialPattern.push(row);
             }
@@ -159,7 +162,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                 for (let r = bbox.minR; r <= bbox.maxR; r++) {
                     const row = [];
                     for (let c = bbox.minC; c <= bbox.maxC; c++) {
-                        row.push(grid[r][c] >= 0.5 ? 1 : 0);
+                        row.push(grid[r][c]);
                     }
                     canonicalPattern.push(row);
                 }

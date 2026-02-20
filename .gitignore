@@ -26,3 +26,6 @@ yarn-error.log*
 .netlify
 !/src/generated-patterns.js
 .idea/copilot.data.migration.agent.xml
+visualize_results.py
+.gitignore
+gpu_explorer.py

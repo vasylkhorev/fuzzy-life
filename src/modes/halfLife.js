@@ -11,21 +11,24 @@ const STATE_STRONG = 2;    // 1.0 → 2
 // Integer intervals for Conway rules (after renormalization)
 // Original: birth on 3, survival on 2-3
 // With integer mapping: neighbor sum ranges
-const BIRTH_MIN = 5;       // 2.5 * 2 = 5
-const BIRTH_MAX = 6;       // 3.0 * 2 = 6
-const SURVIVAL_MIN = 4;    // 1.5 * 2 = 3 (for 2 neighbors)
-const SURVIVAL_MAX = 6;    // 3.0 * 2 = 6
+// Default birth: 5-6, survival: 3-6
 
 const translations = {
     en: {
         label: 'Half-Life',
         description: 'Three-state mode: cells transition between 0, 0.5, and 1 following Conway rules (integer renormalized).',
-        params: {},
+        params: {
+            birthRules: 'Birth Rules',
+            survivalRules: 'Survival Rules',
+        },
     },
     sk: {
         label: 'HalfLife',
         description: 'Trojstavový režim: bunky sa prepínajú medzi 0, 0.5 a 1 podľa Conwayho pravidiel (celočíselná renormalizácia).',
-        params: {},
+        params: {
+            birthRules: 'Pravidlá Zrodu',
+            survivalRules: 'Pravidlá Prežitia',
+        },
     },
 };
 
@@ -158,13 +161,66 @@ class HalfLifeMode extends LifeMode {
             id: 'halfLife',
             label: 'Half-Life',
             description: 'Three-state mode: cells transition between 0, 0.5, and 1 following Conway rules (integer renormalized).',
-            defaultParams: {},
+            defaultParams: {
+                birthRules: '2.5,3',
+                survivalRules: '1.5-3',
+            },
             rulesHtml,
             translations,
         });
+
+        this.birthSet = new Set();
+        this.survivalSet = new Set();
+        this.lastParams = null;
     }
 
-    computeNextState(grid, row, col) {
+    parseRules(ruleString) {
+        const rules = new Set();
+        if (!ruleString) return rules;
+        // Replace commas with spaces temporarily to split by any whitespace or comma
+        const parts = ruleString.replace(/,/g, ' ').split(/\s+/).filter(Boolean);
+
+        for (const part of parts) {
+            const trimmed = part.trim();
+            if (trimmed.includes('-')) {
+                // Handle ranges like "1.5-3"
+                const [minStr, maxStr] = trimmed.split('-');
+                const min = parseFloat(minStr);
+                const max = parseFloat(maxStr);
+
+                if (!isNaN(min) && !isNaN(max)) {
+                    // Loop in 0.5 increments, but store as multiplied by 2 (integers 0-16)
+                    for (let i = min; i <= max; i += 0.5) {
+                        rules.add(Math.round(i * 2));
+                    }
+                }
+            } else {
+                // Handle single numbers like "2.5"
+                const val = parseFloat(trimmed);
+                if (!isNaN(val)) {
+                    rules.add(Math.round(val * 2));
+                }
+            }
+        }
+        return rules;
+    }
+
+    updateRulesIfChanged(params) {
+        if (!params) return;
+
+        // We need to compare against the specifically passed params, not this.params
+        if (this.lastParams !== params) {
+            this.birthSet = this.parseRules(params.birthRules);
+            this.survivalSet = this.parseRules(params.survivalRules);
+            this.lastParams = params;
+        }
+    }
+
+    computeNextState(grid, row, col, params, generation) {
+        // Use default params if none provided
+        const safeParams = params || this.getDefaultParams();
+        this.updateRulesIfChanged(safeParams);
+
         let neighborSumInt = 0;  // Integer sum (0 to 16)
         const dirs = [
             [-1, -1], [-1, 0], [-1, 1],
@@ -182,12 +238,10 @@ class HalfLifeMode extends LifeMode {
             }
         }
 
-        // Integer-based Conway rules (no rounding needed)
-        // Birth: neighbor sum ∈ {5, 6} (equivalent to 2.5-3.0 in original)
-        // Survival: neighbor sum ∈ {3, 4, 5, 6} (equivalent to 1.5-3.0 in original)
-        const birth = neighborSumInt >= BIRTH_MIN && neighborSumInt <= BIRTH_MAX;
+        // Integer-based configurable rules
+        const birth = this.birthSet.has(neighborSumInt);
         const isAlive = valueToIntegerState(grid[row][col]) >= STATE_WEAK;
-        const survival = isAlive && neighborSumInt >= SURVIVAL_MIN && neighborSumInt <= SURVIVAL_MAX;
+        const survival = isAlive && this.survivalSet.has(neighborSumInt);
 
         const targetAlive = birth || survival;
         const targetValue = targetAlive ? 1.0 : 0.0;

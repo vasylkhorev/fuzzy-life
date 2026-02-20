@@ -116,7 +116,7 @@ const App = () => {
         const nextMode = modes[model] || modes.classic;
         const defaults = nextMode.getDefaultParams();
 
-        if (model === '1d') {
+        if (model === '1d' || model === 'halfLife') {
             const keyMap = {
                 neighborhoodSize: 'n',
                 birthRules: 'b',
@@ -137,30 +137,38 @@ const App = () => {
                 params.delete(longKey); // Always clean up legacy long key
             });
 
-            // 2. Sync weights (w)
-            const neighborhoodSize = Number(modeParams.neighborhoodSize) || 2;
-            const weightValues = [];
-            for (let i = 1; i <= neighborhoodSize; i++) {
-                weightValues.push(modeParams[`weightMinus${i}`] ?? 1);
-                weightValues.push(modeParams[`weightPlus${i}`] ?? 1);
-            }
-
-            const isAllDefault = weightValues.every(v => v === 1);
-            if (!isAllDefault) {
-                params.set('w', weightValues.join(','));
-            } else {
-                params.delete('w');
-            }
-
-            // 3. Clean up individual weight keys if they exist in URL
-            const allKeys = Array.from(params.keys());
-            allKeys.forEach(key => {
-                if (key.startsWith('weightMin') || key.startsWith('weightPlu')) {
-                    params.delete(key);
+            if (model === '1d') {
+                // 2. Sync weights (w) only for 1D
+                const neighborhoodSize = Number(modeParams.neighborhoodSize) || 2;
+                const weightValues = [];
+                for (let i = 1; i <= neighborhoodSize; i++) {
+                    weightValues.push(modeParams[`weightMinus${i}`] ?? 1);
+                    weightValues.push(modeParams[`weightPlus${i}`] ?? 1);
                 }
-            });
+
+                const isAllDefault = weightValues.every(v => v === 1);
+                if (!isAllDefault) {
+                    params.set('w', weightValues.join(','));
+                } else {
+                    params.delete('w');
+                }
+
+                // 3. Clean up individual weight keys if they exist in URL
+                const allKeys = Array.from(params.keys());
+                allKeys.forEach(key => {
+                    if (key.startsWith('weightMin') || key.startsWith('weightPlu')) {
+                        params.delete(key);
+                    }
+                });
+            } else {
+                // If Half-Life, clean up weight params
+                params.delete('w');
+                Array.from(params.keys()).forEach(key => {
+                    if (key.startsWith('weight')) params.delete(key);
+                });
+            }
         } else {
-            // Non-1D mode: clean up ALL 1D-specific params
+            // Other modes: clean up ALL specific params
             const keysToRemove = ['n', 'b', 's', 'y', 'w'];
             keysToRemove.forEach(k => params.delete(k));
 
