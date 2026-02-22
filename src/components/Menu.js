@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { CELL_PIXEL_SIZE, GRID_SIZE } from '../config';
 import { useTranslation } from '../i18n';
-import { modes } from '../modes';
+import { modes, getRuleKey } from '../modes';
 
-const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPattern, loadConfiguration, loadConfigurationFromFile, cellPixelSize = CELL_PIXEL_SIZE, selectedPattern, setSelectedPattern }) => {
+const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, grid, loadPattern, loadConfiguration, loadConfigurationFromFile, cellPixelSize = CELL_PIXEL_SIZE, selectedPattern, setSelectedPattern }) => {
     const [customPatterns, setCustomPatterns] = useState({});
     const [customConfigurations, setCustomConfigurations] = useState({});
     const [activeTab, setActiveTab] = useState('patterns'); // 'patterns' or 'configurations'
@@ -13,14 +13,25 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
     const { t, language } = useTranslation();
     const locale = language === 'sk' ? 'sk-SK' : 'en-US';
     const safeMode = mode || 'classic';
+    const ruleKey = getRuleKey(safeMode, modeParams);
     const builtInPatterns = patterns || {};
 
-    const getStorageKey = (baseKey) => `${baseKey}:${safeMode}`;
+    const getStorageKey = (baseKey) => `${baseKey}:${safeMode}:${ruleKey}`;
 
     const getPatternWidth = (pattern) => {
-        if (!pattern || !pattern.cells) return 1;
-        const cols = pattern.cells.map(([row, col]) => col);
+        if (!pattern || !pattern.cells || pattern.cells.length === 0) return 1;
+        const cols = pattern.cells.map(cell => {
+            if (Array.isArray(cell)) return cell[1];
+            return cell.c !== undefined ? cell.c : (cell.col !== undefined ? cell.col : 0);
+        });
         return Math.max(...cols) - Math.min(...cols) + 1;
+    };
+
+    const getNumericPeriod = (name, pattern) => {
+        if (pattern && pattern.period !== undefined) return pattern.period;
+        // Search for numbers in the name (e.g., "Period 10" or "Perióda 2")
+        const match = name.match(/\d+/);
+        return match ? parseInt(match[0], 10) : Infinity;
     };
 
     const loadNamespacedStorage = (baseKey) => {
@@ -32,6 +43,14 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
             const namespacedValue = localStorage.getItem(namespacedKey);
             if (namespacedValue) {
                 return JSON.parse(namespacedValue);
+            }
+            const modeOnlyKey = `${baseKey}:${safeMode}`;
+            const modeOnlyValue = localStorage.getItem(modeOnlyKey);
+            if (modeOnlyValue) {
+                // If it finds the pattern for the mode but without rule params, 
+                // persist it locally to ruleKey, so it upgrades format.
+                localStorage.setItem(namespacedKey, modeOnlyValue);
+                return JSON.parse(modeOnlyValue);
             }
             const legacyValue = localStorage.getItem(baseKey);
             if (legacyValue) {
@@ -60,7 +79,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
         const storedCustomConfigurations = loadNamespacedStorage('customConfigurations');
         setCustomPatterns(storedCustomPatterns);
         setCustomConfigurations(storedCustomConfigurations);
-    }, [safeMode]);
+    }, [safeMode, ruleKey]);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -246,22 +265,34 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
             emptyImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
             e.dataTransfer.setDragImage(emptyImage, 0, 0);
 
+            const currentMode = modes[safeMode] || modes.classic;
             const cellSize = Math.max(1, cellPixelSize || CELL_PIXEL_SIZE);
             const preview = document.createElement('canvas');
             preview.className = 'drag-preview';
 
-            const rows = Math.max(...pattern.cells.map(cell => {
-                if (Array.isArray(cell)) return cell[0];
-                return cell.r !== undefined ? cell.r : cell.row;
-            })) + 1;
-            const cols = Math.max(...pattern.cells.map(cell => {
-                if (Array.isArray(cell)) return cell[1];
-                return cell.c !== undefined ? cell.c : cell.col;
-            })) + 1;
+            // Extract and normalize coordinates for robust preview rendering
+            let parsedCells = pattern.cells.map(cell => {
+                if (Array.isArray(cell)) {
+                    const [r, c, v] = cell;
+                    return [r, c, v !== undefined ? v : 1.0];
+                }
+                const r = cell.r !== undefined ? cell.r : (cell.row !== undefined ? cell.row : 0);
+                const c = cell.c !== undefined ? cell.c : (cell.col !== undefined ? cell.col : 0);
+                const v = cell.v !== undefined ? cell.v : (cell.value !== undefined ? cell.value : 1.0);
+                return [r, c, v];
+            });
 
-            if (rows <= 0 || cols <= 0) {
-                return;
-            }
+            if (parsedCells.length === 0) return;
+
+            const minRow = Math.min(...parsedCells.map(c => c[0]));
+            const minCol = Math.min(...parsedCells.map(c => c[1]));
+            const maxRow = Math.max(...parsedCells.map(c => c[0]));
+            const maxCol = Math.max(...parsedCells.map(c => c[1]));
+
+            const rows = maxRow - minRow + 1;
+            const cols = maxCol - minCol + 1;
+
+            if (rows <= 0 || cols <= 0) return;
 
             const cssWidth = cols * cellSize;
             const cssHeight = rows * cellSize;
@@ -286,22 +317,17 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
             preview.style.left = `${e.pageX - centerX}px`;
             preview.style.top = `${e.pageY - centerY}px`;
 
-            ctx.fillStyle = 'rgba(156, 163, 175, 0.45)';
-            ctx.strokeStyle = 'rgba(75, 85, 99, 0.35)';
-            pattern.cells.forEach((cell) => {
-                let row, col;
-                if (Array.isArray(cell)) {
-                    [row, col] = cell;
-                } else if (cell && typeof cell === 'object') {
-                    row = cell.r !== undefined ? cell.r : cell.row;
-                    col = cell.c !== undefined ? cell.c : cell.col;
+            parsedCells.forEach(([r, c, v]) => {
+                const normR = r - minRow;
+                const normC = c - minCol;
+                if (currentMode.renderCell) {
+                    currentMode.renderCell(ctx, normC * cellSize, normR * cellSize, v, cellSize);
                 } else {
-                    return;
+                    ctx.fillStyle = 'rgba(156, 163, 175, 0.45)';
+                    ctx.fillRect(normC * cellSize, normR * cellSize, cellSize, cellSize);
                 }
-                if (row !== undefined && col !== undefined) {
-                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
-                    ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
-                }
+                ctx.strokeStyle = 'rgba(75, 85, 99, 0.35)';
+                ctx.strokeRect(normC * cellSize, normR * cellSize, cellSize, cellSize);
             });
 
             document.body.appendChild(preview);
@@ -415,27 +441,34 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                     </div>
                                 </div>
                                 <ul>
-                                    {Object.entries(builtInPatterns).map(([name, { description }]) => (
-                                        <li key={name} className="mb-2 flex items-center gap-2">
-                                            <button
-                                                draggable
-                                                onDragStart={(e) => handleDragStart(e, name, false, false)}
-                                                onDragEnd={handleDragEnd}
-                                                onClick={() => {
-                                                    const pattern = { ...builtInPatterns[name], name };
-                                                    const centerCol = Math.floor(GRID_SIZE / 2);
-                                                    const patternWidth = getPatternWidth(pattern);
-                                                    const colOffset = centerCol - Math.floor(patternWidth / 2);
-                                                    loadPattern(pattern, 0, colOffset, { clearBefore: true });
-                                                }}
-                                                className="flex-1 text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move whitespace-normal break-words"
-                                                title={t('menu.tooltips.clickPattern', 'Click to place pattern in center')}
-                                                aria-label={t('menu.tooltips.clickPattern', 'Click to place pattern in center')}
-                                            >
-                                                {name}
-                                            </button>
-                                        </li>
-                                    ))}
+                                    {Object.entries(builtInPatterns)
+                                        .sort((a, b) => {
+                                            const pA = getNumericPeriod(a[0], a[1]);
+                                            const pB = getNumericPeriod(b[0], b[1]);
+                                            if (pA !== pB) return pA - pB;
+                                            return a[0].localeCompare(b[0]);
+                                        })
+                                        .map(([name, { description }]) => (
+                                            <li key={name} className="mb-2 flex items-center gap-2">
+                                                <button
+                                                    draggable
+                                                    onDragStart={(e) => handleDragStart(e, name, false, false)}
+                                                    onDragEnd={handleDragEnd}
+                                                    onClick={() => {
+                                                        const pattern = { ...builtInPatterns[name], name };
+                                                        const centerCol = Math.floor(GRID_SIZE / 2);
+                                                        const patternWidth = getPatternWidth(pattern);
+                                                        const colOffset = centerCol - Math.floor(patternWidth / 2);
+                                                        loadPattern(pattern, 0, colOffset, { clearBefore: true });
+                                                    }}
+                                                    className="flex-1 text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move whitespace-normal break-words"
+                                                    title={t('menu.tooltips.clickPattern', 'Click to place pattern in center')}
+                                                    aria-label={t('menu.tooltips.clickPattern', 'Click to place pattern in center')}
+                                                >
+                                                    {name}
+                                                </button>
+                                            </li>
+                                        ))}
                                 </ul>
                                 <div className="">
                                     <div className="relative my-4">
@@ -447,39 +480,46 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', patterns = {}, grid, loadPa
                                         </div>
                                     </div>
                                     <ul>
-                                        {Object.entries(customPatterns).map(([name, { description }]) => (
-                                            <li key={name} className="mb-2 flex items-center space-x-2">
-                                                <button
-                                                    draggable
-                                                    onDragStart={(e) => handleDragStart(e, name, true, false)}
-                                                    onDragEnd={handleDragEnd}
-                                                    onClick={() => handleLoadCustomPattern(name)}
-                                                    className="flex-1 text-left whitespace-normal break-all pr-2 bg-gray-700 hover:bg-gray-600 rounded p-2 cursor-move"
-                                                    title={t('menu.tooltips.dragPattern')}
-                                                    aria-label={t('menu.tooltips.dragPattern')}
-                                                >
-                                                    {name}
-                                                </button>
-                                                <div className="flex gap-2">
+                                        {Object.entries(customPatterns)
+                                            .sort((a, b) => {
+                                                const pA = getNumericPeriod(a[0], a[1]);
+                                                const pB = getNumericPeriod(b[0], b[1]);
+                                                if (pA !== pB) return pA - pB;
+                                                return a[0].localeCompare(b[0]);
+                                            })
+                                            .map(([name, { description }]) => (
+                                                <li key={name} className="mb-2 flex items-center space-x-2">
                                                     <button
-                                                        onClick={() => handleRemove(name, false)}
-                                                        className="p-1 bg-red-600 hover:bg-red-500 rounded"
-                                                        title={t('menu.tooltips.remove')}
-                                                        aria-label={t('menu.tooltips.remove')}
+                                                        draggable
+                                                        onDragStart={(e) => handleDragStart(e, name, true, false)}
+                                                        onDragEnd={handleDragEnd}
+                                                        onClick={() => handleLoadCustomPattern(name)}
+                                                        className="flex-1 text-left whitespace-normal break-all pr-2 bg-gray-700 hover:bg-gray-600 rounded p-2 cursor-move"
+                                                        title={t('menu.tooltips.dragPattern')}
+                                                        aria-label={t('menu.tooltips.dragPattern')}
                                                     >
-                                                        <AiOutlineDelete size={16} />
+                                                        {name}
                                                     </button>
-                                                    <button
-                                                        onClick={() => handleRename(name, false)}
-                                                        className="p-1 bg-yellow-600 hover:bg-yellow-500 rounded"
-                                                        title={t('menu.tooltips.rename')}
-                                                        aria-label={t('menu.tooltips.rename')}
-                                                    >
-                                                        <AiOutlineEdit size={16} />
-                                                    </button>
-                                                </div>
-                                            </li>
-                                        ))}
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => handleRemove(name, false)}
+                                                            className="p-1 bg-red-600 hover:bg-red-500 rounded"
+                                                            title={t('menu.tooltips.remove')}
+                                                            aria-label={t('menu.tooltips.remove')}
+                                                        >
+                                                            <AiOutlineDelete size={16} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleRename(name, false)}
+                                                            className="p-1 bg-yellow-600 hover:bg-yellow-500 rounded"
+                                                            title={t('menu.tooltips.rename')}
+                                                            aria-label={t('menu.tooltips.rename')}
+                                                        >
+                                                            <AiOutlineEdit size={16} />
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                            ))}
                                     </ul>
                                 </div>
                             </div>

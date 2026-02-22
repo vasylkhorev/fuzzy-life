@@ -111,7 +111,7 @@ class ClassicMode extends LifeMode {
         let liveNeighbors = 0;
         const dirs = [
             [-1, -1], [-1, 0], [-1, 1],
-            [0, -1],          [0, 1],
+            [0, -1], [0, 1],
             [1, -1], [1, 0], [1, 1]
         ];
         for (const [dx, dy] of dirs) {
@@ -149,14 +149,14 @@ class ClassicMode extends LifeMode {
     parseCells(cells) {
         return cells.map(cell => {
             if (Array.isArray(cell)) {
-                const [row, col] = cell;
-                return [row, col, 1.0];
+                const [row, col, val] = cell;
+                return [row, col, val !== undefined ? val : 1.0];
             }
-            // Support object format for backward compatibility
             if (cell && typeof cell === 'object') {
                 const row = cell.r !== undefined ? cell.r : cell.row;
                 const col = cell.c !== undefined ? cell.c : cell.col;
-                return [row, col, 1.0];
+                const val = cell.v !== undefined ? cell.v : (cell.value !== undefined ? cell.value : 1.0);
+                return [row, col, val];
             }
             return null;
         }).filter(Boolean);

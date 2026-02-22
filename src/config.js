@@ -12,6 +12,9 @@ export const DEFAULT_DEBUG_CONFIG = {
     cellOverlayMode: 'none',
 };
 
+// Modes to hide from the UI
+export const HIDDEN_MODES = ['exclusiveHalfLife', 'testMode'];
+
 export const CELL_PIXEL_SIZE = 20;
 export const CELL_PIXEL_MIN = 6;
 export const CELL_PIXEL_MAX = 60;

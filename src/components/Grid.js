@@ -5,8 +5,9 @@ import { GRID_SIZE, CELL_PIXEL_MAX, CELL_PIXEL_SIZE } from "../config";
 import { AiOutlineInfoCircle, AiOutlineSliders, AiOutlineBars, AiOutlineExperiment } from "react-icons/ai";
 import HelpDialog from './HelpDialog';
 import { useTranslation } from '../i18n';
+import { modes } from '../modes';
 
-const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, model, setModel, availableModes, setIsModeMenuOpen, setIsMenuOpen, onOpenPatternSearch, renderCell, generation, debugConfig, cellPixelSize, onCellPixelSizeChange }) => {
+const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, model, setModel, availableModes, setIsModeMenuOpen, setIsMenuOpen, onOpenPatternSearch, renderCell, generation, debugConfig, cellPixelSize, onCellPixelSizeChange, pasteGhost, clearPasteGhost }) => {
     const canvasRef = useRef(null);
     const initialCellSizeRef = useRef(cellPixelSize);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -131,6 +132,120 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
             window.removeEventListener("keyup", handleKeyUp, true);
         };
     }, [resetZoomToDefault]);
+
+    // Handle paste ghost preview rendering
+    useEffect(() => {
+        if (!pasteGhost) {
+            const existing = document.querySelector('.paste-preview');
+            if (existing && existing.parentNode) {
+                existing.parentNode.removeChild(existing);
+            }
+            return;
+        }
+
+        const currentMode = modes[model] || modes.classic;
+        let parsedCells = [];
+
+        // Support both raw configuration coordinates and canonical matrix shapes
+        if (pasteGhost.cells) {
+            parsedCells = currentMode.parseCells(pasteGhost.cells);
+        } else if (pasteGhost.canonicalPattern || pasteGhost.initialPattern) {
+            const pat2D = pasteGhost.canonicalPattern || pasteGhost.initialPattern;
+            for (let r = 0; r < pat2D.length; r++) {
+                for (let c = 0; c < (pat2D[r]?.length || 0); c++) {
+                    if (pat2D[r][c] > 0) {
+                        parsedCells.push([r, c, pat2D[r][c]]);
+                    }
+                }
+            }
+        } else if (pasteGhost.is1D && (pasteGhost.initialRow || pasteGhost.canonicalRow)) {
+            const pat1D = pasteGhost.initialRow || pasteGhost.canonicalRow;
+            for (let c = 0; c < pat1D.length; c++) {
+                if (pat1D[c] > 0) {
+                    parsedCells.push([0, c, pat1D[c]]);
+                }
+            }
+        }
+
+        if (parsedCells.length > 0) {
+            const minRow = Math.min(...parsedCells.map(c => c[0]));
+            const minCol = Math.min(...parsedCells.map(c => c[1]));
+            parsedCells = parsedCells.map(c => [c[0] - minRow, c[1] - minCol, c[2]]);
+        }
+
+        if (parsedCells.length === 0) return;
+
+        // Clean up any existing ghosts
+        const existing = document.querySelector('.paste-preview');
+        if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+
+        const previewSize = Math.max(1, cellPixelSize || CELL_PIXEL_SIZE);
+        const preview = document.createElement('canvas');
+        preview.className = 'paste-preview drag-preview';
+
+        const rows = Math.max(...parsedCells.map(cell => cell[0])) + 1;
+        const cols = Math.max(...parsedCells.map(cell => cell[1])) + 1;
+
+        if (rows <= 0 || cols <= 0) return;
+
+        const cssWidth = cols * previewSize;
+        const cssHeight = rows * previewSize;
+        const deviceRatio = window.devicePixelRatio || 1;
+
+        preview.width = Math.max(1, Math.round(cssWidth * deviceRatio));
+        preview.height = Math.max(1, Math.round(cssHeight * deviceRatio));
+        preview.style.width = `${cssWidth}px`;
+        preview.style.height = `${cssHeight}px`;
+        preview.style.position = 'fixed'; // Use fixed so it tracks window mouse coords natively
+        preview.style.pointerEvents = 'none';
+        preview.style.zIndex = '1000';
+
+        const ctx = preview.getContext('2d');
+        ctx.scale(deviceRatio, deviceRatio);
+
+        const centerX = cssWidth / 2;
+        const centerY = cssHeight / 2;
+        preview.dataset.centerX = centerX;
+        preview.dataset.centerY = centerY;
+
+        preview.style.transform = 'translate(-50%, -50%)';
+
+        parsedCells.forEach(([row, col, val]) => {
+            if (currentMode.renderCell) {
+                currentMode.renderCell(ctx, col * previewSize, row * previewSize, val, previewSize);
+            } else {
+                ctx.fillStyle = 'rgba(156, 163, 175, 0.45)';
+                ctx.fillRect(col * previewSize, row * previewSize, previewSize, previewSize);
+            }
+            ctx.strokeStyle = 'rgba(75, 85, 99, 0.35)';
+            ctx.strokeRect(col * previewSize, row * previewSize, previewSize, previewSize);
+        });
+
+        document.body.appendChild(preview);
+
+        const handleMouseMove = (e) => {
+            preview.style.transform = 'none';
+            preview.style.left = `${e.clientX - centerX}px`;
+            preview.style.top = `${e.clientY - centerY}px`;
+        };
+
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                if (clearPasteGhost) clearPasteGhost();
+            }
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('keydown', handleEscape);
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('keydown', handleEscape);
+            if (preview.parentNode) {
+                preview.parentNode.removeChild(preview);
+            }
+        };
+    }, [pasteGhost, cellPixelSize, model, clearPasteGhost]);
 
     const getCanvasRelativePosition = (event) => {
         const canvas = canvasRef.current;
@@ -429,6 +544,56 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
 
         const col = Math.floor((x + offset.x) / cellSize);
         const row = Math.floor((y + offset.y) / cellSize);
+
+        // Handle Paste Ghost Click Instantiation
+        if (pasteGhost) {
+            // Re-parse the cells logic to figure out bounding box (similar to dragDrop)
+            const currentMode = modes[model] || modes.classic;
+            let parsedCells = [];
+            if (pasteGhost.cells) {
+                parsedCells = currentMode.parseCells(pasteGhost.cells);
+            } else if (pasteGhost.canonicalPattern || pasteGhost.initialPattern) {
+                const pat2D = pasteGhost.canonicalPattern || pasteGhost.initialPattern;
+                for (let r = 0; r < pat2D.length; r++) {
+                    for (let c = 0; c < (pat2D[r]?.length || 0); c++) {
+                        if (pat2D[r][c] > 0) parsedCells.push([r, c, pat2D[r][c]]);
+                    }
+                }
+            } else if (pasteGhost.is1D && (pasteGhost.initialRow || pasteGhost.canonicalRow)) {
+                const pat1D = pasteGhost.initialRow || pasteGhost.canonicalRow;
+                for (let c = 0; c < pat1D.length; c++) {
+                    if (pat1D[c] > 0) parsedCells.push([0, c, pat1D[c]]);
+                }
+            }
+
+            if (parsedCells.length > 0) {
+                const minRow = Math.min(...parsedCells.map(c => c[0]));
+                const minCol = Math.min(...parsedCells.map(c => c[1]));
+                parsedCells = parsedCells.map(c => [c[0] - minRow, c[1] - minCol, c[2]]);
+
+                const rows = Math.max(...parsedCells.map(c => c[0])) + 1;
+                const cols = Math.max(...parsedCells.map(c => c[1])) + 1;
+                const centerX = (cols * cellSize) / 2;
+                const centerY = (rows * cellSize) / 2;
+
+                const pasteX = e.clientX - rect.left - centerX;
+                const pasteY = e.clientY - rect.top - centerY;
+
+                const colOffset = Math.round((pasteX + offset.x) / cellSize);
+                const rowOffset = Math.round((pasteY + offset.y) / cellSize);
+
+                // Construct a standardized pattern wrapper so loadPattern treats it universally
+                const normalizedPattern = {
+                    cells: parsedCells.map(c => [c[0], c[1], c[2]])
+                };
+
+                loadPattern(normalizedPattern, rowOffset, colOffset);
+            }
+
+            if (clearPasteGhost) clearPasteGhost();
+            return;
+        }
+
         console.log("Clicked cell: ", `[${row}, ${col}]`);
         if (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length) {
             const currentVal = grid[row][col];
@@ -477,30 +642,39 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
         if (patternData) {
             const pattern = JSON.parse(patternData);
             const rect = canvasRef.current.getBoundingClientRect();
+
+            const currentMode = modes[model] || modes.classic;
+            let parsedCells = currentMode.parseCells(pattern.cells);
+
+            if (parsedCells.length > 0) {
+                // Normalize coordinates so the bounding box starts at (0,0)
+                const minRow = Math.min(...parsedCells.map(c => c[0]));
+                const minCol = Math.min(...parsedCells.map(c => c[1]));
+                parsedCells = parsedCells.map(c => [c[0] - minRow, c[1] - minCol, c[2]]);
+
+                const rows = Math.max(...parsedCells.map(c => c[0])) + 1;
+                const cols = Math.max(...parsedCells.map(c => c[1])) + 1;
+
+                const centerX = (cols * cellSize) / 2;
+                const centerY = (rows * cellSize) / 2;
+
+                const x = e.clientX - rect.left - centerX;
+                const y = e.clientY - rect.top - centerY;
+
+                const colOffset = Math.round((x + offset.x) / cellSize);
+                const rowOffset = Math.round((y + offset.y) / cellSize);
+
+                const normalizedPattern = {
+                    ...pattern,
+                    cells: parsedCells
+                };
+
+                loadPattern(normalizedPattern, rowOffset, colOffset);
+            }
+
             const preview = document.querySelector('.drag-preview');
-
-            const rows = Math.max(...pattern.cells.map(cell => {
-                if (Array.isArray(cell)) return cell[0];
-                return cell.r !== undefined ? cell.r : cell.row;
-            })) + 1;
-            const cols = Math.max(...pattern.cells.map(cell => {
-                if (Array.isArray(cell)) return cell[1];
-                return cell.c !== undefined ? cell.c : cell.col;
-            })) + 1;
-
-            const centerX = (cols * cellSize) / 2;
-            const centerY = (rows * cellSize) / 2;
-
-            const x = e.clientX - rect.left - centerX;
-            const y = e.clientY - rect.top - centerY;
-
-            const colOffset = Math.round((x + offset.x) / cellSize);
-            const rowOffset = Math.round((y + offset.y) / cellSize);
-
-            loadPattern(pattern, rowOffset, colOffset);
-
-            if (preview) {
-                document.body.removeChild(preview);
+            if (preview && preview.parentNode) {
+                preview.parentNode.removeChild(preview);
             }
         }
     };

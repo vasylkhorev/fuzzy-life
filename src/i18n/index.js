@@ -254,6 +254,7 @@ const translations = {
                 searchWidth: 'Search Width',
                 maxGen: 'Max Gen',
                 strategy: 'Strategy',
+                searchSmaller: 'Search smaller widths',
                 strategies: {
                     random: 'Random',
                     bruteForce: 'Brute Force',
@@ -261,6 +262,7 @@ const translations = {
                 startSearch: 'Start Search',
                 stopSearch: 'Stop Search',
                 clearResults: 'Clear Results',
+                exportResults: 'Export to JSON',
             },
             filters: {
                 title: 'Filters',
@@ -540,6 +542,7 @@ const translations = {
                 searchWidth: 'Šírka hľadania',
                 maxGen: 'Max. gen.',
                 strategy: 'Stratégia',
+                searchSmaller: 'Hľadať aj menšie',
                 strategies: {
                     random: 'Náhodná',
                     bruteForce: 'Hrubá sila',
@@ -547,6 +550,7 @@ const translations = {
                 startSearch: 'Spustiť hľadanie',
                 stopSearch: 'Zastaviť hľadanie',
                 clearResults: 'Vymazať výsledky',
+                exportResults: 'Exportovať do JSON',
             },
             filters: {
                 title: 'Filtre',

@@ -1,4 +1,4 @@
-// src/modes/halfLife.js
+// src/modes/exclusiveHalfLife.js
 import { GRID_SIZE } from "../config";
 import LifeMode from "./LifeMode";
 import { buildRulesByLocale } from "./rulesTemplate";
@@ -8,23 +8,18 @@ const STATE_DEAD = 0;      // 0.0 → 0
 const STATE_WEAK = 1;      // 0.5 → 1
 const STATE_STRONG = 2;    // 1.0 → 2
 
-// Integer intervals for Conway rules (after renormalization)
-// Original: birth on 3, survival on 2-3
-// With integer mapping: neighbor sum ranges
-// Default birth: 5-6, survival: 3-6
-
 const translations = {
     en: {
-        label: 'Half-Life',
-        description: 'Three-state mode: cells transition between 0, 0.5, and 1 following Conway rules (integer renormalized).',
+        label: 'Exclusive Half-Life',
+        description: 'Three-state mode with exclusive birth: birth applies only to strictly dead (0) cells. Transition between 0, 0.5, and 1.',
         params: {
             birthRules: 'Birth Rules',
             survivalRules: 'Survival Rules',
         },
     },
     sk: {
-        label: 'HalfLife',
-        description: 'Trojstavový režim: bunky sa prepínajú medzi 0, 0.5 a 1 podľa Conwayho pravidiel (celočíselná renormalizácia).',
+        label: 'Exkluzívny Polčas',
+        description: 'Trojstavový režim s exkluzívnym narodením: narodenie sa aplikuje len na mŕtve (0) bunky. Prechody medzi 0, 0.5 a 1.',
         params: {
             birthRules: 'Pravidlá Zrodu',
             survivalRules: 'Pravidlá Prežitia',
@@ -36,16 +31,16 @@ const rulesContent = {
     en: {
         overview: {
             title: 'Overview',
-            body: 'Half-Life mode uses three discrete states: 0, 0.5, and 1 (internally mapped to integers 0, 1, 2). Cells follow Conway\'s Game of Life rules using integer renormalization: birth when neighbor sum ∈ {5, 6}, survival when sum ∈ {3, 4, 5, 6}. Transitions occur in 0.5 increments.',
+            body: 'Exclusive Half-Life mode uses three states: 0, 0.5, and 1. It features exclusive birth: a cell must be strictly dead (0) to be born. Half-alive (0.5) cells must satisfy survival rules to become fully alive, otherwise they decay to 0.',
         },
         columns: [
             {
                 title: 'State Representation',
-                body: 'Cells can be in one of three states: 0 (dead), 0.5 (weak/half-alive), or 1 (strong/fully alive). Internally mapped to integers: 0→0, 0.5→1, 1.0→2 for mathematical precision.',
+                body: 'Cells can be in one of three states: 0 (dead), 0.5 (weak/half-alive), or 1 (strong/fully alive). Internally mapped to integers: 0→0, 0.5→1, 1.0→2.',
             },
             {
-                title: 'Integer Renormalization',
-                body: 'Each neighbor contributes its integer state (0, 1, or 2). Maximum neighbor sum is 16 (8 neighbors × 2). Birth occurs when sum ∈ {5, 6}, survival when sum ∈ {3, 4, 5, 6}. This eliminates rounding and uses simple set membership instead.',
+                title: 'Exclusive Target Function',
+                body: 'Birth occurs when sum ∈ Birth rules AND cell is exactly 0. Survival occurs when sum ∈ Survival rules AND cell is ≥ 0.5. The cell moves by 0.5 steps towards the resulting target.',
             },
         ],
         sections: [
@@ -54,18 +49,9 @@ const rulesContent = {
                 variant: 'secondary',
                 bodyClass: 'text-slate-300 text-sm leading-relaxed',
                 body:
-                    'Half-Life mode can be formally defined as a tuple \\( \\mathcal{A} = (\\mathcal{L}, S, \\mathcal{N}, f) \\):<br /><br />' +
-                    '<strong>1. Lattice (\\( \\mathcal{L} \\)):</strong> A 2D grid \\( \\mathbb{Z}^2 \\).<br /><br />' +
-                    '<strong>2. State Set (\\( S \\)):</strong> \\( S = \\{0, 1, 2\\} \\) (internally mapped from \\( \\{0, 0.5, 1\\} \\)).<br /><br />' +
-                    '<strong>3. Neighborhood (\\( \\mathcal{N} \\)):</strong> The Moore neighborhood (8 surrounding cells).<br /><br />' +
-                    '<strong>4. Local Transition Function (\\( f \\)):</strong><br /><br />' +
-                    'Let \\( C_t(x,y) \\) be the state of a cell at coordinates \\( (x,y) \\) at time \\( t \\).<br />' +
-                    'Let \\( \\sigma_t(x,y) \\) be the sum of the states of the neighbors:<br />' +
-                    '\\[ \\sigma_t(x,y) = \\sum_{(i,j) \\in \\mathcal{N}} C_t(x+i, y+j) \\]<br /><br />' +
-                    '<strong>The Target Function \\( \\tau(\\sigma, C) \\):</strong><br />' +
-                    'This function determines where the cell <em>wants</em> to go based on Conway\'s rules.<br />' +
-                    '\\[ \\tau(\\sigma, C) = \\begin{cases} 2 & \\text{if } \\sigma \\in \\{5, 6\\} \\quad \\text{(Birth equivalent)} \\\\ 2 & \\text{if } \\sigma \\in \\{3, 4\\} \\text{ AND } C \\ge 1 \\quad \\text{(Survival equivalent)} \\\\ 0 & \\text{otherwise} \\end{cases} \\]<br /><br />' +
-                    '<strong>The Transition Rule (The "Inertia" or "Fuzzy" step):</strong><br />' +
+                    'Exclusive Half-Life mode modifies the target function \\( \\tau(\\sigma, C) \\) to enforce exclusive birth:<br /><br />' +
+                    '\\[ \\tau(\\sigma, C) = \\begin{cases} 2 & \\text{if } \\sigma \\in B \\text{ AND } C = 0 \\quad \\text{(Exclusive Birth)} \\\\ 2 & \\text{if } \\sigma \\in S \\text{ AND } C \\ge 1 \\quad \\text{(Survival)} \\\\ 0 & \\text{otherwise} \\end{cases} \\]<br /><br />' +
+                    '<strong>The Transition Rule:</strong><br />' +
                     'The cell moves one step toward the target.<br />' +
                     '\\[ C_{t+1} = \\begin{cases} C_t + 1 & \\text{if } \\tau(\\sigma, C_t) > C_t \\\\ C_t - 1 & \\text{if } \\tau(\\sigma, C_t) < C_t \\\\ C_t & \\text{if } \\tau(\\sigma, C_t) = C_t \\end{cases} \\]',
             },
@@ -74,16 +60,16 @@ const rulesContent = {
     sk: {
         overview: {
             title: 'Prehľad',
-            body: 'Režim Polčas používa tri diskrétne stavy: 0, 0.5 a 1 (interné mapovanie na celé čísla 0, 1, 2). Bunky sa riadia Conwayho pravidlami pomocou celočíselnej renormalizácie: zrod pri súčte susedov ∈ {5, 6}, prežitie pri súčte ∈ {3, 4, 5, 6}. Prechody sa uskutočňujú v krokoch po 0.5.',
+            body: 'Režim Exkluzívny Polčas používa tri stavy: 0, 0.5 a 1. Vyznačuje sa exkluzívnym narodením: bunka musí byť prísne mŕtva (0), aby sa narodila. Polomŕtve (0.5) bunky musia spĺňať pravidlá prežitia, inak klesnú na 0.',
         },
         columns: [
             {
                 title: 'Reprezentácia stavu',
-                body: 'Bunky môžu byť v jednom z troch stavov: 0 (mŕtva), 0.5 (slabá/polovične živá) alebo 1 (silná/plne živá). Interné mapovanie na celé čísla: 0→0, 0.5→1, 1.0→2 pre matematickú presnosť.',
+                body: 'Bunky môžu byť v jednom z troch stavov: 0 (mŕtva), 0.5 (slabá/polovične živá) alebo 1 (silná/plne živá). Interné mapovanie na celé čísla: 0→0, 0.5→1, 1.0→2.',
             },
             {
-                title: 'Celočíselná renormalizácia',
-                body: 'Každý sused prispieva svojou celočíselnou hodnotou stavu (0, 1 alebo 2). Maximálny súčet susedov je 16 (8 susedov × 2). Zrod nastáva pri súčte ∈ {5, 6}, prežitie pri súčte ∈ {3, 4, 5, 6}. Toto eliminuje zaokrúhľovanie a používa jednoduché testovanie príslušnosti k množine.',
+                title: 'Exkluzívna funkcia',
+                body: 'Narodenie nastáva pri súčte ∈ B-pravidlá A bunka je presne 0. Prežitie pri súčte ∈ S-pravidlá A bunka je ≥ 0.5. Bunka sa približuje k cieľu v krokoch 0.5.',
             },
         ],
         sections: [
@@ -92,18 +78,9 @@ const rulesContent = {
                 variant: 'secondary',
                 bodyClass: 'text-slate-300 text-sm leading-relaxed',
                 body:
-                    'Režim Polčas môže byť formálne definovaný ako n-tica \\( \\mathcal{A} = (\\mathcal{L}, S, \\mathcal{N}, f) \\):<br /><br />' +
-                    '<strong>1. Mriežka (\\( \\mathcal{L} \\)):</strong> 2D mriežka \\( \\mathbb{Z}^2 \\).<br /><br />' +
-                    '<strong>2. Množina stavov (\\( S \\)):</strong> \\( S = \\{0, 1, 2\\} \\) (interné mapovanie z \\( \\{0, 0.5, 1\\} \\)).<br /><br />' +
-                    '<strong>3. Okolie (\\( \\mathcal{N} \\)):</strong> Mooreho okolie (8 okolitých buniek).<br /><br />' +
-                    '<strong>4. Lokálna prechodová funkcia (\\( f \\)):</strong><br /><br />' +
-                    'Nech \\( C_t(x,y) \\) je stav bunky na súradniciach \\( (x,y) \\) v čase \\( t \\).<br />' +
-                    'Nech \\( \\sigma_t(x,y) \\) je súčet stavov susedov:<br />' +
-                    '\\[ \\sigma_t(x,y) = \\sum_{(i,j) \\in \\mathcal{N}} C_t(x+i, y+j) \\]<br /><br />' +
-                    '<strong>Cieľová funkcia \\( \\tau(\\sigma, C) \\):</strong><br />' +
-                    'Táto funkcia určuje, kam sa bunka <em>chce</em> posunúť podľa Conwayho pravidiel.<br />' +
-                    '\\[ \\tau(\\sigma, C) = \\begin{cases} 2 & \\text{ak } \\sigma \\in \\{5, 6\\} \\quad \\text{(ekvivalent zrodu)} \\\\ 2 & \\text{ak } \\sigma \\in \\{3, 4\\} \\text{ A } C \\ge 1 \\quad \\text{(ekvivalent prežitia)} \\\\ 0 & \\text{inak} \\end{cases} \\]<br /><br />' +
-                    '<strong>Pravidlo prechodu ("zotrvačnosť" alebo "fuzzy" krok):</strong><br />' +
+                    'Exkluzívny Polčas mení cieľovú funkciu \\( \\tau(\\sigma, C) \\) na vynútenie exkluzívneho narodenia:<br /><br />' +
+                    '\\[ \\tau(\\sigma, C) = \\begin{cases} 2 & \\text{ak } \\sigma \\in B \\text{ A } C = 0 \\quad \\text{(Exkluzívne narodenie)} \\\\ 2 & \\text{ak } \\sigma \\in S \\text{ A } C \\ge 1 \\quad \\text{(Prežitie)} \\\\ 0 & \\text{inak} \\end{cases} \\]<br /><br />' +
+                    '<strong>Pravidlo prechodu:</strong><br />' +
                     'Bunka sa posunie o jeden krok smerom k cieľu.<br />' +
                     '\\[ C_{t+1} = \\begin{cases} C_t + 1 & \\text{ak } \\tau(\\sigma, C_t) > C_t \\\\ C_t - 1 & \\text{ak } \\tau(\\sigma, C_t) < C_t \\\\ C_t & \\text{ak } \\tau(\\sigma, C_t) = C_t \\end{cases} \\]',
             },
@@ -145,22 +122,19 @@ const stepTowards = (current, target) => {
         return integerStateToValue(currentInt);
     }
 
-    // Step by 1 integer unit towards target
     if (currentInt < targetInt) {
-        const nextInt = currentInt + 1;
-        return integerStateToValue(nextInt);
+        return integerStateToValue(currentInt + 1);
     } else {
-        const nextInt = currentInt - 1;
-        return integerStateToValue(nextInt);
+        return integerStateToValue(currentInt - 1);
     }
 };
 
-class HalfLifeMode extends LifeMode {
+class ExclusiveHalfLifeMode extends LifeMode {
     constructor() {
         super({
-            id: 'halfLife',
-            label: 'Half-Life',
-            description: 'Three-state mode: cells transition between 0, 0.5, and 1 following Conway rules (integer renormalized).',
+            id: 'exclusiveHalfLife',
+            label: 'Exclusive Half-Life',
+            description: 'Three-state mode with exclusive birth: birth applies only to strictly dead (0) cells.',
             defaultParams: {
                 birthRules: '4-6',
                 survivalRules: '1-3',
@@ -177,25 +151,21 @@ class HalfLifeMode extends LifeMode {
     parseRules(ruleString) {
         const rules = new Set();
         if (!ruleString) return rules;
-        // Replace commas with spaces temporarily to split by any whitespace or comma
         const parts = ruleString.replace(/,/g, ' ').split(/\s+/).filter(Boolean);
 
         for (const part of parts) {
             const trimmed = part.trim();
             if (trimmed.includes('-')) {
-                // Handle ranges like "1.5-3"
                 const [minStr, maxStr] = trimmed.split('-');
                 const min = parseFloat(minStr);
                 const max = parseFloat(maxStr);
 
                 if (!isNaN(min) && !isNaN(max)) {
-                    // Loop in 0.5 increments, but store as multiplied by 2 (integers 0-16)
                     for (let i = min; i <= max; i += 0.5) {
                         rules.add(Math.round(i * 2));
                     }
                 }
             } else {
-                // Handle single numbers like "2.5"
                 const val = parseFloat(trimmed);
                 if (!isNaN(val)) {
                     rules.add(Math.round(val * 2));
@@ -208,7 +178,6 @@ class HalfLifeMode extends LifeMode {
     updateRulesIfChanged(params) {
         if (!params) return;
 
-        // We need to compare against the specifically passed params, not this.params
         if (this.lastParams !== params) {
             this.birthSet = this.parseRules(params.birthRules);
             this.survivalSet = this.parseRules(params.survivalRules);
@@ -217,11 +186,10 @@ class HalfLifeMode extends LifeMode {
     }
 
     computeNextState(grid, row, col, params, generation) {
-        // Use default params if none provided
         const safeParams = params || this.getDefaultParams();
         this.updateRulesIfChanged(safeParams);
 
-        let neighborSumInt = 0;  // Integer sum (0 to 16)
+        let neighborSumInt = 0;
         const dirs = [
             [-1, -1], [-1, 0], [-1, 1],
             [0, -1], [0, 1],
@@ -232,15 +200,17 @@ class HalfLifeMode extends LifeMode {
             const nr = row + dx;
             const nc = col + dy;
             if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
-                // Each neighbor contributes its integer state value (0, 1, or 2)
                 const neighborIntState = valueToIntegerState(grid[nr][nc]);
                 neighborSumInt += neighborIntState;
             }
         }
 
-        // Integer-based configurable rules
-        const birth = this.birthSet.has(neighborSumInt);
-        const isAlive = valueToIntegerState(grid[row][col]) >= STATE_WEAK;
+        const currentIntState = valueToIntegerState(grid[row][col]);
+        const isDead = currentIntState === STATE_DEAD;
+        const isAlive = currentIntState >= STATE_WEAK;
+
+        // Exclusive Birth: ONLY if strictly dead
+        const birth = isDead && this.birthSet.has(neighborSumInt);
         const survival = isAlive && this.survivalSet.has(neighborSumInt);
 
         const targetAlive = birth || survival;
@@ -250,7 +220,6 @@ class HalfLifeMode extends LifeMode {
 
     renderCell(ctx, x, y, val, cellSize) {
         const level = snapToState(val);
-        // Render all non-zero states (0.5 and 1)
         if (level > 0) {
             const gray = Math.floor(255 * (1 - level));
             ctx.fillStyle = `rgb(${gray}, ${gray}, ${gray})`;
@@ -288,6 +257,5 @@ class HalfLifeMode extends LifeMode {
     }
 }
 
-export const halfLifeMode = new HalfLifeMode();
-export default halfLifeMode;
-
+export const exclusiveHalfLifeMode = new ExclusiveHalfLifeMode();
+export default exclusiveHalfLifeMode;

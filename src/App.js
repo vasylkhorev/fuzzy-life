@@ -7,8 +7,7 @@ import Menu from './components/Menu';
 import ModeMenu from './components/ModeMenu';
 import PatternSearchModal from './components/PatternSearchModal';
 import { GRID_SIZE, DEFAULT_DEBUG_CONFIG, CELL_PIXEL_SIZE } from "./config";
-import { getPatternsForMode } from './generated-patterns';
-import { modes, availableModes } from './modes';
+import { modes, availableModes, getPatternsForMode } from './modes';
 import { useTranslation } from './i18n';
 
 const gridsEqual = (gridA, gridB) => {
@@ -53,7 +52,7 @@ const App = () => {
         const targetMode = modes[modeParam] || modes.classic;
         const defaultParams = targetMode.getDefaultParams();
 
-        if (modeParam === '1d') {
+        if (['1d', 'halfLife', 'exclusiveHalfLife', 'testMode'].includes(modeParam)) {
             const merged = { ...defaultParams };
 
             // Explicitly define long keys for 1D mode
@@ -70,8 +69,10 @@ const App = () => {
                 if (key === 'm' || key === 'mode') return;
 
                 const longKey = keyMap[key] || key;
-                if (longKeys.includes(longKey) || longKey.startsWith('weight')) {
+                // If it's a known configurable parameter for these modes
+                if (longKeys.includes(longKey) || longKey.startsWith('weight') || merged[longKey] !== undefined) {
                     const defaultValue = merged[longKey];
+                    // Some modes (like halfLife) might not have defined a default but we know it's a valid string param rule
                     if (typeof defaultValue === 'number') {
                         merged[longKey] = parseFloat(value);
                     } else if (typeof defaultValue === 'boolean') {
@@ -82,19 +83,25 @@ const App = () => {
                     } else {
                         merged[longKey] = value;
                     }
+                } else if (['birthRules', 'survivalRules'].includes(longKey)) {
+                    // Force inject rules even if defaultParams didn't pre-define them 
+                    // (useful for extensible parsing)
+                    merged[longKey] = value;
                 }
             });
 
-            // Parse combined weight string 'w=1,1,1,1...' (overrides individual weights)
-            const weightString = params.get('w');
-            if (weightString) {
-                const weights = weightString.split(',').map(parseFloat);
-                weights.forEach((w, i) => {
-                    const radius = Math.floor(i / 2) + 1;
-                    const isPlus = i % 2 === 1;
-                    const key = `weight${isPlus ? 'Plus' : 'Minus'}${radius}`;
-                    merged[key] = w;
-                });
+            if (modeParam === '1d') {
+                // Parse combined weight string 'w=1,1,1,1...' (overrides individual weights)
+                const weightString = params.get('w');
+                if (weightString) {
+                    const weights = weightString.split(',').map(parseFloat);
+                    weights.forEach((w, i) => {
+                        const radius = Math.floor(i / 2) + 1;
+                        const isPlus = i % 2 === 1;
+                        const key = `weight${isPlus ? 'Plus' : 'Minus'}${radius}`;
+                        merged[key] = w;
+                    });
+                }
             }
 
             return merged;
@@ -102,6 +109,14 @@ const App = () => {
 
         return defaultParams;
     });
+
+    const [patternLibrary, setPatternLibrary] = useState(null);
+
+    useEffect(() => {
+        import('./patterns/index.js')
+            .then(module => setPatternLibrary(module.patternLibrary))
+            .catch(err => console.error("Failed to load generic patterns:", err));
+    }, []);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -116,7 +131,7 @@ const App = () => {
         const nextMode = modes[model] || modes.classic;
         const defaults = nextMode.getDefaultParams();
 
-        if (model === '1d' || model === 'halfLife') {
+        if (['1d', 'halfLife', 'exclusiveHalfLife', 'testMode'].includes(model)) {
             const keyMap = {
                 neighborhoodSize: 'n',
                 birthRules: 'b',
@@ -161,7 +176,7 @@ const App = () => {
                     }
                 });
             } else {
-                // If Half-Life, clean up weight params
+                // If Half-Life, Exclusive Half-Life, or Test Mode, clean up weight params
                 params.delete('w');
                 Array.from(params.keys()).forEach(key => {
                     if (key.startsWith('weight')) params.delete(key);
@@ -198,6 +213,8 @@ const App = () => {
     const [isPatternSearchOpen, setIsPatternSearchOpen] = useState(false);
     const [detectedPeriod, setDetectedPeriod] = useState(null);
     const [selectedPattern, setSelectedPattern] = useState(null);
+    const [pasteGhost, setPasteGhost] = useState(null);
+    const clearPasteGhost = useCallback(() => setPasteGhost(null), []);
     const controlsRef = useRef(null);
     const playAreaRef = useRef(null);
     const dragOffsetRef = useRef({ x: 0, y: 0 });
@@ -208,21 +225,14 @@ const App = () => {
     const debugConfig = DEFAULT_DEBUG_CONFIG;
     const { t } = useTranslation();
 
+    const prevModelRef = useRef(model);
     useEffect(() => {
-        // Only update modeParams if the mode has actually changed to something different
-        // than what is currently reflected in the URL.
-        const nextMode = modes[model] || modes.classic;
-        const currentDefaults = nextMode.getDefaultParams();
-
-        const params = new URLSearchParams(window.location.search);
-        const currentModeInUrl = params.get('m') || params.get('mode');
-
-        // Safety: If there's no mode in URL, and we are classic, we are likely at initial state.
-        // If they differ, we reset to defaults for the NEW mode.
-        const effectiveUrlMode = currentModeInUrl || 'classic';
-
-        if (effectiveUrlMode !== model) {
-            setModeParams(currentDefaults);
+        // When the selected mode changes from the UI, we reset the modeParams
+        // to that new mode's defaults to prevent "parameter bleed" from the old mode.
+        if (prevModelRef.current !== model) {
+            const nextMode = modes[model] || modes.classic;
+            setModeParams(nextMode.getDefaultParams());
+            prevModelRef.current = model;
         }
     }, [model]);
     useEffect(() => {
@@ -268,9 +278,41 @@ const App = () => {
                 undo();
             }
         };
+
+        const handlePaste = (event) => {
+            // Do not intercept paste if the user is typing in an input or textarea
+            if (['INPUT', 'TEXTAREA'].includes(event.target.tagName)) return;
+
+            try {
+                const pastedText = event.clipboardData.getData('text');
+                if (!pastedText) return;
+
+                const parsed = JSON.parse(pastedText);
+
+                // If the user pastes a raw array of coordinates (e.g., [[0,1], [1,0]])
+                if (Array.isArray(parsed) && Array.isArray(parsed[0])) {
+                    setPasteGhost({ cells: parsed });
+                    return;
+                }
+
+                let patternData = Array.isArray(parsed) ? parsed[0] : parsed;
+                if (!patternData || typeof patternData !== 'object') return;
+
+                if (patternData.is1D || patternData.canonicalPattern || patternData.initialPattern || patternData.cells) {
+                    setPasteGhost(patternData);
+                }
+            } catch (err) {
+                // Not valid JSON or parsing failed, safely ignore
+            }
+        };
+
         window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [undo]);
+        window.addEventListener('paste', handlePaste);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('paste', handlePaste);
+        };
+    }, [undo, applyGridChange, model]);
 
     const changeSpeed = (newSpeed) => setSpeed(newSpeed);
     const toggleRun = () => setIsRunning(prev => !prev);
@@ -575,7 +617,7 @@ const App = () => {
             ? anchorStyles[controlAnchor]
             : { top: `${controlFreePosition.y}px`, left: `${controlFreePosition.x}px` };
 
-    const patternsForMode = getPatternsForMode(model);
+    const patternsForMode = getPatternsForMode(patternLibrary, model, modeParams);
 
     return (
         <div className="flex h-screen">
@@ -583,6 +625,7 @@ const App = () => {
                 isOpen={isMenuOpen}
                 setIsOpen={setIsMenuOpen}
                 mode={model}
+                modeParams={modeParams}
                 patterns={patternsForMode}
                 grid={grid}
                 loadPattern={loadPattern}
@@ -616,6 +659,8 @@ const App = () => {
                         debugConfig={debugConfig}
                         selectedPattern={selectedPattern}
                         setSelectedPattern={setSelectedPattern}
+                        pasteGhost={pasteGhost}
+                        clearPasteGhost={clearPasteGhost}
                     />
                 ) : (
                     <Grid
@@ -638,6 +683,8 @@ const App = () => {
                         onCellPixelSizeChange={setCellPixelSize}
                         generation={generation}
                         debugConfig={debugConfig}
+                        pasteGhost={pasteGhost}
+                        clearPasteGhost={clearPasteGhost}
                     />
                 )}
                 <div

@@ -1,5 +1,0 @@
-{
-  "name": "Blinker",
-  "cells": [[0, 0], [0, 1], [0, 2]],
-  "description": "A simple oscillator that switches between horizontal and vertical states."
-}

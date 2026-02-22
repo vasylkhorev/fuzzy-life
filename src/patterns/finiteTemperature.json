@@ -1,0 +1,210 @@
+{
+  "default": {
+    "Thermal Crystal": {
+      "name": "Thermal Crystal",
+      "cells": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "description": "Symmetric seed that forms a crystalline pulse with temperature-dependent edges."
+    },
+    "Thermal Glider": {
+      "name": "Thermal Glider",
+      "cells": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "description": "A glider starter tuned for the finite-temperature rule; drift varies with T."
+    },
+    "Thermal Loop": {
+      "name": "Thermal Loop",
+      "cells": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "description": "Hollow ring with a warm core that oscillates as energy redistributes."
+    },
+    "Thermal Ridge": {
+      "name": "Thermal Ridge",
+      "cells": [
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      "description": "Horizontal spine with a vertical spur; throws off ridges that depend on T and energy shifts."
+    },
+    "Thermal Wavefront": {
+      "name": "Thermal Wavefront",
+      "cells": [
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          0,
+          3
+        ]
+      ],
+      "description": "Asymmetric front that often emits angled waves whose spread is sensitive to temperature."
+    }
+  }
+}

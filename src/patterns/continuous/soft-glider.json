@@ -1,8 +1,0 @@
-{
-  "name": "Soft Glider",
-  "cells": [
-    [0, 1], [1, 2], [2, 0], [2, 1], [2, 2],
-    [1, 1]
-  ],
-  "description": "A glider-like seed that drifts with smoother gradients under continuous rules."
-}
