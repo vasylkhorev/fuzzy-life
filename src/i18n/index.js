@@ -253,6 +253,8 @@ const translations = {
                 patternWidth: 'Pattern Width',
                 searchWidth: 'Search Width',
                 maxGen: 'Max Gen',
+                minSeedDensity: 'Min Density',
+                maxSeedDensity: 'Max Density',
                 strategy: 'Strategy',
                 searchSmaller: 'Search smaller widths',
                 strategies: {
@@ -541,6 +543,8 @@ const translations = {
                 patternWidth: 'Šírka vzoru',
                 searchWidth: 'Šírka hľadania',
                 maxGen: 'Max. gen.',
+                minSeedDensity: 'Min. hustota',
+                maxSeedDensity: 'Max. hustota',
                 strategy: 'Stratégia',
                 searchSmaller: 'Hľadať aj menšie',
                 strategies: {

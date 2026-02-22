@@ -9,7 +9,9 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
     const { t } = useTranslation();
     const [searchWidth, setSearchWidth] = useState(6);
     const [searchSmaller, setSearchSmaller] = useState(true);
-    const [maxGenerations, setMaxGenerations] = useState(50);
+    const [maxGenerations, setMaxGenerations] = useState(100);
+    const [minSeedDensity, setMinSeedDensity] = useState(0.1);
+    const [maxSeedDensity, setMaxSeedDensity] = useState(0.5);
     const [filterGliders, setFilterGliders] = useState(true);
     const [filterOscillators, setFilterOscillators] = useState(true);
     const [filterStillLifes, setFilterStillLifes] = useState(true);
@@ -65,7 +67,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         const currentMode = modes[mode] || modes.classic;
         const history = new Map();
         const historyKeys = [];
-        const MAX_HISTORY_WINDOW = 25;
+        const MAX_HISTORY_WINDOW = 100;
 
         // Ensure 1d has access to its dependencies
         let currentGrid = Array.from({ length: GRID_SIZE }, () => new Array(GRID_SIZE).fill(0));
@@ -140,9 +142,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
             }
 
             // update grid for next step calculation
-            if (gen < GRID_SIZE - 1) {
-                currentGrid[gen + 1] = nextRow;
-            }
+            currentGrid[0] = nextRow;
         }
         return null;
     };
@@ -372,6 +372,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
 
             for (let i = 0; i < (is1D ? 20 : 5); i++) {
                 let result;
+                const currentDensity = minSeedDensity + Math.random() * (maxSeedDensity - minSeedDensity);
 
                 if (is1D) {
                     // ── 1D search ──
@@ -380,10 +381,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
 
                     if (strategy === 'random') {
                         const currentWidth = searchSmaller ? Math.floor(Math.random() * searchWidth) + 1 : searchWidth;
-                        initial = Array.from({ length: currentWidth }, () => {
-                            if (Math.random() > 0.5) return 0;
-                            return isThreeState ? (Math.random() > 0.5 ? 2 : 1) : 1;
-                        });
+                        initial = Array(currentWidth).fill(0).map(() => (Math.random() < currentDensity ? (isThreeState ? (Math.random() > 0.5 ? 2 : 1) : 1) : 0));
                         if (!initial.some(v => v > 0)) continue;
                     } else {
                         const base = isThreeState ? 3 : 2;
@@ -408,7 +406,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                         const currentWidth = searchSmaller ? Math.floor(Math.random() * searchWidth) + 1 : searchWidth;
                         for (let r = 0; r < currentWidth; r++) {
                             for (let c = 0; c < currentWidth; c++) {
-                                if (Math.random() > 0.5) {
+                                if (Math.random() < currentDensity) {
                                     let val = 1;
                                     if (mode === 'testMode' || mode === 'halfLife' || mode === 'exclusiveHalfLife') {
                                         val = (Math.random() > 0.33) ? 2 : 1; // Place fully alive or weak alive cells
@@ -590,7 +588,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
 
                 <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
                     <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('patternSearch.config.patternWidth')}</label>
                                 <input
@@ -604,66 +602,95 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                                 <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('patternSearch.config.maxGen')}</label>
                                 <input
                                     type="number"
+                                    min="10"
+                                    max="1000"
                                     value={maxGenerations}
                                     onChange={(e) => setMaxGenerations(parseInt(e.target.value) || 0)}
                                     className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('patternSearch.config.strategy')}</label>
+                                <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('patternSearch.config.minSeedDensity')}</label>
+                                <input
+                                    type="number"
+                                    step="0.05"
+                                    min="0.01"
+                                    max="0.99"
+                                    value={minSeedDensity}
+                                    onChange={(e) => setMinSeedDensity(parseFloat(e.target.value) || 0)}
+                                    className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('patternSearch.config.maxSeedDensity')}</label>
+                                <input
+                                    type="number"
+                                    step="0.05"
+                                    min="0.01"
+                                    max="0.99"
+                                    value={maxSeedDensity}
+                                    onChange={(e) => setMaxSeedDensity(parseFloat(e.target.value) || 0)}
+                                    className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-x-8 gap-y-4 bg-gray-800/40 p-4 rounded-xl border border-gray-800/50 mt-2">
+                            <div className="flex items-center gap-3">
+                                <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">{t('patternSearch.config.strategy')}</label>
                                 <select
                                     value={strategy}
                                     onChange={(e) => setStrategy(e.target.value)}
-                                    className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                                    className="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-sm text-white outline-none focus:border-blue-500 min-w-[120px]"
                                 >
                                     <option value="random">{t('patternSearch.config.strategies.random')}</option>
                                     <option value="brute-force">{t('patternSearch.config.strategies.bruteForce')}</option>
                                 </select>
                             </div>
-                        </div>
 
-                        {strategy === 'random' && (
-                            <div className="mt-2 -mb-2">
-                                <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer w-max">
+                            {strategy === 'random' && (
+                                <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer hover:text-white transition-colors">
                                     <input
                                         type="checkbox"
                                         checked={searchSmaller}
                                         onChange={(e) => setSearchSmaller(e.target.checked)}
-                                        className="w-4 h-4 rounded border-gray-700 text-blue-500 focus:ring-blue-500 bg-gray-800"
+                                        className="w-4 h-4 rounded border-gray-700 text-blue-500 focus:ring-blue-500 bg-gray-900"
                                     />
-                                    {t('patternSearch.config.searchSmaller')}
+                                    <span className="whitespace-nowrap">{t('patternSearch.config.searchSmaller')}</span>
+                                </label>
+                            )}
+
+                            <div className="h-4 w-px bg-gray-700 mx-2 hidden md:block"></div>
+
+                            <div className="flex items-center gap-6">
+                                <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer hover:text-white transition-colors">
+                                    <input
+                                        type="checkbox"
+                                        checked={filterGliders}
+                                        onChange={(e) => setFilterGliders(e.target.checked)}
+                                        className="w-4 h-4 rounded border-gray-700 text-purple-500 focus:ring-purple-500 bg-gray-900"
+                                    />
+                                    <span className="whitespace-nowrap">{t('patternSearch.filters.gliders')}</span>
+                                </label>
+                                <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer hover:text-white transition-colors">
+                                    <input
+                                        type="checkbox"
+                                        checked={filterOscillators}
+                                        onChange={(e) => setFilterOscillators(e.target.checked)}
+                                        className="w-4 h-4 rounded border-gray-700 text-blue-500 focus:ring-blue-500 bg-gray-900"
+                                    />
+                                    <span className="whitespace-nowrap">{t('patternSearch.filters.oscillators')}</span>
+                                </label>
+                                <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer hover:text-white transition-colors">
+                                    <input
+                                        type="checkbox"
+                                        checked={filterStillLifes}
+                                        onChange={(e) => setFilterStillLifes(e.target.checked)}
+                                        className="w-4 h-4 rounded border-gray-700 text-green-500 focus:ring-green-500 bg-gray-900"
+                                    />
+                                    <span className="whitespace-nowrap">{t('patternSearch.filters.stillLifes')}</span>
                                 </label>
                             </div>
-                        )}
-
-                        <div className="flex items-center gap-6 mt-4 pb-2">
-                            <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={filterGliders}
-                                    onChange={(e) => setFilterGliders(e.target.checked)}
-                                    className="w-4 h-4 rounded border-gray-700 text-blue-500 focus:ring-blue-500 bg-gray-800"
-                                />
-                                {t('patternSearch.filters.gliders')}
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={filterOscillators}
-                                    onChange={(e) => setFilterOscillators(e.target.checked)}
-                                    className="w-4 h-4 rounded border-gray-700 text-blue-500 focus:ring-blue-500 bg-gray-800"
-                                />
-                                {t('patternSearch.filters.oscillators')}
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={filterStillLifes}
-                                    onChange={(e) => setFilterStillLifes(e.target.checked)}
-                                    className="w-4 h-4 rounded border-gray-700 text-blue-500 focus:ring-blue-500 bg-gray-800"
-                                />
-                                {t('patternSearch.filters.stillLifes')}
-                            </label>
                         </div>
 
                         <div className="flex items-center gap-4 border-t border-gray-800 pt-6">
