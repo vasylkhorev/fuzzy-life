@@ -79,11 +79,18 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         });
         currentGrid[0] = currentRow;
 
+        // Initial serialization to detect still lifes immediately
+        const initB = getTrimmedString1D(currentRow);
+        if (initB.s) {
+            history.set(initB.s, { gen: -1, minC: initB.offset });
+            historyKeys.push(initB.s);
+        }
+
         for (let gen = 0; gen < maxGenerations; gen++) {
             // Calculate next row
             const nextRow = Array(GRID_SIZE).fill(0);
             for (let c = 0; c < GRID_SIZE; c++) {
-                nextRow[c] = currentMode.computeNextState(currentGrid, gen, c, modeParams, gen);
+                nextRow[c] = currentMode.computeNextState(currentGrid, 0, c, modeParams, gen);
             }
 
             // Find bounds for 1D serialization
@@ -108,7 +115,8 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                 const shiftC = minC - prev.minC;
 
                 const canonicalPattern = [];
-                canonicalPattern.push(nextRow.slice(minC, maxC + 1));
+                const trimmedRow = nextRow.slice(minC, maxC + 1);
+                canonicalPattern.push(trimmedRow);
 
                 return {
                     type: shiftC === 0 ? 'oscillator' : 'glider',
@@ -116,7 +124,9 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                     shift: Math.abs(shiftC),
                     shiftR: 0,
                     shiftC,
+                    canonicalRow: trimmedRow,
                     canonicalPattern,
+                    initialRow: initialRow,
                     initialPattern: [initialRow],
                     is1D: true
                 };
@@ -366,7 +376,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                 if (is1D) {
                     // ── 1D search ──
                     let initial;
-                    const isThreeState = mode === 'testMode' || mode === 'halfLife';
+                    const isThreeState = mode === 'testMode' || mode === 'halfLife' || mode === 'exclusiveHalfLife';
 
                     if (strategy === 'random') {
                         const currentWidth = searchSmaller ? Math.floor(Math.random() * searchWidth) + 1 : searchWidth;
@@ -400,7 +410,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                             for (let c = 0; c < currentWidth; c++) {
                                 if (Math.random() > 0.5) {
                                     let val = 1;
-                                    if (mode === 'testMode' || mode === 'halfLife') {
+                                    if (mode === 'testMode' || mode === 'halfLife' || mode === 'exclusiveHalfLife') {
                                         val = (Math.random() > 0.33) ? 2 : 1; // Place fully alive or weak alive cells
                                     }
                                     cells.push([r, c, val]);
@@ -409,7 +419,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                         }
                         if (cells.length === 0) continue;
                     } else {
-                        const isThreeState = mode === 'testMode' || mode === 'halfLife';
+                        const isThreeState = mode === 'testMode' || mode === 'halfLife' || mode === 'exclusiveHalfLife';
                         const base = isThreeState ? 3 : 2;
                         const totalCells = searchWidth * searchWidth;
                         const max = Math.pow(base, totalCells);
@@ -677,7 +687,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                             <button
                                 onClick={exportResults}
                                 disabled={filteredPatterns.length === 0}
-                                className={`p - 3 rounded - lg transition border ${filteredPatterns.length === 0 ? 'border-gray-800 text-gray-700 cursor-not-allowed' : 'border-gray-700 text-green-400 hover:text-white hover:bg-green-600/20'} `}
+                                className={`p-3 rounded-lg transition border ${filteredPatterns.length === 0 ? 'border-gray-800 text-gray-700 cursor-not-allowed' : 'border-gray-700 text-green-400 hover:text-white hover:bg-green-600/20'}`}
                                 title={t('patternSearch.config.exportResults') || 'Export Results to JSON'}
                             >
                                 <AiOutlineDownload size={20} />
@@ -711,9 +721,13 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                                             <div className="w-12 h-12 flex items-center justify-center shrink-0">
                                                 {p.is1D ? (
                                                     <div className="flex gap-px bg-black p-1 rounded">
-                                                        {(p.canonicalRow || p.initialRow).map((v, i) => (
-                                                            <div key={i} className={`w - 2 h - 2 ${v === 1 ? 'bg-white' : 'bg-gray-900'} `}></div>
-                                                        ))}
+                                                        {(p.canonicalRow || p.initialRow).map((v, i) => {
+                                                            let bgClass = 'bg-gray-900';
+                                                            if (v === 2) bgClass = 'bg-yellow-500';
+                                                            else if (v === 1) bgClass = 'bg-purple-500';
+                                                            else if (v > 0) bgClass = 'bg-white';
+                                                            return <div key={i} className={`w-2 h-2 ${bgClass}`}></div>;
+                                                        })}
                                                     </div>
                                                 ) : (
                                                     <PatternGrid pattern2D={p.canonicalPattern} size={48} />
@@ -721,10 +735,10 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                                             </div>
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className={`text - [10px] font - bold uppercase px - 1.5 py - 0.5 rounded ${p.type === 'glider' ? 'bg-purple-500/20 text-purple-400' : (p.type === 'oscillator' && p.period === 1) ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'} `}>{t(`patternSearch.filters.${p.type === 'oscillator' && p.period === 1 ? 'stillLifes' : p.type + 's'} `)}</span>
+                                                    <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${p.type === 'glider' ? 'bg-purple-500/20 text-purple-400' : (p.type === 'oscillator' && p.period === 1) ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'}`}>{t(`patternSearch.filters.${p.type === 'oscillator' && p.period === 1 ? 'stillLifes' : p.type + 's'}`)}</span>
                                                     <span className="text-xs text-gray-400">
-                                                        {!(p.type === 'oscillator' && p.period === 1) && `P${p.period} `}
-                                                        {p.is1D && p.shift !== 0 ? ` S${p.shift} ` : ''}
+                                                        {!(p.type === 'oscillator' && p.period === 1) && `P${p.period}`}
+                                                        {p.is1D && p.shift !== 0 ? ` S${p.shift}` : ''}
                                                         {!p.is1D && p.type === 'glider' ? ` (${p.shiftR}, ${p.shiftC})` : ''}
                                                     </span>
                                                 </div>
