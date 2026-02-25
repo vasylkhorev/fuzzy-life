@@ -296,6 +296,66 @@
       ],
       "description": "A simple oscillator that switches between horizontal and vertical states."
     },
+    "Toad": {
+      "name": "Toad",
+      "cells": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "description": "A period-2 oscillator with 6 cells that shifts back and forth."
+    },
+    "Beacon": {
+      "name": "Beacon",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ]
+      ],
+      "description": "A period-2 oscillator composed of two diagonally adjacent blocks."
+    },
     "Glider": {
       "name": "Glider",
       "cells": [
