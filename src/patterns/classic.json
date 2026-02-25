@@ -194,32 +194,20 @@
       ],
       "description": "The first known gun and the first known finite pattern with unbounded growth. A true period 30 glider gun"
     },
-    "Lightweight Spaceship": {
-      "name": "Lightweight Spaceship",
+    "Lightweight spaceship": {
+      "name": "Lightweight spaceship",
       "cells": [
         [
-          0,
+          1,
           1
-        ],
-        [
-          0,
-          4
         ],
         [
           1,
-          0
-        ],
-        [
-          2,
-          0
-        ],
-        [
-          2,
           4
         ],
         [
-          3,
-          0
+          2,
+          5
         ],
         [
           3,
@@ -227,14 +215,26 @@
         ],
         [
           3,
+          5
+        ],
+        [
+          4,
           2
         ],
         [
-          3,
+          4,
           3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          5
         ]
       ],
-      "description": "Fast-moving spaceship that slides horizontally every four generations."
+      "description": "A very well-known period 4 c/2 orthogonal spaceship."
     },
     "Middleweight spaceship": {
       "name": "Middleweight spaceship",
