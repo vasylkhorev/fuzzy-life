@@ -118,7 +118,7 @@ const App = () => {
             .catch(err => console.error("Failed to load generic patterns:", err));
     }, []);
 
-    // Auto-load a pattern from the URL ?p= parameter
+    // Auto-load a pattern from the URL ?p= parameter, optionally advance ?t= steps
     useEffect(() => {
         if (!patternLibrary) return;
 
@@ -134,7 +134,32 @@ const App = () => {
         }
 
         const center = Math.floor(GRID_SIZE / 2);
-        loadPattern(pattern, center, center, { clearBefore: true });
+        const currentMode = modes[model] || modes.classic;
+        const parsedCells = currentMode.parseCells(pattern.cells);
+
+        // Build the initial grid with the pattern centered
+        let grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
+        parsedCells.forEach(([row, col, value]) => {
+            const r = row + center;
+            const c = col + center;
+            if (r >= 0 && r < GRID_SIZE && c >= 0 && c < GRID_SIZE) {
+                grid[r][c] = value;
+            }
+        });
+
+        // Advance ?t= steps synchronously before displaying
+        const steps = parseInt(params.get('t'), 10) || 0;
+        for (let i = 0; i < steps; i++) {
+            grid = grid.map((row, rowIndex) =>
+                row.map((cell, colIndex) =>
+                    currentMode.computeNextState(grid, rowIndex, colIndex, modeParams, i)
+                )
+            );
+        }
+
+        applyGridChange(grid);
+        setGeneration(steps);
+        setIsRunning(false);
     }, [patternLibrary]); // eslint-disable-line
 
     useEffect(() => {
@@ -212,11 +237,14 @@ const App = () => {
             });
         }
 
-        // Ensure ?p= is always the last parameter for readable URLs
+        // Ensure ?p= and ?t= are always last for readable URLs
         const patternParam = params.get('p');
+        const stepsParam = params.get('t');
         if (patternParam) {
             params.delete('p');
+            params.delete('t');
             params.set('p', patternParam);
+            if (stepsParam) params.set('t', stepsParam);
         }
 
         const newUrlParams = params.toString();
