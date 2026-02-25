@@ -29,3 +29,4 @@ yarn-error.log*
 visualize_results.py
 .gitignore
 gpu_explorer.py
+.vscode/settings.json

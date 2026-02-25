@@ -118,6 +118,25 @@ const App = () => {
             .catch(err => console.error("Failed to load generic patterns:", err));
     }, []);
 
+    // Auto-load a pattern from the URL ?p= parameter
+    useEffect(() => {
+        if (!patternLibrary) return;
+
+        const params = new URLSearchParams(window.location.search);
+        const patternName = params.get('p');
+        if (!patternName) return;
+
+        const patterns = getPatternsForMode(patternLibrary, model, modeParams);
+        const pattern = patterns[patternName];
+        if (!pattern) {
+            console.warn(`Pattern "${patternName}" not found for mode "${model}"`);
+            return;
+        }
+
+        const center = Math.floor(GRID_SIZE / 2);
+        loadPattern(pattern, center, center, { clearBefore: true });
+    }, [patternLibrary]); // eslint-disable-line
+
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const currentModeInUrl = params.get('m') || params.get('mode');
@@ -191,6 +210,13 @@ const App = () => {
             Array.from(params.keys()).forEach(key => {
                 if (key.startsWith('weight')) params.delete(key);
             });
+        }
+
+        // Ensure ?p= is always the last parameter for readable URLs
+        const patternParam = params.get('p');
+        if (patternParam) {
+            params.delete('p');
+            params.set('p', patternParam);
         }
 
         const newUrlParams = params.toString();
