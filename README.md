@@ -39,11 +39,5 @@ Aplikácia je postavená ako single-page aplikácia (SPA) pomocou Reactu. Ponúk
 *   **Medzinárodná Podpora:** Aplikácia je internacionalizovaná s podporou anglického a slovenského jazyka.
 
 ## Informácie o diplomovej práci
+Táto aplikácia je súčasťou diplomovej práce s názvom "Fuzzy Life" Vasiľa Choreva na Ústave informatiky PF UPJŠ v Košiciach pod vedením prof. RNDr. Stanislava Krajčiho, PhD.
 
-Táto aplikácia je súčasťou diplomovej práce s názvom "Fuzzy Life", ktorú vypracoval Bc. Vasyl Khorev v roku 2026 na Ústave informatiky v Košiciach pod vedením prof. RNDr. Stanislava Krajčiho, PhD.
-
-
-Abstract práce:
-"Fuzzy Life" je interaktívna webová aplikácia, ktorá simuluje Conwayovu Hru života a jej rozšírené varianty. Používa spojité stavy a pravdepodobnostné pravidlá, čím presahuje binárnu povahu klasickej Hry života. Aplikácia, vyvinutá v Reacte, ponúka vizuálne prostredie s prispôsobiteľnou mriežkou, rôznymi simulačnými režimami a možnosťou ukladania vzorov. Cieľom je intuitívne skúmanie celulárnych automatov s podporou anglického a slovenského jazyka.
-
-Kľúčové slová: lorem ipsum, dolor, sit amet
