@@ -1,14 +1,16 @@
 // src/components/Menu.js
 import React, { useState, useEffect, useRef } from 'react';
-import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiOutlineClose, AiOutlineSave } from "react-icons/ai";
+import { AiOutlineDownload, AiOutlineUpload, AiOutlineDelete, AiOutlineEdit, AiOutlineClose, AiOutlineSave, AiOutlineCopy } from "react-icons/ai";
 import { CELL_PIXEL_SIZE, GRID_SIZE } from '../config';
 import { useTranslation } from '../i18n';
 import { modes, getRuleKey } from '../modes';
+import { encodeRle } from '../utils/rle';
 
-const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, grid, loadPattern, loadConfiguration, loadConfigurationFromFile, cellPixelSize = CELL_PIXEL_SIZE, selectedPattern, setSelectedPattern }) => {
+const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, grid, loadPattern, loadAndCenterPattern, loadConfiguration, loadConfigurationFromFile, cellPixelSize = CELL_PIXEL_SIZE, selectedPattern, setSelectedPattern }) => {
     const [customPatterns, setCustomPatterns] = useState({});
     const [customConfigurations, setCustomConfigurations] = useState({});
     const [activeTab, setActiveTab] = useState('patterns'); // 'patterns' or 'configurations'
+    const [hoveredDescription, setHoveredDescription] = useState(null);
     const menuRef = useRef(null);
     const { t, language } = useTranslation();
     const locale = language === 'sk' ? 'sk-SK' : 'en-US';
@@ -109,7 +111,7 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, 
     const handleLoadClick = () => {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = '.json';
+        input.accept = '.rle';
         input.onchange = (e) => loadConfigurationFromFile(e);
         input.click();
     };
@@ -195,7 +197,13 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, 
     const handleLoadCustomPattern = (name) => {
         const pattern = customPatterns[name];
         if (pattern) {
-            loadPattern(pattern, 0, 0, { clearBefore: true });
+            loadAndCenterPattern(pattern, { clearBefore: true });
+
+            // Update URL with pattern name
+            const url = new URL(window.location);
+            url.searchParams.set('p', name);
+            url.searchParams.delete('t'); // Reset generation steps if any
+            window.history.pushState({}, '', url);
         }
     };
 
@@ -344,18 +352,27 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, 
     const sanitizeFileName = (name = '') =>
         name.replace(/[\\/:*?"<>|]+/g, '').trim().replace(/\s+/g, '-') || 'pattern';
 
-    const formatPatternJson = (pattern) => {
-        if (!pattern) return '';
-        const inlineCells = JSON.stringify(pattern.cells || []);
-        const token = '__INLINE_CELLS__';
-        const ordered = {
-            ...pattern,
-            name: pattern.name,
-            description: pattern.description,
-            cells: token
-        };
-        const withToken = JSON.stringify(ordered, null, 2);
-        return withToken.replace(`"${token}"`, inlineCells);
+    const handleCopyRle = () => {
+        const pattern = getNormalizedPattern();
+        if (!pattern) {
+            console.log(t('menu.messages.noLiveCells'));
+            return;
+        }
+        try {
+            const currentMode = modes[safeMode] || modes.classic;
+            const rleString = encodeRle(pattern.cells, {
+                name: pattern.name,
+                description: pattern.description,
+                stateMap: currentMode.rleStateMap,
+            });
+            navigator.clipboard.writeText(rleString).then(() => {
+                const originalText = hoveredDescription;
+                setHoveredDescription(t('menu.messages.copiedToClipboard', 'Copied to clipboard!'));
+                setTimeout(() => setHoveredDescription(originalText), 2000);
+            });
+        } catch (error) {
+            console.error('Failed to copy RLE to clipboard', error);
+        }
     };
 
     const handleDownloadCurrentPattern = () => {
@@ -365,8 +382,14 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, 
             return;
         }
         try {
-            const fileName = `${sanitizeFileName(pattern.name)}.json`;
-            const blob = new Blob([formatPatternJson(pattern)], { type: 'application/json' });
+            const currentMode = modes[safeMode] || modes.classic;
+            const rleString = encodeRle(pattern.cells, {
+                name: pattern.name,
+                description: pattern.description,
+                stateMap: currentMode.rleStateMap,
+            });
+            const fileName = `${sanitizeFileName(pattern.name)}.rle`;
+            const blob = new Blob([rleString], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
@@ -423,6 +446,14 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, 
                                     <h2 className="text-lg font-bold">{t('menu.patternsSectionTitle')}</h2>
                                     <div className="flex gap-2">
                                         <button
+                                            onClick={handleCopyRle}
+                                            className="p-2 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center"
+                                            title={t('menu.tooltips.copyRle', 'Copy current pattern RLE to clipboard')}
+                                            aria-label={t('menu.tooltips.copyRle', 'Copy current pattern RLE to clipboard')}
+                                        >
+                                            <AiOutlineCopy size={16} />
+                                        </button>
+                                        <button
                                             onClick={handleDownloadCurrentPattern}
                                             className="p-2 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center"
                                             title={t('menu.tooltips.downloadCurrentPattern', 'Download current pattern as JSON')}
@@ -454,14 +485,19 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, 
                                                     draggable
                                                     onDragStart={(e) => handleDragStart(e, name, false, false)}
                                                     onDragEnd={handleDragEnd}
+                                                    onMouseEnter={() => setHoveredDescription(description)}
+                                                    onMouseLeave={() => setHoveredDescription(null)}
                                                     onClick={() => {
                                                         const pattern = { ...builtInPatterns[name], name };
-                                                        const centerCol = Math.floor(GRID_SIZE / 2);
-                                                        const patternWidth = getPatternWidth(pattern);
-                                                        const colOffset = centerCol - Math.floor(patternWidth / 2);
-                                                        loadPattern(pattern, 0, colOffset, { clearBefore: true });
+                                                        loadAndCenterPattern(pattern, { clearBefore: true });
+
+                                                        // Update URL with pattern name
+                                                        const url = new URL(window.location);
+                                                        url.searchParams.set('p', name);
+                                                        url.searchParams.delete('t'); // Reset generation steps if any
+                                                        window.history.pushState({}, '', url);
                                                     }}
-                                                    className="flex-1 text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move whitespace-normal break-words"
+                                                    className="flex-1 text-left p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-move whitespace-normal break-words transition-colors"
                                                     title={t('menu.tooltips.clickPattern', 'Click to place pattern in center')}
                                                     aria-label={t('menu.tooltips.clickPattern', 'Click to place pattern in center')}
                                                 >
@@ -493,6 +529,8 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, 
                                                         draggable
                                                         onDragStart={(e) => handleDragStart(e, name, true, false)}
                                                         onDragEnd={handleDragEnd}
+                                                        onMouseEnter={() => setHoveredDescription(description)}
+                                                        onMouseLeave={() => setHoveredDescription(null)}
                                                         onClick={() => handleLoadCustomPattern(name)}
                                                         className="flex-1 text-left whitespace-normal break-all pr-2 bg-gray-700 hover:bg-gray-600 rounded p-2 cursor-move"
                                                         title={t('menu.tooltips.dragPattern')}
@@ -552,8 +590,10 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, 
                                     {Object.entries(customConfigurations).map(([name, { description }]) => (
                                         <li key={name} className="mb-2 flex items-center space-x-2 ">
                                             <button
+                                                onMouseEnter={() => setHoveredDescription(description)}
+                                                onMouseLeave={() => setHoveredDescription(null)}
                                                 onClick={() => handleLoadConfiguration(name)}
-                                                className="flex-1 text-left whitespace-normal break-all pr-2 bg-gray-700 hover:bg-gray-600 rounded p-2 cursor-pointer"
+                                                className="flex-1 text-left whitespace-normal break-all pr-2 bg-gray-700 hover:bg-gray-600 rounded p-2 cursor-pointer transition-colors"
                                                 title={t('menu.tooltips.loadConfigurationButton')}
                                                 aria-label={t('menu.tooltips.loadConfigurationButton')}
                                             >
@@ -582,6 +622,16 @@ const Menu = ({ isOpen, setIsOpen, mode = 'classic', modeParams, patterns = {}, 
                                 </ul>
                             </div>
                         )}
+                    </div>
+
+                    {/* Description area */}
+                    <div className="sticky bottom-0 bg-gray-800 border-t border-gray-700 p-4 min-h-[100px] flex flex-col justify-center">
+                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 mb-2">
+                            {t('menu.descriptionLabel', 'Description')}
+                        </p>
+                        <p className="text-sm text-gray-300 italic">
+                            {hoveredDescription || t('menu.descriptionPlaceholder', 'Hover over a pattern to see details...')}
+                        </p>
                     </div>
                 </div>
             )}

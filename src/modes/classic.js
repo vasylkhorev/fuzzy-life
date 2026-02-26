@@ -104,6 +104,7 @@ class ClassicMode extends LifeMode {
             defaultParams: {},
             rulesHtml,
             translations,
+            supportsRle: true,
         });
     }
 

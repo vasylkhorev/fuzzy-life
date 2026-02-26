@@ -9,6 +9,7 @@ import PatternSearchModal from './components/PatternSearchModal';
 import { GRID_SIZE, DEFAULT_DEBUG_CONFIG, CELL_PIXEL_SIZE } from "./config";
 import { modes, availableModes, getPatternsForMode } from './modes';
 import { useTranslation } from './i18n';
+import { decodeRle, isRleString } from './utils/rle';
 
 const gridsEqual = (gridA, gridB) => {
     if (gridA === gridB) {
@@ -52,7 +53,7 @@ const App = () => {
         const targetMode = modes[modeParam] || modes.classic;
         const defaultParams = targetMode.getDefaultParams();
 
-        if (['1d', 'halfLife', 'exclusiveHalfLife', 'testMode'].includes(modeParam)) {
+        if (['1d', 'halfLife', 'testMode'].includes(modeParam)) {
             const merged = { ...defaultParams };
 
             // Explicitly define long keys for 1D mode
@@ -112,64 +113,6 @@ const App = () => {
 
     const [patternLibrary, setPatternLibrary] = useState(null);
 
-    useEffect(() => {
-        import('./patterns/index.js')
-            .then(module => setPatternLibrary(module.patternLibrary))
-            .catch(err => console.error("Failed to load generic patterns:", err));
-    }, []);
-
-    // Auto-load a pattern from the URL ?p= parameter, optionally advance ?t= steps
-    useEffect(() => {
-        if (!patternLibrary) return;
-
-        const params = new URLSearchParams(window.location.search);
-        const patternName = params.get('p');
-        if (!patternName) return;
-
-        const patterns = getPatternsForMode(patternLibrary, model, modeParams);
-        const pattern = patterns[patternName];
-        if (!pattern) {
-            console.warn(`Pattern "${patternName}" not found for mode "${model}"`);
-            return;
-        }
-
-        const center = Math.floor(GRID_SIZE / 2);
-        const currentMode = modes[model] || modes.classic;
-        const parsedCells = currentMode.parseCells(pattern.cells);
-
-        // Compute pattern bounding box to center the view on it
-        const rows = parsedCells.map(c => c[0]);
-        const cols = parsedCells.map(c => c[1]);
-        const patternCenterRow = center + (Math.min(...rows) + Math.max(...rows)) / 2;
-        const patternCenterCol = center + (Math.min(...cols) + Math.max(...cols)) / 2;
-
-        // Build the initial grid with the pattern centered
-        let grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
-        parsedCells.forEach(([row, col, value]) => {
-            const r = row + center;
-            const c = col + center;
-            if (r >= 0 && r < GRID_SIZE && c >= 0 && c < GRID_SIZE) {
-                grid[r][c] = value;
-            }
-        });
-
-        // Advance ?t= steps synchronously before displaying
-        const steps = parseInt(params.get('t'), 10) || 0;
-        for (let i = 0; i < steps; i++) {
-            grid = grid.map((row, rowIndex) =>
-                row.map((cell, colIndex) =>
-                    currentMode.computeNextState(grid, rowIndex, colIndex, modeParams, i)
-                )
-            );
-        }
-
-        applyGridChange(grid);
-        setGeneration(steps);
-        setIsRunning(false);
-
-        // Tell the Grid to center the view on the pattern's center
-        setInitialViewCenter({ row: patternCenterRow, col: patternCenterCol });
-    }, [patternLibrary]); // eslint-disable-line
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -184,7 +127,7 @@ const App = () => {
         const nextMode = modes[model] || modes.classic;
         const defaults = nextMode.getDefaultParams();
 
-        if (['1d', 'halfLife', 'exclusiveHalfLife', 'testMode'].includes(model)) {
+        if (['1d', 'halfLife', 'testMode'].includes(model)) {
             const keyMap = {
                 neighborhoodSize: 'n',
                 birthRules: 'b',
@@ -323,6 +266,80 @@ const App = () => {
         });
     }, [cloneGrid]);
 
+    useEffect(() => {
+        import('./patterns/index.js')
+            .then(module => setPatternLibrary(module.patternLibrary))
+            .catch(err => console.error("Failed to load generic patterns:", err));
+    }, []);
+
+    const loadAndCenterPattern = useCallback((pattern, options = {}) => {
+        const { clearBefore = true, steps = 0 } = options;
+        if (!pattern || !pattern.cells) return;
+
+        const currentMode = modes[model] || modes.classic;
+        const parsedCells = currentMode.parseCells(pattern.cells);
+        const center = Math.floor(GRID_SIZE / 2);
+
+        // Compute pattern bounding box to center the view on it
+        const rows = parsedCells.map(c => c[0]);
+        const cols = parsedCells.map(c => c[1]);
+        const minR = Math.min(...rows);
+        const maxR = Math.max(...rows);
+        const minC = Math.min(...cols);
+        const maxC = Math.max(...cols);
+        const patternCenterRow = center + (minR + maxR) / 2;
+        const patternCenterCol = center + (minC + maxC) / 2;
+
+        // Build the grid
+        applyGridChange((prevGrid) => {
+            let nextGrid = clearBefore
+                ? Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0))
+                : prevGrid.map(row => [...row]);
+
+            parsedCells.forEach(([row, col, value]) => {
+                const r = row + center;
+                const c = col + center;
+                if (r >= 0 && r < GRID_SIZE && c >= 0 && c < GRID_SIZE) {
+                    nextGrid[r][c] = value;
+                }
+            });
+
+            // Advance steps if needed
+            for (let i = 0; i < steps; i++) {
+                nextGrid = nextGrid.map((row, rowIndex) =>
+                    row.map((cell, colIndex) =>
+                        currentMode.computeNextState(nextGrid, rowIndex, colIndex, modeParams, i)
+                    )
+                );
+            }
+
+            return nextGrid;
+        });
+
+        setGeneration(steps);
+        setIsRunning(false);
+        setInitialViewCenter({ row: patternCenterRow, col: patternCenterCol });
+    }, [model, modeParams, applyGridChange]);
+
+    // Auto-load a pattern from the URL ?p= parameter, optionally advance ?t= steps
+    useEffect(() => {
+        if (!patternLibrary) return;
+
+        const params = new URLSearchParams(window.location.search);
+        const patternName = params.get('p');
+        if (!patternName) return;
+
+        const patterns = getPatternsForMode(patternLibrary, model, modeParams);
+        const pattern = patterns[patternName];
+        if (!pattern) {
+            console.warn(`Pattern "${patternName}" not found for mode "${model}"`);
+            return;
+        }
+
+        const steps = parseInt(params.get('t'), 10) || 0;
+        loadAndCenterPattern(pattern, { clearBefore: true, steps });
+    }, [patternLibrary, loadAndCenterPattern]); // eslint-disable-line
+
     const undo = useCallback(() => {
         while (historyRef.current.length) {
             const previous = historyRef.current.pop();
@@ -351,22 +368,15 @@ const App = () => {
                 const pastedText = event.clipboardData.getData('text');
                 if (!pastedText) return;
 
-                const parsed = JSON.parse(pastedText);
-
-                // If the user pastes a raw array of coordinates (e.g., [[0,1], [1,0]])
-                if (Array.isArray(parsed) && Array.isArray(parsed[0])) {
-                    setPasteGhost({ cells: parsed });
-                    return;
-                }
-
-                let patternData = Array.isArray(parsed) ? parsed[0] : parsed;
-                if (!patternData || typeof patternData !== 'object') return;
-
-                if (patternData.is1D || patternData.canonicalPattern || patternData.initialPattern || patternData.cells) {
-                    setPasteGhost(patternData);
+                if (isRleString(pastedText)) {
+                    const currentMode = modes[model] || modes.classic;
+                    const decoded = decodeRle(pastedText, currentMode.rleStateMap);
+                    if (decoded.cells && decoded.cells.length > 0) {
+                        setPasteGhost({ cells: decoded.cells, name: decoded.name, description: decoded.description });
+                    }
                 }
             } catch (err) {
-                // Not valid JSON or parsing failed, safely ignore
+                // Not valid RLE, safely ignore
             }
         };
 
@@ -386,11 +396,20 @@ const App = () => {
         setIsTestingPeriodicity(false);
         setGeneration(0);
         setDetectedPeriod(null);
+        setInitialViewCenter(null);
         testingHistoryRef.current = [];
         if (testingIntervalRef.current) {
             clearInterval(testingIntervalRef.current);
             testingIntervalRef.current = null;
         }
+
+        // Remove pattern and generation params from URL
+        const params = new URLSearchParams(window.location.search);
+        params.delete('p');
+        params.delete('t');
+        const newUrlParams = params.toString();
+        window.history.replaceState(null, '', `?${newUrlParams}`);
+
         // Reset 1D mode specific state if needed
         if (model === '1d') {
             // The Grid1D component will handle resetting its own state
@@ -560,8 +579,14 @@ const App = () => {
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
-                const config = JSON.parse(e.target.result);
-                loadConfiguration(config);
+                const text = e.target.result;
+                const currentMode = modes[model] || modes.classic;
+                const decoded = decodeRle(text, currentMode.rleStateMap);
+                if (decoded.cells && decoded.cells.length > 0) {
+                    loadConfiguration({ cells: decoded.cells, name: decoded.name, description: decoded.description });
+                } else {
+                    alert(t('alerts.invalidConfigurationFile'));
+                }
             } catch (error) {
                 console.error('Error loading configuration:', error);
                 alert(t('alerts.invalidConfigurationFile'));
@@ -693,6 +718,7 @@ const App = () => {
                 patterns={patternsForMode}
                 grid={grid}
                 loadPattern={loadPattern}
+                loadAndCenterPattern={loadAndCenterPattern}
                 loadConfiguration={loadConfiguration}
                 loadConfigurationFromFile={handleLoadConfigurationFromFile}
                 cellPixelSize={cellPixelSize}

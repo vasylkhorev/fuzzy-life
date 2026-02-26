@@ -187,6 +187,7 @@ class Mode1D extends LifeMode {
             },
             rulesHtml,
             translations,
+            supportsRle: true,
         });
         this.cache = {};
     }

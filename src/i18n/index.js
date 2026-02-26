@@ -62,6 +62,7 @@ const translations = {
             tooltips: {
                 close: 'Close',
                 savePattern: 'Save pattern to local storage',
+                copyRle: 'Copy current pattern RLE to clipboard',
                 dragPattern: 'Drag to place on grid or click to load at origin',
                 downloadCurrentPattern: 'Download current grid as JSON pattern',
                 remove: 'Remove',
@@ -77,6 +78,7 @@ const translations = {
             },
             messages: {
                 noLiveCells: 'No live cells to save.',
+                copiedToClipboard: 'Copied to clipboard!',
             },
             generatedNames: {
                 pattern: 'Pattern {{day}}.{{month}}.{{year}} {{hours}}:{{minutes}}',
@@ -84,6 +86,8 @@ const translations = {
                 patternDescription: 'Pattern saved at {{timestamp}}',
                 configurationDescription: 'Configuration saved at {{timestamp}}',
             },
+            descriptionLabel: 'Description',
+            descriptionPlaceholder: 'Hover over a pattern to see details...',
         },
         help: {
             title: 'How to use the game',
@@ -120,7 +124,7 @@ const translations = {
                         },
                         configurationsTab: {
                             label: 'Configurations tab',
-                            body: 'Click a configuration to replace the entire board. Use the upload icon to import `.json` exports.',
+                            body: 'Click a configuration to replace the entire board. Use the upload icon to import `.rle` exports.',
                         },
                         localStorage: {
                             label: 'Local storage',
@@ -352,6 +356,7 @@ const translations = {
             tooltips: {
                 close: 'Zavrieť',
                 savePattern: 'Uložiť vzor do lokálneho úložiska',
+                copyRle: 'Skopírovať RLE kód aktuálneho vzoru do schránky',
                 dragPattern: 'Potiahnite pre umiestnenie na mriežku alebo kliknite pre načítanie na začiatok',
                 remove: 'Odstrániť',
                 rename: 'Premenovať',
@@ -366,6 +371,7 @@ const translations = {
             },
             messages: {
                 noLiveCells: 'Nie sú žiadne živé bunky na uloženie.',
+                copiedToClipboard: 'Skopírované do schránky!',
             },
             generatedNames: {
                 pattern: 'Vzor {{day}}.{{month}}.{{year}} {{hours}}:{{minutes}}',
@@ -373,6 +379,8 @@ const translations = {
                 patternDescription: 'Vzor uložený {{timestamp}}',
                 configurationDescription: 'Konfigurácia uložená {{timestamp}}',
             },
+            descriptionLabel: 'Popis',
+            descriptionPlaceholder: 'Umiestnite kurzor nad vzor pre zobrazenie podrobností...',
         },
         help: {
             title: 'Ako používať hru',
@@ -409,7 +417,7 @@ const translations = {
                         },
                         configurationsTab: {
                             label: 'Karta konfigurácií',
-                            body: 'Kliknutím na konfiguráciu nahradíte celú mriežku. Na import `.json` exportov použite ikonu nahratia.',
+                            body: 'Kliknutím na konfiguráciu nahradíte celú mriežku. Na import `.rle` exportov použite ikonu nahratia.',
                         },
                         localStorage: {
                             label: 'Lokálne úložisko',

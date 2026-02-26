@@ -3,8 +3,27 @@ import React, { useState } from 'react';
 import { AiOutlineClose, AiOutlineFileText, AiOutlineCheckCircle, AiOutlineEdit, AiOutlineReload } from "react-icons/ai";
 import RulesDialog from './RulesDialog';
 import WeightEditorModal from './WeightEditorModal';
-import { availableModes } from '../modes';
+import { availableModes, getRuleKey } from '../modes';
+import { patternLibrary } from '../patterns';
 import { useTranslation } from '../i18n';
+
+/**
+ * Parse a rule key like 'b2-2_s3-5,2-2' back into { birthRules, survivalRules }.
+ */
+const parseRuleKeyToParams = (ruleKey) => {
+    const match = ruleKey.match(/^b([^_]+)_s(.+)$/);
+    if (!match) return null;
+    return { birthRules: match[1], survivalRules: match[2] };
+};
+
+/**
+ * Format a rule key into a human-readable label like 'B 2-2 / S 3-5,2-2'.
+ */
+const formatRuleKeyLabel = (ruleKey) => {
+    const params = parseRuleKeyToParams(ruleKey);
+    if (!params) return ruleKey;
+    return `B ${params.birthRules} / S ${params.survivalRules}`;
+};
 
 const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParams }) => {
     const [showRules, setShowRules] = useState(false);
@@ -103,6 +122,19 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
         setIsOpen(false);
         setShowRules(false);
         setShowWeightEditor(false);
+    };
+
+    // Compute pattern presets for current mode
+    const modePatterns = patternLibrary[model] || {};
+    const presetRuleKeys = Object.keys(modePatterns).filter(k => k !== 'default');
+    const currentRuleKey = getRuleKey(model, modeParams);
+    const showPresets = presetRuleKeys.length > 0;
+
+    const applyPreset = (ruleKey) => {
+        const parsed = parseRuleKeyToParams(ruleKey);
+        if (parsed) {
+            setModeParams(prev => ({ ...prev, ...parsed }));
+        }
     };
 
     return (
@@ -308,6 +340,41 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                     </p>
                                 )}
                             </div>
+
+                            {showPresets && (
+                                <div className="space-y-4 rounded-lg border border-gray-700 bg-gray-800 p-5">
+                                    <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
+                                        {translateOrFallback('modeMenu.patternPresets', 'PATTERN PRESETS')}
+                                    </h4>
+                                    <p className="text-xs text-gray-500">
+                                        {translateOrFallback('modeMenu.patternPresetsHelp', 'Rule settings with discovered patterns. Click to apply.')}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {presetRuleKeys.map((ruleKey) => {
+                                            const isActive = currentRuleKey === ruleKey;
+                                            const patternCount = Object.keys(modePatterns[ruleKey] || {}).length;
+                                            return (
+                                                <button
+                                                    key={ruleKey}
+                                                    type="button"
+                                                    onClick={() => applyPreset(ruleKey)}
+                                                    className={`inline-flex flex-col items-start gap-0.5 rounded-lg border px-3 py-2 text-left text-xs transition ${isActive
+                                                            ? 'border-emerald-500 bg-emerald-600/20 text-emerald-200 shadow-sm shadow-emerald-500/10'
+                                                            : 'border-gray-600 bg-gray-900 text-gray-300 hover:border-emerald-500/60 hover:bg-gray-800 hover:text-white'
+                                                        }`}
+                                                >
+                                                    <span className="font-semibold">{formatRuleKeyLabel(ruleKey)}</span>
+                                                    <span className={`text-[10px] ${isActive ? 'text-emerald-400' : 'text-gray-500'}`}>
+                                                        {patternCount} {patternCount === 1
+                                                            ? translateOrFallback('modeMenu.patternSingular', 'pattern')
+                                                            : translateOrFallback('modeMenu.patternPlural', 'patterns')}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-800/60 p-6 text-sm text-gray-400">

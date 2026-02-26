@@ -83,6 +83,8 @@ class QuartileContinuousMode extends LifeMode {
             defaultParams: {},
             rulesHtml,
             translations,
+            supportsRle: true,
+            rleStateMap: [0, 0.25, 0.5, 0.75, 1.0],
         });
     }
 
@@ -90,7 +92,7 @@ class QuartileContinuousMode extends LifeMode {
         let neighborSum = 0;
         const dirs = [
             [-1, -1], [-1, 0], [-1, 1],
-            [0, -1],          [0, 1],
+            [0, -1], [0, 1],
             [1, -1], [1, 0], [1, 1],
         ];
 

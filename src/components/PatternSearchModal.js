@@ -4,6 +4,7 @@ import { useTranslation } from '../i18n';
 import { db } from '../db';
 import { GRID_SIZE } from '../config';
 import { modes, getRuleKey } from '../modes';
+import { encodeRle } from '../utils/rle';
 
 const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }) => {
     const { t } = useTranslation();
@@ -377,7 +378,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                 if (is1D) {
                     // ── 1D search ──
                     let initial;
-                    const isThreeState = mode === 'testMode' || mode === 'halfLife' || mode === 'exclusiveHalfLife';
+                    const isThreeState = mode === 'testMode' || mode === 'halfLife';
 
                     if (strategy === 'random') {
                         const currentWidth = searchSmaller ? Math.floor(Math.random() * searchWidth) + 1 : searchWidth;
@@ -408,7 +409,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                             for (let c = 0; c < currentWidth; c++) {
                                 if (Math.random() < currentDensity) {
                                     let val = 1;
-                                    if (mode === 'testMode' || mode === 'halfLife' || mode === 'exclusiveHalfLife') {
+                                    if (mode === 'testMode' || mode === 'halfLife') {
                                         val = (Math.random() > 0.33) ? 2 : 1; // Place fully alive or weak alive cells
                                     }
                                     cells.push([r, c, val]);
@@ -417,7 +418,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                         }
                         if (cells.length === 0) continue;
                     } else {
-                        const isThreeState = mode === 'testMode' || mode === 'halfLife' || mode === 'exclusiveHalfLife';
+                        const isThreeState = mode === 'testMode' || mode === 'halfLife';
                         const base = isThreeState ? 3 : 2;
                         const totalCells = searchWidth * searchWidth;
                         const max = Math.pow(base, totalCells);
@@ -518,7 +519,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         if (filteredPatterns.length === 0) return;
         const dataStr = JSON.stringify(filteredPatterns, null, 2);
         const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-        const exportFileDefaultName = `fuzzy - life - patterns - ${Date.now()}.json`;
+        const exportFileDefaultName = `fuzzy-life-patterns-${Date.now()}.json`;
 
         let linkElement = document.createElement('a');
         linkElement.setAttribute('href', dataUri);
@@ -772,7 +773,20 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                                            <button onClick={() => navigator.clipboard.writeText(JSON.stringify(p, null, 2))} className="p-1.5 bg-gray-700 hover:bg-gray-600 rounded text-gray-300 hover:text-white" title="Copy JSON layout to clipboard to paste in grid">
+                                            <button onClick={() => {
+                                                const currentMode = modes[mode] || modes.classic;
+                                                const pat = p.canonicalPattern || p.initialPattern;
+                                                if (!pat) return;
+                                                const cells = [];
+                                                if (p.is1D) {
+                                                    const row = p.canonicalRow || p.initialRow;
+                                                    row.forEach((v, c) => { if (v > 0) cells.push({ r: 0, c, v }); });
+                                                } else {
+                                                    pat.forEach((row, r) => row.forEach((v, c) => { if (v > 0) cells.push({ r, c, v }); }));
+                                                }
+                                                const rle = encodeRle(cells, { stateMap: currentMode.rleStateMap });
+                                                navigator.clipboard.writeText(rle);
+                                            }} className="p-1.5 bg-gray-700 hover:bg-gray-600 rounded text-gray-300 hover:text-white" title="Copy RLE to clipboard">
                                                 <AiOutlineCopy size={16} />
                                             </button>
                                             <button onClick={() => handleLoad(p)} className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-xs font-semibold rounded">{t('patternSearch.results.load')}</button>

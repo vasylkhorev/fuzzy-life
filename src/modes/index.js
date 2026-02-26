@@ -43,7 +43,7 @@ export const modeTranslations = modeInstances.reduce((acc, mode) => {
 export const getRuleKey = (modeId, params) => {
     if (!params) return 'default';
 
-    if (['halfLife', 'exclusiveHalfLife', 'testMode'].includes(modeId)) {
+    if (['halfLife', 'testMode'].includes(modeId)) {
         if (params.birthRules !== undefined && params.survivalRules !== undefined) {
             // e.g. B2-2 S3-5 -> b2-2_s3-5
             return `b${params.birthRules}_s${params.survivalRules}`.toLowerCase().replace(/\s+/g, '');

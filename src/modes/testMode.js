@@ -65,6 +65,8 @@ class TestMode extends LifeMode {
             },
             rulesHtml,
             translations,
+            supportsRle: true,
+            rleStateMap: [0, 1, 2],
         });
 
         this.birthSet = new Set();

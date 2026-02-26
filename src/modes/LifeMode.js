@@ -4,7 +4,7 @@
  * Subclasses must implement both computeNextState and renderCell.
  */
 export class LifeMode {
-    constructor({ id, label, description, defaultParams = {}, parameterHelp = {}, rulesHtml = {}, translations = {} }) {
+    constructor({ id, label, description, defaultParams = {}, parameterHelp = {}, rulesHtml = {}, translations = {}, supportsRle = false, rleStateMap = null }) {
         if (new.target === LifeMode) {
             throw new Error('LifeMode is an abstract class and cannot be instantiated directly.');
         }
@@ -19,6 +19,8 @@ export class LifeMode {
         this.rulesHtml = rulesHtml;
         this.translations = translations;
         this.defaultParams = Object.freeze({ ...defaultParams });
+        this.supportsRle = supportsRle;
+        this.rleStateMap = rleStateMap;
 
         // Bind abstract methods so they can be passed around safely.
         this.computeNextState = this.computeNextState.bind(this);
