@@ -137,6 +137,12 @@ const App = () => {
         const currentMode = modes[model] || modes.classic;
         const parsedCells = currentMode.parseCells(pattern.cells);
 
+        // Compute pattern bounding box to center the view on it
+        const rows = parsedCells.map(c => c[0]);
+        const cols = parsedCells.map(c => c[1]);
+        const patternCenterRow = center + (Math.min(...rows) + Math.max(...rows)) / 2;
+        const patternCenterCol = center + (Math.min(...cols) + Math.max(...cols)) / 2;
+
         // Build the initial grid with the pattern centered
         let grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
         parsedCells.forEach(([row, col, value]) => {
@@ -160,6 +166,9 @@ const App = () => {
         applyGridChange(grid);
         setGeneration(steps);
         setIsRunning(false);
+
+        // Tell the Grid to center the view on the pattern's center
+        setInitialViewCenter({ row: patternCenterRow, col: patternCenterCol });
     }, [patternLibrary]); // eslint-disable-line
 
     useEffect(() => {
@@ -257,6 +266,7 @@ const App = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
     const [canvasOffset, setCanvasOffset] = useState({ x: 0, y: 0 });
+    const [initialViewCenter, setInitialViewCenter] = useState(null);
     const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
     const [controlAnchor, setControlAnchor] = useState('bottom-right');
     const [controlFreePosition, setControlFreePosition] = useState({ x: 0, y: 0 });
@@ -739,6 +749,7 @@ const App = () => {
                         debugConfig={debugConfig}
                         pasteGhost={pasteGhost}
                         clearPasteGhost={clearPasteGhost}
+                        initialViewCenter={initialViewCenter}
                     />
                 )}
                 <div

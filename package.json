@@ -18,8 +18,8 @@
     "zustand": "^5.0.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "node generate_sitemap.js && react-scripts start",
+    "build": "node generate_sitemap.js && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

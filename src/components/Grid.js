@@ -7,7 +7,7 @@ import HelpDialog from './HelpDialog';
 import { useTranslation } from '../i18n';
 import { modes } from '../modes';
 
-const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, model, setModel, availableModes, setIsModeMenuOpen, setIsMenuOpen, onOpenPatternSearch, renderCell, generation, debugConfig, cellPixelSize, onCellPixelSizeChange, pasteGhost, clearPasteGhost }) => {
+const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, model, setModel, availableModes, setIsModeMenuOpen, setIsMenuOpen, onOpenPatternSearch, renderCell, generation, debugConfig, cellPixelSize, onCellPixelSizeChange, pasteGhost, clearPasteGhost, initialViewCenter }) => {
     const canvasRef = useRef(null);
     const initialCellSizeRef = useRef(cellPixelSize);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -59,8 +59,10 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
             console.log("Canvas dimensions set:", { width, height });
 
             const baseCellSize = initialCellSizeRef.current || cellSize;
-            const centerGridX = (GRID_SIZE / 2) * baseCellSize;
-            const centerGridY = (GRID_SIZE / 2) * baseCellSize;
+            const centerRow = initialViewCenter ? initialViewCenter.row : GRID_SIZE / 2;
+            const centerCol = initialViewCenter ? initialViewCenter.col : GRID_SIZE / 2;
+            const centerGridX = centerCol * baseCellSize;
+            const centerGridY = centerRow * baseCellSize;
             const centerCanvasX = width / 2;
             const centerCanvasY = height / 2;
 
@@ -73,7 +75,7 @@ const Grid = ({ grid, setGrid, onOffsetChange, onDimensionsChange, loadPattern, 
                 onOffsetChange(newOffset);
             }
         }
-    }, [onDimensionsChange, onOffsetChange]);
+    }, [onDimensionsChange, onOffsetChange, initialViewCenter]);
 
     const resetZoomToDefault = useCallback(() => {
         if (!onCellPixelSizeChange) {
