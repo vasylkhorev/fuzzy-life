@@ -57,7 +57,6 @@ function ruleKeyToParams(ruleKey) {
 // ── Build sitemap URLs ─────────────────────────────────────────────────────
 function buildUrls() {
     const modeIds = discoverModeIds();
-    const patternsDir = path.join(__dirname, 'src', 'patterns');
     const urls = [];
 
     // 1. Homepage
@@ -68,43 +67,6 @@ function buildUrls() {
         urls.push({ loc: `${SITE_URL}/?m=${modeId}` });
     }
 
-    // 3. Pattern entries — read the index.js to find which JSON maps to which mode
-    const indexContent = fs.readFileSync(path.join(patternsDir, 'index.js'), 'utf-8');
-
-    // Parse the patternLibrary export to find mode→file mappings
-    // index.js maps mode IDs to imported JSON filenames
-    const jsonFiles = fs.readdirSync(patternsDir).filter(f => f.endsWith('.json'));
-
-    for (const jsonFile of jsonFiles) {
-        const filePath = path.join(patternsDir, jsonFile);
-        const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-
-        // Determine which mode this pattern file belongs to
-        // The mapping in index.js uses the JSON filename (without extension) as the
-        // key, except '1d.json' is mapped to '1d'
-        const baseName = path.basename(jsonFile, '.json');
-
-        // Check if this file is referenced in index.js
-        // The mode ID might differ from the filename (e.g., file 'continuous' → mode 'continuous')
-        // We just need to match the key used in patternLibrary export
-        let modeId = baseName === '1d' ? '1d' : baseName;
-
-        // Skip if mode is hidden
-        if (HIDDEN_MODES.includes(modeId)) continue;
-
-        // Iterate over rule groups
-        for (const [ruleKey, patterns] of Object.entries(data)) {
-            const ruleParams = ruleKeyToParams(ruleKey);
-
-            // Iterate over individual patterns
-            for (const patternName of Object.keys(patterns)) {
-                const encodedPattern = encodeURIComponent(patternName);
-                const loc = `${SITE_URL}/?m=${modeId}${ruleParams}&p=${encodedPattern}`;
-                urls.push({ loc });
-            }
-        }
-    }
-
     return urls;
 }
 
@@ -112,10 +74,13 @@ function buildUrls() {
 function generateSitemapXml(urls) {
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-    const urlEntries = urls.map(u => `  <url>
-    <loc>${u.loc}</loc>
+    const urlEntries = urls.map(u => {
+        const escapedLoc = u.loc.replace(/&/g, '&amp;');
+        return `  <url>
+    <loc>${escapedLoc}</loc>
     <lastmod>${today}</lastmod>
-  </url>`).join('\n');
+  </url>`;
+    }).join('\n');
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
