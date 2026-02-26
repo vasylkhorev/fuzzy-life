@@ -14,7 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const SITE_URL = 'https://fuzzy-life.netlify.app';
+const SITE_URL = 'https://fuzzylife.netlify.app';
 const HIDDEN_MODES = ['exclusiveHalfLife', 'testMode'];
 
 // ── Discover mode IDs from src/modes/*.js ──────────────────────────────────
