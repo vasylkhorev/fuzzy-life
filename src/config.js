@@ -53,6 +53,27 @@ export const HELP_SECTIONS = [
                 labelKey: 'help.sections.libraryFiles.bullets.localStorage.label',
                 bodyKey: 'help.sections.libraryFiles.bullets.localStorage.body',
             },
+            {
+                labelKey: 'help.sections.libraryFiles.bullets.copyRle.label',
+                bodyKey: 'help.sections.libraryFiles.bullets.copyRle.body',
+            },
+        ],
+    },
+    {
+        titleKey: 'help.sections.advancedFeatures.title',
+        bullets: [
+            {
+                labelKey: 'help.sections.advancedFeatures.bullets.patternSearcher.label',
+                bodyKey: 'help.sections.advancedFeatures.bullets.patternSearcher.body',
+            },
+            {
+                labelKey: 'help.sections.advancedFeatures.bullets.weightEditor.label',
+                bodyKey: 'help.sections.advancedFeatures.bullets.weightEditor.body',
+            },
+            {
+                labelKey: 'help.sections.advancedFeatures.bullets.patternPresets.label',
+                bodyKey: 'help.sections.advancedFeatures.bullets.patternPresets.body',
+            },
         ],
     },
 ];

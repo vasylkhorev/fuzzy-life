@@ -130,6 +130,27 @@ const translations = {
                             label: 'Local storage',
                             body: 'Custom saves live in your browser. Clearing site data removes them, so export important work regularly.',
                         },
+                        copyRle: {
+                            label: 'Copy RLE',
+                            body: 'Quickly export any pattern or configuration by copying its RLE code directly to your clipboard.',
+                        },
+                    },
+                },
+                advancedFeatures: {
+                    title: 'Advanced Features',
+                    bullets: {
+                        patternSearcher: {
+                            label: 'Pattern Searcher',
+                            body: 'Automatically discover new gliders and oscillators in 1D modes. Find it in the Modes panel.',
+                        },
+                        weightEditor: {
+                            label: 'Weight Editor',
+                            body: 'Customize rules and neighborhood weights for 1D automata to explore unique behaviors.',
+                        },
+                        patternPresets: {
+                            label: 'Pattern Presets',
+                            body: 'Quickly apply known interesting rule combinations and associated patterns from the Modes panel.',
+                        },
                     },
                 },
             },
@@ -422,6 +443,27 @@ const translations = {
                         localStorage: {
                             label: 'Lokálne úložisko',
                             body: 'Vlastné uloženia ostávajú vo vašom prehliadači. Vymazanie údajov stránky ich odstráni, preto dôležité projekty pravidelne exportujte.',
+                        },
+                        copyRle: {
+                            label: 'Kopírovanie RLE',
+                            body: 'Rýchly export akéhokoľvek vzoru alebo konfigurácie skopírovaním ich RLE kódu priamo do schránky.',
+                        },
+                    },
+                },
+                advancedFeatures: {
+                    title: 'Pokročilé funkcie',
+                    bullets: {
+                        patternSearcher: {
+                            label: 'Hľadač vzorov',
+                            body: 'Automaticky objavujte nové klzáky a oscilátory v 1D režimoch. Nájdete ho v paneli Režimy.',
+                        },
+                        weightEditor: {
+                            label: 'Editor váh',
+                            body: 'Prispôsobte pravidlá a váhy susedstva pre 1D automaty a objavujte unikátne správanie.',
+                        },
+                        patternPresets: {
+                            label: 'Predvoľby vzorov',
+                            body: 'Rýchlo aplikujte známe zaujímavé kombinácie pravidiel a k nim prislúchajúce vzory priamo z panela Režimy.',
                         },
                     },
                 },
