@@ -127,6 +127,14 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
     // Compute pattern presets for current mode
     const modePatterns = patternLibrary[model] || {};
     const presetRuleKeys = Object.keys(modePatterns).filter(k => k !== 'default');
+
+    // Sort by total number of patterns (descending)
+    presetRuleKeys.sort((a, b) => {
+        const countA = Object.keys(modePatterns[a] || {}).length;
+        const countB = Object.keys(modePatterns[b] || {}).length;
+        return countB - countA;
+    });
+
     const currentRuleKey = getRuleKey(model, modeParams);
     const showPresets = presetRuleKeys.length > 0;
 
@@ -359,8 +367,8 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
                                                     type="button"
                                                     onClick={() => applyPreset(ruleKey)}
                                                     className={`inline-flex flex-col items-start gap-0.5 rounded-lg border px-3 py-2 text-left text-xs transition ${isActive
-                                                            ? 'border-emerald-500 bg-emerald-600/20 text-emerald-200 shadow-sm shadow-emerald-500/10'
-                                                            : 'border-gray-600 bg-gray-900 text-gray-300 hover:border-emerald-500/60 hover:bg-gray-800 hover:text-white'
+                                                        ? 'border-emerald-500 bg-emerald-600/20 text-emerald-200 shadow-sm shadow-emerald-500/10'
+                                                        : 'border-gray-600 bg-gray-900 text-gray-300 hover:border-emerald-500/60 hover:bg-gray-800 hover:text-white'
                                                         }`}
                                                 >
                                                     <span className="font-semibold">{formatRuleKeyLabel(ruleKey)}</span>

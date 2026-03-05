@@ -233,15 +233,7 @@ const App = () => {
     const { t } = useTranslation();
 
     const prevModelRef = useRef(model);
-    useEffect(() => {
-        // When the selected mode changes from the UI, we reset the modeParams
-        // to that new mode's defaults to prevent "parameter bleed" from the old mode.
-        if (prevModelRef.current !== model) {
-            const nextMode = modes[model] || modes.classic;
-            setModeParams(nextMode.getDefaultParams());
-            prevModelRef.current = model;
-        }
-    }, [model]);
+
     useEffect(() => {
         gridRef.current = grid;
     }, [grid]);
@@ -265,6 +257,33 @@ const App = () => {
             return nextGrid;
         });
     }, [cloneGrid]);
+
+    useEffect(() => {
+        // When the selected mode changes from the UI, we reset the modeParams
+        // to that new mode's defaults to prevent "parameter bleed" from the old mode.
+        if (prevModelRef.current !== model) {
+            const nextMode = modes[model] || modes.classic;
+            setModeParams(nextMode.getDefaultParams());
+
+            // Clear grid and pattern state on mode change
+            applyGridChange(Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0)));
+            setGeneration(0);
+            setDetectedPeriod(null);
+            setInitialViewCenter(null);
+            setIsRunning(false);
+
+            // Force clean URL parameters for patterns
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('p') || params.has('t')) {
+                params.delete('p');
+                params.delete('t');
+                const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname;
+                window.history.replaceState(null, '', newUrl);
+            }
+
+            prevModelRef.current = model;
+        }
+    }, [model, applyGridChange]);
 
     useEffect(() => {
         import('./patterns/index.js')
