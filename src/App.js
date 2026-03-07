@@ -826,6 +826,10 @@ const App = () => {
                 setModel={setModel}
                 modeParams={modeParams}
                 setModeParams={setModeParams}
+                onPresetApplied={() => {
+                    clearGrid();
+                    setSelectedPattern(null);
+                }}
             />
             <PatternSearchModal
                 isOpen={isPatternSearchOpen}
