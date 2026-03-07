@@ -21,7 +21,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -107,7 +107,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -145,7 +145,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\n2bB$3A$3A$2bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -251,7 +251,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -299,7 +299,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\nbAbA$B3bB$b3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -425,7 +425,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -459,7 +459,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$5A$AbBbA$b3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -503,7 +503,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\nbAbA$B3bB$b3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -589,7 +589,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -645,7 +645,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -691,7 +691,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -745,7 +745,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2bBA$A3B$2AbB$b3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1009,7 +1009,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1069,7 +1069,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$5A$A3bA$b3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1119,7 +1119,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1217,7 +1217,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2A$A$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1277,7 +1277,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2A$A$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1311,7 +1311,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bB$BA$BAB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1349,7 +1349,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2A$A$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1451,7 +1451,7 @@ const patterns = {
       rle: 'x = 6, y = 3, rule = FuzzyLife/3\nbAb3A$AbBA2B$A2b3A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1477,7 +1477,7 @@ const patterns = {
       rle: 'x = 4, y = 5, rule = FuzzyLife/3\n2bB$BAbA$BA$BAbA$2bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1531,7 +1531,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$5A$A3bA$b3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1603,7 +1603,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bB$BA$BAB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1683,7 +1683,7 @@ const patterns = {
       rle: 'x = 4, y = 5, rule = FuzzyLife/3\n2bB$BAbA$BA$BAbA$2bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1717,7 +1717,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2A$A$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1747,7 +1747,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bB$BA$BAB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1811,7 +1811,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1849,7 +1849,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1887,7 +1887,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$5A$A3bA$b3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1931,7 +1931,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -1999,7 +1999,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2041,7 +2041,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2083,7 +2083,7 @@ const patterns = {
       rle: 'x = 5, y = 5, rule = FuzzyLife/3\n2bAB$2AbAB$2AbA$2AbAB$2bAB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2125,7 +2125,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bB$BA$BAB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2159,7 +2159,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$5A$A3bA$b3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2205,7 +2205,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bB$BA$BAB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2265,7 +2265,7 @@ const patterns = {
       rle: 'x = 7, y = 6, rule = FuzzyLife/3\n2bAbA$3AB3A$3bA$3Ab3A$$7A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2303,7 +2303,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n3bB$3bB$$2BbB!',
       description: 'Glider, speed c/8 (period 8, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2341,7 +2341,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2A$A$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2379,7 +2379,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2425,7 +2425,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2471,7 +2471,7 @@ const patterns = {
       rle: 'x = 4, y = 5, rule = FuzzyLife/3\n2bB$BAbA$BA$BAbA$2bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2535,7 +2535,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2A$A$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2581,7 +2581,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2A$A$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2623,7 +2623,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2693,7 +2693,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2727,7 +2727,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bB$BA$BAB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2761,7 +2761,7 @@ const patterns = {
       rle: 'x = 4, y = 2, rule = FuzzyLife/3\nb2A$A2BA!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n3bB$bBb2B$2BbB$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2803,7 +2803,7 @@ const patterns = {
       rle: 'x = 7, y = 6, rule = FuzzyLife/3\n3bA$bAbAbA$2AbAb2A$2AbAb2A$bAbAbA$2b3A!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2871,7 +2871,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bB$BA$BAB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2905,7 +2905,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2A$A$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -2969,7 +2969,7 @@ const patterns = {
       rle: 'x = 4, y = 5, rule = FuzzyLife/3\n2bB$BAbA$BA$BAbA$2bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3029,7 +3029,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bB$BA$BAB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3063,7 +3063,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$5A$A3bA$b3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3133,7 +3133,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\n2bB$3A$3A$2bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n3bB$bBb2B$2BbB$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3247,7 +3247,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3407,7 +3407,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3445,7 +3445,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3491,7 +3491,7 @@ const patterns = {
       rle: 'x = 4, y = 5, rule = FuzzyLife/3\n2bB$BAbA$BA$BAbA$2bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3549,7 +3549,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$5A$A3bA$b3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3609,7 +3609,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2A$A$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3687,7 +3687,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3751,7 +3751,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3801,7 +3801,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3847,7 +3847,7 @@ const patterns = {
       rle: 'x = 4, y = 5, rule = FuzzyLife/3\n2bB$BAbA$BA$BAbA$2bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3887,7 +3887,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nb2A$Bb2B$4B$b2B!',
       description: 'Glider, speed c/4 (period 8, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3929,7 +3929,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -3999,7 +3999,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nb2A$Bb2B$4B$b2B!',
       description: 'Glider, speed c/4 (period 8, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4041,7 +4041,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4075,7 +4075,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4137,7 +4137,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\n4bA$2BAbA$4bA!',
       description: 'Glider, speed c/3 (period 9, displacement 3)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4181,7 +4181,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nAbA$3B$ABA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 1, rule = FuzzyLife/3\n2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4241,7 +4241,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$3B$BbB!',
       description: 'Glider, speed c/9 (period 9, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 2, rule = FuzzyLife/3\nB$B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4293,7 +4293,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\n4bA$2BAbA$4bA!',
       description: 'Glider, speed c/3 (period 9, displacement 3)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4339,7 +4339,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\n4bA$2BAbA$4bA!',
       description: 'Glider, speed c/3 (period 9, displacement 3)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4419,7 +4419,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nAbA$3B$ABA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4441,7 +4441,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$3B$BAB$bB!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4459,7 +4459,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nAbA$3B$ABA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4477,7 +4477,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$3B$BAB$bB!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4507,7 +4507,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$BAB$bB$3A!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4561,7 +4561,7 @@ const patterns = {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n2bB$2BAB$2bB!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4623,7 +4623,7 @@ const patterns = {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n2bB$2BAB$2bB!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4685,7 +4685,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$3B$3A!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4767,7 +4767,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n3A$3B$BAB!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4829,7 +4829,7 @@ const patterns = {
       rle: 'x = 5, y = 5, rule = FuzzyLife/3\n2bA$b3B$BbAbB$bBAB$2bB!',
       description: 'Glider, speed c/24 (period 24, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4883,7 +4883,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbB$BAB$3B$bB!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4945,7 +4945,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$3B$BAB$bB!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4959,7 +4959,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nb2B$B2bB$4B$b2B!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -4993,7 +4993,7 @@ const patterns = {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\n3bAB$bA3bA$BA2b2A$bA2b2A$2bBA!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5041,7 +5041,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nAbA$3B$ABA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5071,7 +5071,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\n4bA$2BAbA$4bA!',
       description: 'Glider, speed c/3 (period 9, displacement 3)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5163,7 +5163,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\n3bA$2AbAB$3bA!',
       description: 'Glider, speed c/3 (period 9, displacement 3)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5219,7 +5219,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2A$3B$A2B!',
       description: 'Glider, speed c/9 (period 18, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5315,7 +5315,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\n4bA$2BAbA$4bA!',
       description: 'Glider, speed c/3 (period 9, displacement 3)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5359,7 +5359,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nb2A$Bb2B$4B$b2B!',
       description: 'Glider, speed c/4 (period 8, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 2, rule = FuzzyLife/3\nB$B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5441,7 +5441,7 @@ const patterns = {
       rle: 'x = 7, y = 6, rule = FuzzyLife/3\n3bA$bAbAbA$2AbAb2A$2AbAb2A$bAbAbA$2b3A!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5515,7 +5515,7 @@ const patterns = {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n3bA$2AbA$2bA!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5555,7 +5555,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$3B$BAB$bB!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 2, rule = FuzzyLife/3\nB$B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5659,7 +5659,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$BAB$bB$3A!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5689,7 +5689,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbB$BAB$3B$bB!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5739,7 +5739,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$BAB$BbB!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5813,7 +5813,7 @@ const patterns = {
       rle: 'x = 6, y = 7, rule = FuzzyLife/3\n3b2A$b3BbB$A4B$2B3bA$A4B$b3BbB$3b2A!',
       description: 'Glider, speed c/3 (period 15, displacement 5)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5851,7 +5851,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$3B$BAB$bB!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5865,7 +5865,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$3B$BAB$bB!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5889,7 +5889,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$3B$BAB$bB!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5907,7 +5907,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nAbA$3B$ABA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5929,7 +5929,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nAbA$3B$ABA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5943,7 +5943,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nb2B$B2bB$4B$b2B!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -5991,7 +5991,7 @@ const patterns = {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n3bB$2BAB$3bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -6025,7 +6025,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$3B$BAB$bB!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -6047,7 +6047,7 @@ const patterns = {
       rle: 'x = 3, y = 6, rule = FuzzyLife/3\nAbA$AbA$3B$3A$BbB$BAB!',
       description: 'Glider, speed c/7 (period 7, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 2, rule = FuzzyLife/3\nB$B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -6105,7 +6105,7 @@ const patterns = {
       rle: 'x = 5, y = 6, rule = FuzzyLife/3\n2bA$b3B$2AB2A$BABAB$b3B$2bB!',
       description: 'Glider, speed c/26 (period 26, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -6163,7 +6163,7 @@ const patterns = {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n2bB$2BAB$2bB!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -6205,7 +6205,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$BbB$BAB$bB!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -6285,7 +6285,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$BbB$BAB$bB!',
       description: 'Glider, speed c/7 (period 14, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -6359,7 +6359,7 @@ const patterns = {
       rle: 'x = 5, y = 6, rule = FuzzyLife/3\n2bA$b3B$2AB2A$BABAB$b3B$2bB!',
       description: 'Glider, speed c/26 (period 26, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -7341,7 +7341,7 @@ const patterns = {
       rle: 'x = 6, y = 2, rule = FuzzyLife/3\n3bAbA$3B2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8075,7 +8075,7 @@ const patterns = {
       rle: 'x = 6, y = 2, rule = FuzzyLife/3\n3bAbA$3B2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8179,7 +8179,7 @@ const patterns = {
       rle: 'x = 6, y = 2, rule = FuzzyLife/3\n3bAbA$3B2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8283,7 +8283,7 @@ const patterns = {
       rle: 'x = 6, y = 3, rule = FuzzyLife/3\nbAb3A$AbBA2B$A2b3A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8321,7 +8321,7 @@ const patterns = {
       rle: 'x = 6, y = 2, rule = FuzzyLife/3\n4bAB$3AbB!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8355,7 +8355,7 @@ const patterns = {
       rle: 'x = 6, y = 2, rule = FuzzyLife/3\n3bAbA$3B2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8393,7 +8393,7 @@ const patterns = {
       rle: 'x = 6, y = 3, rule = FuzzyLife/3\nbAb3A$AbBA2B$A2b3A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8431,7 +8431,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\n3b2A$bBb2B$Ab3A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8465,7 +8465,7 @@ const patterns = {
       rle: 'x = 6, y = 3, rule = FuzzyLife/3\nbAb3A$AbBA2B$A2b3A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8503,7 +8503,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\nb2AbA$BbBAB$AbAbA!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8545,7 +8545,7 @@ const patterns = {
       rle: 'x = 6, y = 3, rule = FuzzyLife/3\nbAb3A$AbBA2B$A2b3A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8583,7 +8583,7 @@ const patterns = {
       rle: 'x = 6, y = 3, rule = FuzzyLife/3\nbAb3A$AbBA2B$A2b3A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8617,7 +8617,7 @@ const patterns = {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\nb2AbA$BbBAB$AbAbA!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8647,7 +8647,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2bA$2b2B$Ab2B$3A!',
       description: 'Glider, speed c/4 (period 8, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8669,7 +8669,7 @@ const patterns = {
       rle: 'x = 25, y = 16, rule = FuzzyLife/3\n22bAB$21bAbB$21bAbBA$21bB$19bAb2B$2B17bBAB$2BbA13bAb2B$bBAB13bBAB$2b2BbA9bAb2B$3bBAB3bAbA3bBAB$4b2BbAbBbBbAb2B$5bBABbABAbBAB$6b2B5b2B$7b3BA3B$8b2BA2B$9b3A!',
       description: 'Glider, speed c/2 (period 16, displacement 8)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8703,7 +8703,7 @@ const patterns = {
       rle: 'x = 3, y = 7, rule = FuzzyLife/3\n2bA$A$AbA$A$AbA$A$2bA!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8807,7 +8807,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbAB$3B$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8825,7 +8825,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2bB$2bAB$BAB$bB!',
       description: 'Glider, speed c/12 (period 12, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 2, rule = FuzzyLife/3\nB$B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8855,7 +8855,7 @@ const patterns = {
       rle: 'x = 15, y = 8, rule = FuzzyLife/3\n13bB$13b2A$4bAbAbAbAb2A$2bAbAbAbAbAbAbA$AbAbAbAbAbAbAbA$AbAbAbABABABA$AbAbAbA5b3A$b4A2bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8901,7 +8901,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$AbB$A2B$ABA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8919,7 +8919,7 @@ const patterns = {
       rle: 'x = 3, y = 5, rule = FuzzyLife/3\n2bA$A2B$2B$A2B$2bA!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8937,7 +8937,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nb2A$A2BA$B2bB$b2B!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8955,7 +8955,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbA$BAB$3B!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -8987,7 +8987,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nb2A$4B$B2AB$b2B!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9039,7 +9039,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nABA$BAB$BAB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9057,7 +9057,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nb2A$4B$B2AB$b2B!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9071,7 +9071,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nb2A$4B$B2AB$b2B!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9119,7 +9119,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$ABbBA$bBbB$2bB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbB$BbB$BbB$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9165,7 +9165,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbAB$3B$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9183,7 +9183,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nAbB$2AB$ABA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9217,7 +9217,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9341,7 +9341,7 @@ const patterns = {
       rle: 'x = 3, y = 6, rule = FuzzyLife/3\n2bA$b2B$2B$2B$b2B$2bA!',
       description: 'Glider, speed c/8 (period 8, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$BbB$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9391,7 +9391,7 @@ const patterns = {
       rle: 'x = 13, y = 7, rule = FuzzyLife/3\n10bB$6bAbAb2A$4bAbAbAbA$2bAbAbAbAbA$AbAbAbAbAbAbA$AbAbAbAbAbA$8bAb3A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9437,7 +9437,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$bBb2A$2Ab2A$bBA!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9535,7 +9535,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2b2B$2b2B$3B$2B!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9549,7 +9549,7 @@ const patterns = {
       rle: 'x = 11, y = 9, rule = FuzzyLife/3\n6bA$5bA3B$2B3bB2bAB$2B2b7B$3b3B3bAB$2B2b7B$2B3bB2bAB$5bA3B$6bA!',
       description: 'Glider, speed c/3 (period 24, displacement 8)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9571,7 +9571,7 @@ const patterns = {
       rle: 'x = 4, y = 5, rule = FuzzyLife/3\n2bB$4A$B2bB$4A$2bB!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbB$BbB$BbB$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9601,7 +9601,7 @@ const patterns = {
       rle: 'x = 12, y = 5, rule = FuzzyLife/3\n9bAB$3b6Ab2A$3AbAbAb3A$AbAbAbAbAb2A$AbABABAB2bB!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9631,7 +9631,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$BAB$bA$A2B!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9657,7 +9657,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$AbA!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9765,7 +9765,7 @@ const patterns = {
       rle: 'x = 3, y = 6, rule = FuzzyLife/3\n2bA$A2B$BA$BA$A2B$2bA!',
       description: 'Glider, speed c/2 (period 2, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9799,7 +9799,7 @@ const patterns = {
       rle: 'x = 2, y = 4, rule = FuzzyLife/3\nbA$2B$2B$bA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9831,7 +9831,7 @@ const patterns = {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\n2b2A$b4B$2B2A2B$BA2bAB$6B!',
       description: 'Glider, speed c/2 (period 8, displacement 4)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9873,7 +9873,7 @@ const patterns = {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n2bBA$A3B$b2BA!',
       description: 'Glider, speed c/4 (period 12, displacement 3)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9907,7 +9907,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2bBA$2bA$BA2B$AbBA!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n3bB$bBb2B$2BbB$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9933,7 +9933,7 @@ const patterns = {
       rle: 'x = 5, y = 5, rule = FuzzyLife/3\n3bA$2bB2A$A2bA$bA3B$3bBA!',
       description: 'Glider, speed 2c/5 (period 10, displacement 4)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$3B$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9973,7 +9973,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbAB$3B$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -9991,7 +9991,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2bA$4B$AbAB$bA2B!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10013,7 +10013,7 @@ const patterns = {
       rle: 'x = 4, y = 5, rule = FuzzyLife/3\n2bB$BAbA$BA$BAbA$2bB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10047,7 +10047,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2bB$ABAB$A2B$b2A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$3B$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10145,7 +10145,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$BAB$bA$A2B!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10159,7 +10159,7 @@ const patterns = {
       rle: 'x = 5, y = 5, rule = FuzzyLife/3\n2bA$bABA$AB2bB$b3BA$bABA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10223,7 +10223,7 @@ const patterns = {
       rle: 'x = 8, y = 5, rule = FuzzyLife/3\n4bA$5b3A$3AbA2bA$$4b3A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10253,7 +10253,7 @@ const patterns = {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\n5bB$3bBA$2B3bB$3bBA$5bB!',
       description: 'Glider, speed c/3 (period 15, displacement 5)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10449,7 +10449,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2bAB$b3B$ABA$2B!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10463,7 +10463,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\n2bA$A3BA$B3AB$BbBbB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10477,7 +10477,7 @@ const patterns = {
       rle: 'x = 5, y = 5, rule = FuzzyLife/3\n2bA$A3BA$2BA2B$2Bb2B$AbAbA!',
       description: 'Glider, speed c/3 (period 9, displacement 3)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10535,7 +10535,7 @@ const patterns = {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\nbA$BAB$bA$A2B!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10657,7 +10657,7 @@ const patterns = {
       rle: 'x = 3, y = 2, rule = FuzzyLife/3\nb2A$BbB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10719,7 +10719,7 @@ const patterns = {
       rle: 'x = 3, y = 2, rule = FuzzyLife/3\nb2A$BbB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10789,7 +10789,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbAB$3B$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10811,7 +10811,7 @@ const patterns = {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\nbAb2A$ABAB$ABAB$bAb2A!',
       description: 'Glider, speed c/2 (period 4, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$3B$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10897,7 +10897,7 @@ const patterns = {
       rle: 'x = 5, y = 5, rule = FuzzyLife/3\n2b2A$b3B$ABAbB$A2B$2b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$3B$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10923,7 +10923,7 @@ const patterns = {
       rle: 'x = 5, y = 5, rule = FuzzyLife/3\n2b2A$b3B$ABAbB$A2B$2b2A!',
       description: 'Glider, speed c/3 (period 6, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$3B$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -10953,7 +10953,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbAB$3B$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11033,7 +11033,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nAbA$3B$ABA!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11051,7 +11051,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbAB$3B$3A!',
       description: 'Glider, speed c/6 (period 6, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\n2B$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11249,7 +11249,7 @@ const patterns = {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n2bA$4A$A2bA!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11355,7 +11355,7 @@ const patterns = {
       rle: 'x = 3, y = 2, rule = FuzzyLife/3\nb2A$BbB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11595,7 +11595,7 @@ const patterns = {
       rle: 'x = 3, y = 2, rule = FuzzyLife/3\nb2A$BbB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11635,7 +11635,7 @@ const patterns = {
       rle: 'x = 3, y = 2, rule = FuzzyLife/3\nb2A$BbB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11649,7 +11649,7 @@ const patterns = {
       rle: 'x = 6, y = 3, rule = FuzzyLife/3\n5bB$2bAbA$A4bB!',
       description: 'Glider, speed c/4 (period 4, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11699,7 +11699,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2b2A$3bA$Ab2A$3A!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11725,7 +11725,7 @@ const patterns = {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n2bA$4A$A2bA!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11791,7 +11791,7 @@ const patterns = {
       rle: 'x = 13, y = 9, rule = FuzzyLife/3\n11b2A$11bBA$11b2A$$$$$$AB!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 2, rule = FuzzyLife/3\nB$B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11831,7 +11831,7 @@ const patterns = {
       rle: 'x = 3, y = 2, rule = FuzzyLife/3\n3A$ABA!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 1, rule = FuzzyLife/3\n2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11861,7 +11861,7 @@ const patterns = {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n3bB$b2A$bAB$B!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11915,7 +11915,7 @@ const patterns = {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\n2bA$A$AbA!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -11981,7 +11981,7 @@ const patterns = {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n2bA$4A$A2bA!',
       description: 'Glider, speed c/3 (period 3, displacement 1)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 1, rule = FuzzyLife/3\nB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -12043,7 +12043,7 @@ const patterns = {
       rle: 'x = 6, y = 6, rule = FuzzyLife/3\n3bA$2bA2bA$bB2bB$A3bB$2b3BA$bA2bA!',
       description: 'Glider, speed c/2 (period 8, displacement 4)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$3B$bB!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -12277,7 +12277,7 @@ const patterns = {
       rle: 'x = 5, y = 5, rule = FuzzyLife/3\n2b2A$2b2B$ABbAB$ABA$2bB!',
       description: 'Glider, speed c/2 (period 4, displacement 2)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\nbB$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -12327,7 +12327,7 @@ const patterns = {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\n5bA$2bB$BA$BAB$AbBA!',
       description: 'Glider, speed 2c/3 (period 6, displacement 4)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\nbB$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -12433,7 +12433,7 @@ const patterns = {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\n3bBbA$A2b2AB$ABAbAB$2b2AbA$2b2BA!',
       description: 'Glider, speed c/2 (period 8, displacement 4)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\nbB$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -12591,7 +12591,7 @@ const patterns = {
       rle: 'x = 7, y = 5, rule = FuzzyLife/3\n4b2A$4b2B$2A4BA$$b3A!',
       description: 'Glider, speed 2c/3 (period 6, displacement 4)',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 2, y = 2, rule = FuzzyLife/3\nbB$2B!',
       description: 'Period 1 oscillator (smallest)',
     },
@@ -13781,7 +13781,7 @@ const patterns = {
       rle: 'x = 8, y = 5, rule = FuzzyLife/3\n4bB$4bA2B$AB2bBbBA$A5BbA$2bB2bBA!',
       description: 'Period 18 oscillator',
     },
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nbB$3B$bB!',
       description: 'Period 1 oscillator',
     },
@@ -13915,639 +13915,639 @@ const patterns = {
     },
   },
   'b4-6_s1-3,4-6': {
-    'Oscillator P1 1': {
+    'Oscillator P1': {
       rle: 'x = 1, y = 2, rule = FuzzyLife/3\nB$B!',
       description: 'Period 1 oscillator',
     },
-    'Oscillator P10 10': {
+    'Oscillator P10': {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\nbBA2B$5B$bA2B!',
       description: 'Period 10 oscillator',
     },
-    'Oscillator P100 100': {
+    'Oscillator P100': {
       rle: 'x = 6, y = 7, rule = FuzzyLife/3\n2b4B$b2Bb2B$6B$BbBb2B$b4BA$3Bb2B$B2A2B!',
       description: 'Period 100 oscillator',
     },
-    'Oscillator P102 102': {
+    'Oscillator P102': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n2b4B$b3Bb2B$ABbBb2B$A6B$2Bb2BbA$b2BA3B$5bB!',
       description: 'Period 102 oscillator',
     },
-    'Oscillator P104 104': {
+    'Oscillator P104': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\nb2BAB$b2Bb2B$b6B$b2BbBbB$BbBb3B$5BbB$2bA2BAB!',
       description: 'Period 104 oscillator',
     },
-    'Oscillator P105 105': {
+    'Oscillator P105': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n4b4B$2Bb2Bb2B$BbBb4B$5B2bB$b2Bb4B$3b4B$4bBA$5bB!',
       description: 'Period 105 oscillator',
     },
-    'Oscillator P106 106': {
+    'Oscillator P106': {
       rle: 'x = 7, y = 8, rule = FuzzyLife/3\n2BbB$2Bb2B$4Bb2B$2Bb4B$4B3A$2Bb4B$b6B$4b2B!',
       description: 'Period 106 oscillator',
     },
-    'Oscillator P108 108': {
+    'Oscillator P108': {
       rle: 'x = 7, y = 6, rule = FuzzyLife/3\n2b5B$b2BA2BA$Bb4BA$4BbB$Bb4B$2B!',
       description: 'Period 108 oscillator',
     },
-    'Oscillator P11 11': {
+    'Oscillator P11': {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nbBA$4B$Bb2B$4B!',
       description: 'Period 11 oscillator',
     },
-    'Oscillator P110 110': {
+    'Oscillator P110': {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\n2bA3B$b5B$6B$2BA3B$b4B!',
       description: 'Period 110 oscillator',
     },
-    'Oscillator P112 112': {
+    'Oscillator P112': {
       rle: 'x = 8, y = 7, rule = FuzzyLife/3\nb4B$2Bb3B$4Bb2B$B2b5B$7BA$2BbBbBA$2BA3B!',
       description: 'Period 112 oscillator',
     },
-    'Oscillator P114 114': {
+    'Oscillator P114': {
       rle: 'x = 5, y = 7, rule = FuzzyLife/3\nb4B$bABbB$b4B$b2BbB$Bb3B$3BbB$b2BAB!',
       description: 'Period 114 oscillator',
     },
-    'Oscillator P115 115': {
+    'Oscillator P115': {
       rle: 'x = 8, y = 9, rule = FuzzyLife/3\nB2A$6B$3Bb3B$2bBbBb2B$5Bb2B$2Bb5B$2BbB2b2B$7B$bABA!',
       description: 'Period 115 oscillator',
     },
-    'Oscillator P116 116': {
+    'Oscillator P116': {
       rle: 'x = 7, y = 8, rule = FuzzyLife/3\nb5B$3Bb3B$BbBbBbA$A6B$4Bb2B$2Bb3B$B2A2B$4B!',
       description: 'Period 116 oscillator',
     },
-    'Oscillator P117 117': {
+    'Oscillator P117': {
       rle: 'x = 9, y = 9, rule = FuzzyLife/3\n4bA2BAB$2b5BbB$b2BbBb3B$Bb2BA2BbB$3BbBb3B$Bb5BbB$BbBbBb3B$3BA4B$b6B!',
       description: 'Period 117 oscillator',
     },
-    'Oscillator P118 118': {
+    'Oscillator P118': {
       rle: 'x = 8, y = 7, rule = FuzzyLife/3\n2bAB$$$6BAB$6BbB$2B2A4B$b5BA!',
       description: 'Period 118 oscillator',
     },
-    'Oscillator P12 12': {
+    'Oscillator P12': {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nBA$3B$3B!',
       description: 'Period 12 oscillator',
     },
-    'Oscillator P120 120': {
+    'Oscillator P120': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n2b5B$bBbBAbB$7B$AbBbBbB$7B$2BbBb2B$2BA3B!',
       description: 'Period 120 oscillator',
     },
-    'Oscillator P122 122': {
+    'Oscillator P122': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n6B$AbB2b2B$8B$BbBbB2bB$b7B$bBbBbBbB$bBb4BA$b7B!',
       description: 'Period 122 oscillator',
     },
-    'Oscillator P124 124': {
+    'Oscillator P124': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n3b4B$2b3BbB$b2Bb3B$b4BbB$bBb3BA$b3BA2B$B3b2B!',
       description: 'Period 124 oscillator',
     },
-    'Oscillator P126 126': {
+    'Oscillator P126': {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\n2b4B$bA2BbB$2Bb3B$3Bb2B$b4B!',
       description: 'Period 126 oscillator',
     },
-    'Oscillator P128 128': {
+    'Oscillator P128': {
       rle: 'x = 9, y = 8, rule = FuzzyLife/3\nb6BAB$3BbBbBbB$Bb5BAB$3BbBb3B$Bb5BbB$3BbBbBbB$BbBA5B$BA3BA3B!',
       description: 'Period 128 oscillator',
     },
-    'Oscillator P13 13': {
+    'Oscillator P13': {
       rle: 'x = 7, y = 3, rule = FuzzyLife/3\n2bA3B$7B$b3BA!',
       description: 'Period 13 oscillator',
     },
-    'Oscillator P130 130': {
+    'Oscillator P130': {
       rle: 'x = 7, y = 8, rule = FuzzyLife/3\n7B$BbBbBbA$A6B$2BbB2bB$A6B$BbBbB$7B$b6B!',
       description: 'Period 130 oscillator',
     },
-    'Oscillator P132 132': {
+    'Oscillator P132': {
       rle: 'x = 6, y = 7, rule = FuzzyLife/3\n2b3B$bA3B$b2BA$B$4b2B$3bA2B$3b3B!',
       description: 'Period 132 oscillator',
     },
-    'Oscillator P133 133': {
+    'Oscillator P133': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n4b4B$bBABABAB$2Bb3BbB$4Bb3B$B2b3BbB$4Bb3B$b5BbB$3b3BAB!',
       description: 'Period 133 oscillator',
     },
-    'Oscillator P134 134': {
+    'Oscillator P134': {
       rle: 'x = 10, y = 10, rule = FuzzyLife/3\nB2b2Bb3B$b2BbBA3B$b5BA2B$2BbBb4B$6BbBbB$B2bBb5B$BA4BbBbB$B2bBb5B$4BbBb2B$b7B!',
       description: 'Period 134 oscillator',
     },
-    'Oscillator P135 135': {
+    'Oscillator P135': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\nb2Bb2B$3B2A2B$Bb5B$3BbBbB$Ab5B$3Bb2B$3BAB!',
       description: 'Period 135 oscillator',
     },
-    'Oscillator P136 136': {
+    'Oscillator P136': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n3bBb3B$2bB2b3B$3B3bAB$BAB3bB$b2B2b2B$4b3B$5b2B$7bB!',
       description: 'Period 136 oscillator',
     },
-    'Oscillator P138 138': {
+    'Oscillator P138': {
       rle: 'x = 6, y = 8, rule = FuzzyLife/3\n4B$2Bb2B$Ab4B$3Bb2B$b2BA2B$2b2BbB$3b3B$4bAB!',
       description: 'Period 138 oscillator',
     },
-    'Oscillator P14 14': {
+    'Oscillator P14': {
       rle: 'x = 3, y = 5, rule = FuzzyLife/3\nb2B$b2B$3B$BAB$b2B!',
       description: 'Period 14 oscillator',
     },
-    'Oscillator P140 140': {
+    'Oscillator P140': {
       rle: 'x = 6, y = 9, rule = FuzzyLife/3\nBA4B$2BbBbB$4BbB$2Bb3B$4BbB$Ab4B$3Bb2B$b4B$2bAB!',
       description: 'Period 140 oscillator',
     },
-    'Oscillator P141 141': {
+    'Oscillator P141': {
       rle: 'x = 8, y = 9, rule = FuzzyLife/3\n2b5B$b2Bb4B$BbBbB2bB$8B$ABbBbBbB$4Bb2B$7B$2BbBb2B$4b2B!',
       description: 'Period 141 oscillator',
     },
-    'Oscillator P142 142': {
+    'Oscillator P142': {
       rle: 'x = 7, y = 8, rule = FuzzyLife/3\n2bB$b3B$2BbBA$5BA$2Bb3B$4Bb2B$2Bb3B$2BbAB!',
       description: 'Period 142 oscillator',
     },
-    'Oscillator P143 143': {
+    'Oscillator P143': {
       rle: 'x = 7, y = 9, rule = FuzzyLife/3\n2b4B$b2Bb3B$2ABbBbB$7B$2BbB2bB$7B$BbBbB$7B$b6B!',
       description: 'Period 143 oscillator',
     },
-    'Oscillator P144 144': {
+    'Oscillator P144': {
       rle: 'x = 8, y = 9, rule = FuzzyLife/3\nb3B2A2B$2Bb5B$4BbBbA$2Bb5B$A3BbBbB$bA6B$2b2BbBbB$3b5B$6b2B!',
       description: 'Period 144 oscillator',
     },
-    'Oscillator P145 145': {
+    'Oscillator P145': {
       rle: 'x = 9, y = 9, rule = FuzzyLife/3\n3bA3B$b7B$2BbBbBb2B$6Bb2B$BbB2b3B$7B$AbBb2B$3BA$3B!',
       description: 'Period 145 oscillator',
     },
-    'Oscillator P146 146': {
+    'Oscillator P146': {
       rle: 'x = 10, y = 7, rule = FuzzyLife/3\n2bBA4B$b4BA3B$3BbBbBb2B$Bb5Bb2B$3BbBb3B$Ab2Bb3B$3B3bB!',
       description: 'Period 146 oscillator',
     },
-    'Oscillator P148 148': {
+    'Oscillator P148': {
       rle: 'x = 8, y = 7, rule = FuzzyLife/3\n7B$BABABb2B$BbBb4B$2BA2B2bB$BbBb4B$5Bb2B$b2ABb2B!',
       description: 'Period 148 oscillator',
     },
-    'Oscillator P15 15': {
+    'Oscillator P15': {
       rle: 'x = 4, y = 6, rule = FuzzyLife/3\n2b2B$b3B$2BA$4B$b2BA$2bB!',
       description: 'Period 15 oscillator',
     },
-    'Oscillator P150 150': {
+    'Oscillator P150': {
       rle: 'x = 8, y = 7, rule = FuzzyLife/3\nA$b4B$b2Bb2B$Bb5B$3BbBbBA$b4BA2B$2bA5B!',
       description: 'Period 150 oscillator',
     },
-    'Oscillator P152 152': {
+    'Oscillator P152': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n6b2B$2bBABA2B$2Bb5B$4Bb3B$2Bb3BbB$A3Bb3B$bBb4B$b2B!',
       description: 'Period 152 oscillator',
     },
-    'Oscillator P153 153': {
+    'Oscillator P153': {
       rle: 'x = 8, y = 10, rule = FuzzyLife/3\n4b2B$b3Bb2B$bBb5B$4BbBbB$BAb5B$4B2b2B$B2b5B$5BbA$BbBbBbB$2Bb4B!',
       description: 'Period 153 oscillator',
     },
-    'Oscillator P154 154': {
+    'Oscillator P154': {
       rle: 'x = 8, y = 6, rule = FuzzyLife/3\n7bB$7B$B2ABAbB$7B$b3Bb2B$2b4B!',
       description: 'Period 154 oscillator',
     },
-    'Oscillator P156 156': {
+    'Oscillator P156': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\nb3BA$5BAB$BbBbBbB$7B$BbBbBbB$A2BA3B$6B!',
       description: 'Period 156 oscillator',
     },
-    'Oscillator P157 157': {
+    'Oscillator P157': {
       rle: 'x = 9, y = 10, rule = FuzzyLife/3\n7B$3Bb4B$2bBbB2b2B$9B$BAbBbBb2B$6Bb2B$2BbBb3B$7B$3Bb2B$2BA2B!',
       description: 'Period 157 oscillator',
     },
-    'Oscillator P16 16': {
+    'Oscillator P16': {
       rle: 'x = 6, y = 3, rule = FuzzyLife/3\nb5B$3B2bB$bBA3B!',
       description: 'Period 16 oscillator',
     },
-    'Oscillator P160 160': {
+    'Oscillator P160': {
       rle: 'x = 9, y = 9, rule = FuzzyLife/3\n2b4B$b2Bb3B$8B$BbBbBb2AB$7BAB$BbBbBbBbB$9B$B2bB2A2B$7B!',
       description: 'Period 160 oscillator',
     },
-    'Oscillator P162 162': {
+    'Oscillator P162': {
       rle: 'x = 10, y = 10, rule = FuzzyLife/3\nb2B2A4B$2Bb7B$4BbBbBbB$B2b7B$5Bb4B$BbBb3Bb2B$BbBbBb4B$7Bb2B$bBbBABA2B$2b3B!',
       description: 'Period 162 oscillator',
     },
-    'Oscillator P164 164': {
+    'Oscillator P164': {
       rle: 'x = 9, y = 9, rule = FuzzyLife/3\n4b3B$4bBA2B$3b3BbB$2b6B$b3B2bBbB$bBb6B$4BbBb2B$BAbBb2B$6B!',
       description: 'Period 164 oscillator',
     },
-    'Oscillator P165 165': {
+    'Oscillator P165': {
       rle: 'x = 9, y = 9, rule = FuzzyLife/3\n8B$2BbBbBb2B$4Bb4B$B2b3B2bB$4Bb4B$2Bb3B2bB$4Bb4B$ABb3Bb2B$b2BABA2B!',
       description: 'Period 165 oscillator',
     },
-    'Oscillator P166 166': {
+    'Oscillator P166': {
       rle: 'x = 10, y = 10, rule = FuzzyLife/3\n2b7B$b2BbBbBbA$A8B$ABbBbBbBAB$3BA4BAB$4BbBbBbB$BA8B$5BbB2bB$3b2Bb4B$4b5B!',
       description: 'Period 166 oscillator',
     },
-    'Oscillator P168 168': {
+    'Oscillator P168': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n7bB$Bb5B$bBABAbB$b6B$b2BbBbB$b2Bb3B$2b3BbB$3bBA2B!',
       description: 'Period 168 oscillator',
     },
-    'Oscillator P17 17': {
+    'Oscillator P17': {
       rle: 'x = 6, y = 4, rule = FuzzyLife/3\nb2BbB$3Bb2B$4BAB$2BA3B!',
       description: 'Period 17 oscillator',
     },
-    'Oscillator P170 170': {
+    'Oscillator P170': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n4bA3B$2b4BAB$b3BbBAB$8B$B2bBb2B$5B$Bb2B$BAB!',
       description: 'Period 170 oscillator',
     },
-    'Oscillator P171 171': {
+    'Oscillator P171': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n2B$2BABAB$5Bb2B$3Bb4B$Bb3BbBA$3Bb4B$b2BbBb2B$2b4BAB!',
       description: 'Period 171 oscillator',
     },
-    'Oscillator P172 172': {
+    'Oscillator P172': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\nbBA$3BA2B$2BbBb2B$6BA$2BbBbBA$b5B$2bA2B!',
       description: 'Period 172 oscillator',
     },
-    'Oscillator P174 174': {
+    'Oscillator P174': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n7B$4BA3B$ABbBbBbB$8B$b2BbBbBA$2b5B$3b3B$4bB!',
       description: 'Period 174 oscillator',
     },
-    'Oscillator P175 175': {
+    'Oscillator P175': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n6b2B$b5BAB$2BbBb3B$A6B$2BbBbB$5B$2Bb2B$4B!',
       description: 'Period 175 oscillator',
     },
-    'Oscillator P176 176': {
+    'Oscillator P176': {
       rle: 'x = 7, y = 9, rule = FuzzyLife/3\n2b4B$b2B2bB$b6B$bBbBbAB$b5BA$bBbB2bB$7B$BAbBb2B$6B!',
       description: 'Period 176 oscillator',
     },
-    'Oscillator P18 18': {
+    'Oscillator P18': {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\nbAB$4B$b3B$2bB!',
       description: 'Period 18 oscillator',
     },
-    'Oscillator P180 180': {
+    'Oscillator P180': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\nb2BA4B$2Bb4BA$4BbBbB$B2b5B$5B2bB$BbBb4B$3BABb2B$4BA2B!',
       description: 'Period 180 oscillator',
     },
-    'Oscillator P182 182': {
+    'Oscillator P182': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\nb7B$4BA2BA$B2bBbBbB$8B$BbB2bBbB$A7B$3BbBb2B$b6B!',
       description: 'Period 182 oscillator',
     },
-    'Oscillator P184 184': {
+    'Oscillator P184': {
       rle: 'x = 8, y = 9, rule = FuzzyLife/3\n6BAB$BbABbBbB$3BA4B$BAbBbBAB$6BAB$ABbBb3B$b5BbA$2b2Bb3B$3b4B!',
       description: 'Period 184 oscillator',
     },
-    'Oscillator P186 186': {
+    'Oscillator P186': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n2b2BAB$b3Bb2B$2BbBA2B$6B$Bb2B$3B$2B!',
       description: 'Period 186 oscillator',
     },
-    'Oscillator P187 187': {
+    'Oscillator P187': {
       rle: 'x = 8, y = 9, rule = FuzzyLife/3\n7bB$b4BA2B$2BbBb3B$6BbB$BbB2b3B$6BbB$AbB2b3B$3BA2BA$3B!',
       description: 'Period 187 oscillator',
     },
-    'Oscillator P19 19': {
+    'Oscillator P19': {
       rle: 'x = 7, y = 3, rule = FuzzyLife/3\n2bA3B$b6B$4BA!',
       description: 'Period 19 oscillator',
     },
-    'Oscillator P190 190': {
+    'Oscillator P190': {
       rle: 'x = 4, y = 6, rule = FuzzyLife/3\n2B$2B$BA2B$BA2B$3B$2B!',
       description: 'Period 190 oscillator',
     },
-    'Oscillator P192 192': {
+    'Oscillator P192': {
       rle: 'x = 9, y = 9, rule = FuzzyLife/3\n7b2B$6BAbB$BbBbBb3B$A6BbB$2BAbBb3B$A6BAB$bBbBbB2AB$b3Bb4B$2b3BA2B!',
       description: 'Period 192 oscillator',
     },
-    'Oscillator P195 195': {
+    'Oscillator P195': {
       rle: 'x = 10, y = 8, rule = FuzzyLife/3\n2b5Bb2B$b2BbBbBb2B$5Bb4B$BbBb3Bb2B$5Bb4B$BABb3Bb2B$BA3BbBb2B$2B3b5B!',
       description: 'Period 195 oscillator',
     },
-    'Oscillator P196 196': {
+    'Oscillator P196': {
       rle: 'x = 9, y = 9, rule = FuzzyLife/3\nbBA6B$b2BbBbBA$b8B$4BbBb2B$ABA6B$4BbB2bB$9B$bABbBbBbB$2b5BAB!',
       description: 'Period 196 oscillator',
     },
-    'Oscillator P198 198': {
+    'Oscillator P198': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n3B3bBA$BAB$3B$bB$bB2b3B$B3b3BA$4bBb2B$4b3B!',
       description: 'Period 198 oscillator',
     },
-    'Oscillator P2 2': {
+    'Oscillator P2': {
       rle: 'x = 1, y = 2, rule = FuzzyLife/3\nB$A!',
       description: 'Period 2 oscillator',
     },
-    'Oscillator P20 20': {
+    'Oscillator P20': {
       rle: 'x = 6, y = 3, rule = FuzzyLife/3\nbA2B$4BAB$bA2B!',
       description: 'Period 20 oscillator',
     },
-    'Oscillator P21 21': {
+    'Oscillator P21': {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\nBb3B$bBA2B$b3B$b2B!',
       description: 'Period 21 oscillator',
     },
-    'Oscillator P22 22': {
+    'Oscillator P22': {
       rle: 'x = 3, y = 7, rule = FuzzyLife/3\n2bB$b2B$A2B$2BA$2BA$3B$bB!',
       description: 'Period 22 oscillator',
     },
-    'Oscillator P23 23': {
+    'Oscillator P23': {
       rle: 'x = 4, y = 6, rule = FuzzyLife/3\nb3B$2BAB$b3B$$2bB$b3B!',
       description: 'Period 23 oscillator',
     },
-    'Oscillator P24 24': {
+    'Oscillator P24': {
       rle: 'x = 5, y = 5, rule = FuzzyLife/3\nb4B$2B2AB$b4B$2bAB$3bB!',
       description: 'Period 24 oscillator',
     },
-    'Oscillator P25 25': {
+    'Oscillator P25': {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\n3bA2B$2BA3B$3Bb2B$b3BA$2b2B!',
       description: 'Period 25 oscillator',
     },
-    'Oscillator P26 26': {
+    'Oscillator P26': {
       rle: 'x = 5, y = 5, rule = FuzzyLife/3\n2bA2B$3BAB$BbBbB$5B$bB2A!',
       description: 'Period 26 oscillator',
     },
-    'Oscillator P27 27': {
+    'Oscillator P27': {
       rle: 'x = 4, y = 6, rule = FuzzyLife/3\n2bAB$b3B$2BbB$4B$2BbA$4B!',
       description: 'Period 27 oscillator',
     },
-    'Oscillator P28 28': {
+    'Oscillator P28': {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2BAB$2BAB$2BAB$Bb2B!',
       description: 'Period 28 oscillator',
     },
-    'Oscillator P29 29': {
+    'Oscillator P29': {
       rle: 'x = 5, y = 6, rule = FuzzyLife/3\n3B$5B$BABAB$A2BA$Bb3B$4B!',
       description: 'Period 29 oscillator',
     },
-    'Oscillator P3 3': {
+    'Oscillator P3': {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n3B$BAB$2BbA!',
       description: 'Period 3 oscillator',
     },
-    'Oscillator P30 30': {
+    'Oscillator P30': {
       rle: 'x = 4, y = 6, rule = FuzzyLife/3\nb3B$bBAB$b2B$b2B$bAB$B2bB!',
       description: 'Period 30 oscillator',
     },
-    'Oscillator P31 31': {
+    'Oscillator P31': {
       rle: 'x = 6, y = 4, rule = FuzzyLife/3\nB$2Bb2B$2b4B$3b3B!',
       description: 'Period 31 oscillator',
     },
-    'Oscillator P32 32': {
+    'Oscillator P32': {
       rle: 'x = 5, y = 4, rule = FuzzyLife/3\nB2A2B$5B$b3B$2bB!',
       description: 'Period 32 oscillator',
     },
-    'Oscillator P33 33': {
+    'Oscillator P33': {
       rle: 'x = 6, y = 6, rule = FuzzyLife/3\n5B$4BA$AbBbB$5B$B2bBbB$6B!',
       description: 'Period 33 oscillator',
     },
-    'Oscillator P34 34': {
+    'Oscillator P34': {
       rle: 'x = 6, y = 4, rule = FuzzyLife/3\n6B$6B$2BABbB$6B!',
       description: 'Period 34 oscillator',
     },
-    'Oscillator P35 35': {
+    'Oscillator P35': {
       rle: 'x = 7, y = 5, rule = FuzzyLife/3\n3b4B$2bBA2B$bA3B$4B$3B!',
       description: 'Period 35 oscillator',
     },
-    'Oscillator P36 36': {
+    'Oscillator P36': {
       rle: 'x = 3, y = 6, rule = FuzzyLife/3\nB$3B$2BA$2BA$3B$bB!',
       description: 'Period 36 oscillator',
     },
-    'Oscillator P37 37': {
+    'Oscillator P37': {
       rle: 'x = 5, y = 6, rule = FuzzyLife/3\n5B$b3B$bA2B$bBbB$b3B$2b2B!',
       description: 'Period 37 oscillator',
     },
-    'Oscillator P38 38': {
+    'Oscillator P38': {
       rle: 'x = 5, y = 7, rule = FuzzyLife/3\n2b3B$b3BA$bBb2B$b4B$bAb2B$b3B$B!',
       description: 'Period 38 oscillator',
     },
-    'Oscillator P39 39': {
+    'Oscillator P39': {
       rle: 'x = 6, y = 4, rule = FuzzyLife/3\n3B$BA3B$2Bb3B$b4B!',
       description: 'Period 39 oscillator',
     },
-    'Oscillator P4 4': {
+    'Oscillator P4': {
       rle: 'x = 3, y = 3, rule = FuzzyLife/3\nb2B$3B$3B!',
       description: 'Period 4 oscillator',
     },
-    'Oscillator P40 40': {
+    'Oscillator P40': {
       rle: 'x = 8, y = 5, rule = FuzzyLife/3\n3B3bAB$BAB$2B3b2B$2B3bBAB$4b4B!',
       description: 'Period 40 oscillator',
     },
-    'Oscillator P41 41': {
+    'Oscillator P41': {
       rle: 'x = 5, y = 6, rule = FuzzyLife/3\nb3B$2BbA$4BA$bBb2B$2b3B$3b2B!',
       description: 'Period 41 oscillator',
     },
-    'Oscillator P42 42': {
+    'Oscillator P42': {
       rle: 'x = 4, y = 4, rule = FuzzyLife/3\n2B$BAB$BA2B$4B!',
       description: 'Period 42 oscillator',
     },
-    'Oscillator P43 43': {
+    'Oscillator P43': {
       rle: 'x = 6, y = 7, rule = FuzzyLife/3\nbBA$3BA$2Bb2B$5B$2BbBbB$b5B$2bA2B!',
       description: 'Period 43 oscillator',
     },
-    'Oscillator P44 44': {
+    'Oscillator P44': {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\nBA$6B$5B$B2ABAB$6B!',
       description: 'Period 44 oscillator',
     },
-    'Oscillator P45 45': {
+    'Oscillator P45': {
       rle: 'x = 6, y = 4, rule = FuzzyLife/3\nb2Bb2B$2B2A2B$6B$6B!',
       description: 'Period 45 oscillator',
     },
-    'Oscillator P46 46': {
+    'Oscillator P46': {
       rle: 'x = 5, y = 6, rule = FuzzyLife/3\nBbBbB$bB2bA$$b3B$bBA2B$b3B!',
       description: 'Period 46 oscillator',
     },
-    'Oscillator P47 47': {
+    'Oscillator P47': {
       rle: 'x = 5, y = 8, rule = FuzzyLife/3\n2b3B$b2BbB$BbBbB$2BA2B$BbBA$5B$2Bb2B$b4B!',
       description: 'Period 47 oscillator',
     },
-    'Oscillator P48 48': {
+    'Oscillator P48': {
       rle: 'x = 6, y = 4, rule = FuzzyLife/3\nb4B$2Bb3B$4BbB$2BAb2B!',
       description: 'Period 48 oscillator',
     },
-    'Oscillator P49 49': {
+    'Oscillator P49': {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\n2BA$4B$b2BbB$bABA2B$b5B!',
       description: 'Period 49 oscillator',
     },
-    'Oscillator P5 5': {
+    'Oscillator P5': {
       rle: 'x = 3, y = 4, rule = FuzzyLife/3\n2B$2B$BAB$3B!',
       description: 'Period 5 oscillator',
     },
-    'Oscillator P50 50': {
+    'Oscillator P50': {
       rle: 'x = 6, y = 5, rule = FuzzyLife/3\n6B$bBA3B$b2BbB$2b3B$3bB!',
       description: 'Period 50 oscillator',
     },
-    'Oscillator P51 51': {
+    'Oscillator P51': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n4b2B$b3Bb2B$7B$BbBbBA$5BAB$BbBb3B$6B!',
       description: 'Period 51 oscillator',
     },
-    'Oscillator P52 52': {
+    'Oscillator P52': {
       rle: 'x = 5, y = 7, rule = FuzzyLife/3\n4B$2BbB$BA3B$bBbBA$bA2BA$BbBbB$5B!',
       description: 'Period 52 oscillator',
     },
-    'Oscillator P53 53': {
+    'Oscillator P53': {
       rle: 'x = 9, y = 6, rule = FuzzyLife/3\n3bA3B$b7B$2BbBbBb2B$9B$BbBbBbBbB$9B!',
       description: 'Period 53 oscillator',
     },
-    'Oscillator P54 54': {
+    'Oscillator P54': {
       rle: 'x = 6, y = 7, rule = FuzzyLife/3\nbAB$4B$Bb3B$3Bb2B$6B$2BABA$2B!',
       description: 'Period 54 oscillator',
     },
-    'Oscillator P55 55': {
+    'Oscillator P55': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n5b2B$b4BAB$bB2b3B$bA4B$2Bb2B$3BA$3B!',
       description: 'Period 55 oscillator',
     },
-    'Oscillator P56 56': {
+    'Oscillator P56': {
       rle: 'x = 5, y = 7, rule = FuzzyLife/3\nb4B$3BA$BbBAB$A4B$2B2bB$b4B$2b2B!',
       description: 'Period 56 oscillator',
     },
-    'Oscillator P57 57': {
+    'Oscillator P57': {
       rle: 'x = 7, y = 6, rule = FuzzyLife/3\n5b2B$4b3B$3b2BAB$2b3BbB$b2Bb3B$BABA2B!',
       description: 'Period 57 oscillator',
     },
-    'Oscillator P58 58': {
+    'Oscillator P58': {
       rle: 'x = 7, y = 4, rule = FuzzyLife/3\nBA2BA2B$Bb3BbB$3Bb3B$b5B!',
       description: 'Period 58 oscillator',
     },
-    'Oscillator P59 59': {
+    'Oscillator P59': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n4b3B$4b4B$4b2BAB$4b2BAB$4b4B$bB2b4B$B3bAbBA$B3b3B!',
       description: 'Period 59 oscillator',
     },
-    'Oscillator P6 6': {
+    'Oscillator P6': {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\n2bAB$b3B$3B!',
       description: 'Period 6 oscillator',
     },
-    'Oscillator P60 60': {
+    'Oscillator P60': {
       rle: 'x = 4, y = 9, rule = FuzzyLife/3\nBA2B$BA2B$BA2B$4B$B2bB$4B$2BbB$b3B$2b2B!',
       description: 'Period 60 oscillator',
     },
-    'Oscillator P61 61': {
+    'Oscillator P61': {
       rle: 'x = 6, y = 9, rule = FuzzyLife/3\nb5B$2BbBbB$4BbB$2Bb3B$4BbB$2BbBbB$6B$2Bb2B$BA2B!',
       description: 'Period 61 oscillator',
     },
-    'Oscillator P62 62': {
+    'Oscillator P62': {
       rle: 'x = 4, y = 6, rule = FuzzyLife/3\nbBAB$2BbB$4B$Bb2B$3B$2B!',
       description: 'Period 62 oscillator',
     },
-    'Oscillator P63 63': {
+    'Oscillator P63': {
       rle: 'x = 4, y = 8, rule = FuzzyLife/3\nbB$3B$BbB$2BAB$Bb2B$4B$B2bB$4B!',
       description: 'Period 63 oscillator',
     },
-    'Oscillator P64 64': {
+    'Oscillator P64': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n2BA$5B$BbBb2B$7B$A2bBb2B$6B$5B!',
       description: 'Period 64 oscillator',
     },
-    'Oscillator P65 65': {
+    'Oscillator P65': {
       rle: 'x = 8, y = 7, rule = FuzzyLife/3\n6B$ABbBb2B$A7B$2BbBbBbB$7BA$2B2bBb2B$b5BAB!',
       description: 'Period 65 oscillator',
     },
-    'Oscillator P66 66': {
+    'Oscillator P66': {
       rle: 'x = 8, y = 5, rule = FuzzyLife/3\n3b5B$2b2BbBbA$b4BA2B$2BbABAbB$8B!',
       description: 'Period 66 oscillator',
     },
-    'Oscillator P67 67': {
+    'Oscillator P67': {
       rle: 'x = 7, y = 8, rule = FuzzyLife/3\nb3BAB$2B2A3B$2BA2BbB$3Bb3B$5BbB$b2Bb3B$4BAbB$5b2B!',
       description: 'Period 67 oscillator',
     },
-    'Oscillator P68 68': {
+    'Oscillator P68': {
       rle: 'x = 6, y = 6, rule = FuzzyLife/3\nbB$3B$ABb3B$A3BAB$BbBb2B$6B!',
       description: 'Period 68 oscillator',
     },
-    'Oscillator P69 69': {
+    'Oscillator P69': {
       rle: 'x = 9, y = 8, rule = FuzzyLife/3\n3b5B$b2BbBb3B$7BbB$B2bB2b3B$7BbB$BbBbBA2B$5B2AB$4BA3B!',
       description: 'Period 69 oscillator',
     },
-    'Oscillator P7 7': {
+    'Oscillator P7': {
       rle: 'x = 3, y = 5, rule = FuzzyLife/3\n2bB$3B$BAB$3B$B!',
       description: 'Period 7 oscillator',
     },
-    'Oscillator P70 70': {
+    'Oscillator P70': {
       rle: 'x = 6, y = 6, rule = FuzzyLife/3\nb3B$4BA$BbBb2B$A5B$2BbBbB$BA4B!',
       description: 'Period 70 oscillator',
     },
-    'Oscillator P71 71': {
+    'Oscillator P71': {
       rle: 'x = 6, y = 7, rule = FuzzyLife/3\nb5B$6B$BbBb2B$3Bb2B$bBA3B$2b2BAB$3b3B!',
       description: 'Period 71 oscillator',
     },
-    'Oscillator P72 72': {
+    'Oscillator P72': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n4b2B$3b4B$b4BAB$7B$3BA3B$bBA3B$3b2B!',
       description: 'Period 72 oscillator',
     },
-    'Oscillator P73 73': {
+    'Oscillator P73': {
       rle: 'x = 6, y = 10, rule = FuzzyLife/3\n2b4B$b3BbB$2BbBbB$6B$BAbBbB$6B$ABbBbB$6B$b2Bb2B$2b2B!',
       description: 'Period 73 oscillator',
     },
-    'Oscillator P74 74': {
+    'Oscillator P74': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n6B$A3Bb2B$B2A5B$4BbBbB$B2bBbBbB$8B$b2BbA2B$2b4B!',
       description: 'Period 74 oscillator',
     },
-    'Oscillator P75 75': {
+    'Oscillator P75': {
       rle: 'x = 10, y = 9, rule = FuzzyLife/3\n2B$Bb5B$3BA3BA$b2BbBbBb2B$2b8B$3b2BbBbAB$4b6B$5b2BbAB$6b4B!',
       description: 'Period 75 oscillator',
     },
-    'Oscillator P76 76': {
+    'Oscillator P76': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\nb3BAB$3Bb3B$Bb3BbB$b2Bb3B$b6B$2bABA2B$5b2B!',
       description: 'Period 76 oscillator',
     },
-    'Oscillator P77 77': {
+    'Oscillator P77': {
       rle: 'x = 7, y = 8, rule = FuzzyLife/3\n2Bb4B$BA5B$BABbBbA$7B$B2bB2bB$7B$b2Bb2B$2b3B!',
       description: 'Period 77 oscillator',
     },
-    'Oscillator P78 78': {
+    'Oscillator P78': {
       rle: 'x = 6, y = 6, rule = FuzzyLife/3\nb3B$2BAB$Bb2B$3B$3B$bB2bAB!',
       description: 'Period 78 oscillator',
     },
-    'Oscillator P79 79': {
+    'Oscillator P79': {
       rle: 'x = 10, y = 9, rule = FuzzyLife/3\nb5BA2B$2BbBA4B$2BbBbBbBbB$10B$BAbBbBbBbB$10B$b2BbBbB2bB$2b3Bb4B$3b6B!',
       description: 'Period 79 oscillator',
     },
-    'Oscillator P8 8': {
+    'Oscillator P8': {
       rle: 'x = 4, y = 3, rule = FuzzyLife/3\nb2B$3B$2BAB!',
       description: 'Period 8 oscillator',
     },
-    'Oscillator P80 80': {
+    'Oscillator P80': {
       rle: 'x = 8, y = 6, rule = FuzzyLife/3\n3b2BA2B$2b2Bb2BA$b5BbB$2BbBb3B$4BA2B$3Bb2B!',
       description: 'Period 80 oscillator',
     },
-    'Oscillator P81 81': {
+    'Oscillator P81': {
       rle: 'x = 7, y = 8, rule = FuzzyLife/3\n7B$BbBbBbB$BbBb3B$6BA$B2bBb2B$6B$2Bb2B$b3B!',
       description: 'Period 81 oscillator',
     },
-    'Oscillator P82 82': {
+    'Oscillator P82': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n4B$2Bb2B$6B$B2bBbB$5BA$2Bb2BAB$4B!',
       description: 'Period 82 oscillator',
     },
-    'Oscillator P83 83': {
+    'Oscillator P83': {
       rle: 'x = 9, y = 9, rule = FuzzyLife/3\nBABA4B$Bb7B$4BbB2bB$BAb6B$5BbBbB$b2Bb5B$2b3BbBbB$3b2Bb3B$4b4B!',
       description: 'Period 83 oscillator',
     },
-    'Oscillator P84 84': {
+    'Oscillator P84': {
       rle: 'x = 7, y = 5, rule = FuzzyLife/3\n7B$BbABAbB$7B$2BbBAB$b4B!',
       description: 'Period 84 oscillator',
     },
-    'Oscillator P85 85': {
+    'Oscillator P85': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n3b5B$2b3BA2B$2bAbBb2B$2b3Bb2B$bAb5B$4B2b2B$B2b4B$6B!',
       description: 'Period 85 oscillator',
     },
-    'Oscillator P86 86': {
+    'Oscillator P86': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n4bAB$b2BA3B$2BbBb2B$7B$2BbBb2B$6B$4BA!',
       description: 'Period 86 oscillator',
     },
-    'Oscillator P87 87': {
+    'Oscillator P87': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n4b2B$3b2Bb2B$2b6B$2b2BbB$bBb5B$4BbBbB$2Bb5B$b2BA4B!',
       description: 'Period 87 oscillator',
     },
-    'Oscillator P88 88': {
+    'Oscillator P88': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n2bBAb2B$b3Bb2B$2Bb4B$b3Bb2B$2b5B$3bBb2B$4b2B!',
       description: 'Period 88 oscillator',
     },
-    'Oscillator P89 89': {
+    'Oscillator P89': {
       rle: 'x = 9, y = 9, rule = FuzzyLife/3\n6b3B$5b2BbB$3b2Bb2B$2b5BAB$b2BbBb3B$9B$BbBbBbBbB$3Bb5B$b6B!',
       description: 'Period 89 oscillator',
     },
-    'Oscillator P9 9': {
+    'Oscillator P9': {
       rle: 'x = 5, y = 3, rule = FuzzyLife/3\n2b3B$3BAB$2b3B!',
       description: 'Period 9 oscillator',
     },
-    'Oscillator P90 90': {
+    'Oscillator P90': {
       rle: 'x = 7, y = 8, rule = FuzzyLife/3\n4bBA$3b4B$2Bb3B$4bB$$b2B$bBA4B$b4BA!',
       description: 'Period 90 oscillator',
     },
-    'Oscillator P91 91': {
+    'Oscillator P91': {
       rle: 'x = 8, y = 9, rule = FuzzyLife/3\n2B4b2B$BAB3b2B$3BA$2Bb2B$A5B$2BbBb2B$7B$2B2b2B$b4B!',
       description: 'Period 91 oscillator',
     },
-    'Oscillator P92 92': {
+    'Oscillator P92': {
       rle: 'x = 7, y = 8, rule = FuzzyLife/3\nbB$bA2b3B$4bBbB$4b2BA$bB3b2B$3B3bB$BAB$3Bb2B!',
       description: 'Period 92 oscillator',
     },
-    'Oscillator P93 93': {
+    'Oscillator P93': {
       rle: 'x = 9, y = 9, rule = FuzzyLife/3\nbB5b2B$2bB3b3B$B4b4B$B3b5B$B2b6B$5bBb2B$3b6B$3bABbBbA$4b5B!',
       description: 'Period 93 oscillator',
     },
-    'Oscillator P94 94': {
+    'Oscillator P94': {
       rle: 'x = 8, y = 6, rule = FuzzyLife/3\n4BA2B$5Bb2B$BA2b3BA$5BbBA$2BbBb2B$b4BAB!',
       description: 'Period 94 oscillator',
     },
-    'Oscillator P95 95': {
+    'Oscillator P95': {
       rle: 'x = 8, y = 6, rule = FuzzyLife/3\nb4BA2B$4Bb2BA$B2b3BbB$4Bb3B$b5BbB$3b3BAB!',
       description: 'Period 95 oscillator',
     },
-    'Oscillator P96 96': {
+    'Oscillator P96': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\n6B$BAbBb2B$8B$bBbBbBAB$b5BAB$bBbBb3B$Bb2Bb2B$3b3B!',
       description: 'Period 96 oscillator',
     },
-    'Oscillator P98 98': {
+    'Oscillator P98': {
       rle: 'x = 8, y = 8, rule = FuzzyLife/3\nb7B$6BbB$B2bBbBbB$A7B$2B2ABbB$b5B$b4BA$6bB!',
       description: 'Period 98 oscillator',
     },
-    'Oscillator P99 99': {
+    'Oscillator P99': {
       rle: 'x = 7, y = 7, rule = FuzzyLife/3\n3BABA$BA5B$6B$ABb2B$4B$3B$2B!',
       description: 'Period 99 oscillator',
     },
