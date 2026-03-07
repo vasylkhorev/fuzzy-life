@@ -25,7 +25,7 @@ const formatRuleKeyLabel = (ruleKey) => {
     return `B ${params.birthRules} / S ${params.survivalRules}`;
 };
 
-const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParams }) => {
+const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParams, onPresetApplied }) => {
     const [showRules, setShowRules] = useState(false);
     const [selectedModelForRules, setSelectedModelForRules] = useState(model);
     const [showWeightEditor, setShowWeightEditor] = useState(false);
@@ -142,6 +142,9 @@ const ModeMenu = ({ isOpen, setIsOpen, model, setModel, modeParams, setModeParam
         const parsed = parseRuleKeyToParams(ruleKey);
         if (parsed) {
             setModeParams(prev => ({ ...prev, ...parsed }));
+            if (onPresetApplied) {
+                onPresetApplied();
+            }
         }
     };
 

@@ -33,6 +33,48 @@ const gridsEqual = (gridA, gridB) => {
     return true;
 };
 
+const getBoundingBox = (grid) => {
+    let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
+    let hasCells = false;
+    for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[r].length; c++) {
+            if (grid[r][c] !== 0) {
+                if (r < minR) minR = r;
+                if (r > maxR) maxR = r;
+                if (c < minC) minC = c;
+                if (c > maxC) maxC = c;
+                hasCells = true;
+            }
+        }
+    }
+    return hasCells ? { minR, maxR, minC, maxC } : null;
+};
+
+const areGridsShiftedEqual = (gridA, gridB) => {
+    const boxA = getBoundingBox(gridA);
+    const boxB = getBoundingBox(gridB);
+
+    if (!boxA && !boxB) return true;
+    if (!boxA || !boxB) return false;
+
+    const heightA = boxA.maxR - boxA.minR + 1;
+    const widthA = boxA.maxC - boxA.minC + 1;
+    const heightB = boxB.maxR - boxB.minR + 1;
+    const widthB = boxB.maxC - boxB.minC + 1;
+
+    if (heightA !== heightB || widthA !== widthB) return false;
+
+    for (let r = 0; r < heightA; r++) {
+        for (let c = 0; c < widthA; c++) {
+            if (gridA[boxA.minR + r][boxA.minC + c] !== gridB[boxB.minR + r][boxB.minC + c]) {
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
+
 const App = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [grid, setGridState] = useState(
@@ -465,7 +507,8 @@ const App = () => {
         testGenerationRef.current = generation;
 
         const initialGrid = cloneGrid(grid);
-        testingHistoryRef.current.push({ grid: initialGrid, generation: testGenerationRef.current });
+        const initialBox = getBoundingBox(initialGrid);
+        testingHistoryRef.current.push({ grid: initialGrid, generation: testGenerationRef.current, box: initialBox });
 
         const testNextGeneration = () => {
             const mode = modes[model] || modes.classic;
@@ -480,14 +523,44 @@ const App = () => {
 
             testGenerationRef.current += 1;
             const nextGridSnapshot = cloneGrid(nextGrid);
+            const nextBox = getBoundingBox(nextGridSnapshot);
 
             // Check for periodicity
             for (let i = testingHistoryRef.current.length - 1; i >= 0; i--) {
-                const { grid: savedGrid, generation: savedGen } = testingHistoryRef.current[i];
-                if (gridsEqual(nextGridSnapshot, savedGrid)) {
+                const { grid: savedGrid, generation: savedGen, box: savedBox } = testingHistoryRef.current[i];
+
+                let isEqual = false;
+                if (!nextBox && !savedBox) {
+                    isEqual = true;
+                } else if (nextBox && savedBox) {
+                    const heightA = nextBox.maxR - nextBox.minR + 1;
+                    const widthA = nextBox.maxC - nextBox.minC + 1;
+                    const heightB = savedBox.maxR - savedBox.minR + 1;
+                    const widthB = savedBox.maxC - savedBox.minC + 1;
+
+                    if (heightA === heightB && widthA === widthB) {
+                        isEqual = true;
+                        for (let r = 0; r < heightA; r++) {
+                            for (let c = 0; c < widthA; c++) {
+                                if (nextGridSnapshot[nextBox.minR + r][nextBox.minC + c] !== savedGrid[savedBox.minR + r][savedBox.minC + c]) {
+                                    isEqual = false;
+                                    break;
+                                }
+                            }
+                            if (!isEqual) break;
+                        }
+                    }
+                }
+
+                if (isEqual) {
                     const period = testGenerationRef.current - savedGen;
                     setDetectedPeriod(period);
                     setIsTestingPeriodicity(false);
+
+                    // Show the successful shifted/identical grid state
+                    setGridState(nextGridSnapshot);
+                    setGeneration(testGenerationRef.current);
+
                     if (testingIntervalRef.current) {
                         clearInterval(testingIntervalRef.current);
                         testingIntervalRef.current = null;
@@ -497,7 +570,7 @@ const App = () => {
             }
 
             // Store snapshot
-            testingHistoryRef.current.push({ grid: nextGridSnapshot, generation: testGenerationRef.current });
+            testingHistoryRef.current.push({ grid: nextGridSnapshot, generation: testGenerationRef.current, box: nextBox });
             if (testingHistoryRef.current.length > maxTestingHistorySize) {
                 testingHistoryRef.current.shift();
             }
@@ -508,6 +581,9 @@ const App = () => {
             // Check if we've exceeded a reasonable limit
             if (testGenerationRef.current > maxTestingHistorySize) {
                 setIsTestingPeriodicity(false);
+                setGridState(nextGridSnapshot);
+                setGeneration(testGenerationRef.current);
+
                 if (testingIntervalRef.current) {
                     clearInterval(testingIntervalRef.current);
                     testingIntervalRef.current = null;
@@ -826,6 +902,10 @@ const App = () => {
                 setModel={setModel}
                 modeParams={modeParams}
                 setModeParams={setModeParams}
+                onPresetApplied={() => {
+                    clearGrid();
+                    setSelectedPattern(null);
+                }}
             />
             <PatternSearchModal
                 isOpen={isPatternSearchOpen}
