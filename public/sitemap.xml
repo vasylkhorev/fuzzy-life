@@ -2,30 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://fuzzylife.netlify.app/</loc>
-    <lastmod>2026-03-05</lastmod>
+    <lastmod>2026-03-07</lastmod>
   </url>
   <url>
     <loc>https://fuzzylife.netlify.app/?m=1d</loc>
-    <lastmod>2026-03-05</lastmod>
+    <lastmod>2026-03-07</lastmod>
   </url>
   <url>
     <loc>https://fuzzylife.netlify.app/?m=classic</loc>
-    <lastmod>2026-03-05</lastmod>
+    <lastmod>2026-03-07</lastmod>
   </url>
   <url>
     <loc>https://fuzzylife.netlify.app/?m=continuous</loc>
-    <lastmod>2026-03-05</lastmod>
+    <lastmod>2026-03-07</lastmod>
   </url>
   <url>
     <loc>https://fuzzylife.netlify.app/?m=finiteTemperature</loc>
-    <lastmod>2026-03-05</lastmod>
+    <lastmod>2026-03-07</lastmod>
   </url>
   <url>
     <loc>https://fuzzylife.netlify.app/?m=halfLife</loc>
-    <lastmod>2026-03-05</lastmod>
+    <lastmod>2026-03-07</lastmod>
   </url>
   <url>
     <loc>https://fuzzylife.netlify.app/?m=continuousQuartiles</loc>
-    <lastmod>2026-03-05</lastmod>
+    <lastmod>2026-03-07</lastmod>
   </url>
 </urlset>
