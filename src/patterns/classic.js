@@ -89,6 +89,10 @@ const patterns = {
       rle: 'x = 7, y = 4\nbo$2bo2bo$3obo$4b3o!',
       description: 'A Vanishing reaction in Conway\'s Game of Life.',
     },
+    'Eater 1': {
+      rle: 'x = 8, y = 7, rule = B3/S23\n2bo$obo$b2o$4b2o$4bobo$6bo$6b2o!',
+      description: 'An eater 1 about to eat a glider.',
+    },
   },
 };
 export default patterns;

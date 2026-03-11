@@ -18,16 +18,16 @@ const translations = {
         label: 'Half-Life',
         description: 'Three-state mode with exclusive birth: birth applies only to strictly dead (0) cells. Transition between 0, 0.5, and 1.',
         params: {
-            birthRules: 'Birth Rules',
-            survivalRules: 'Survival Rules',
+            birthRules: { label: 'Birth Rules' },
+            survivalRules: { label: 'Survival Rules' },
         },
     },
     sk: {
         label: 'HalfLife',
         description: 'Trojstavový režim s exkluzívnym narodením: narodenie sa aplikuje len na mŕtve (0) bunky. Prechody medzi 0, 0.5 a 1.',
         params: {
-            birthRules: 'Pravidlá Zrodu',
-            survivalRules: 'Pravidlá Prežitia',
+            birthRules: { label: 'Pravidlá zrodu' },
+            survivalRules: { label: 'Pravidlá prežitia' },
         },
     },
 };

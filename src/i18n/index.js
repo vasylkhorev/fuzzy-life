@@ -234,6 +234,10 @@ const translations = {
             '1dWeightsHelp': 'Configure neighborhood weights, size, threshold, and rules for 1D cellular automaton.',
             patternSearch: 'Pattern Search',
             '1dSearchHelp': 'Automatically search for oscillators and gliders in 1D cellular automaton.',
+            patternPresets: 'PATTERN PRESETS',
+            patternPresetsHelp: 'Rule settings with discovered patterns. Click to apply.',
+            patternSingular: 'pattern',
+            patternPlural: 'patterns',
         },
         modeRules: {
             title: '{{mode}} Rules',
@@ -548,6 +552,10 @@ const translations = {
             '1dWeightsHelp': 'Konfigurujte váhy susedstva, veľkosť, prah a pravidlá pre 1D celulárny automat.',
             patternSearch: 'Hľadať vzory',
             '1dSearchHelp': 'Automaticky vyhľadávať oscilátory a klzáky v 1D celulárnom automate.',
+            patternPresets: 'PREDVOĽBY VZOROV',
+            patternPresetsHelp: 'Nastavenia pravidiel s objavenými vzormi. Kliknite pre aplikovanie.',
+            patternSingular: 'vzor',
+            patternPlural: 'vzory',
         },
         modeRules: {
             title: 'Pravidlá režimu {{mode}}',
