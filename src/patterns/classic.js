@@ -93,6 +93,10 @@ const patterns = {
       rle: 'x = 8, y = 7, rule = B3/S23\n2bo$obo$b2o$4b2o$4bobo$6bo$6b2o!',
       description: 'An eater 1 about to eat a glider.',
     },
+    "NOT Gate": {
+      rle: 'x = 49, y = 36, rule = B3/S23\n42b2o$42b2o6$obo$b2o$bo$42b3o$41bo3bo$40bo5bo$40bo5bo$8bo34bo$9b2o30bo\n3bo$8b2o32b3o$43bo3$44b3o$44b3o$43bo3bo$37bobo$37b2o3b2o3b2o$38bo4$23b\no$24b2o5bo$23b2o4b2o$30b2o2$44b2o$44b2o!',
+      description: 'A NOT gate in Conway\'s Game of Life.',
+    }
   },
 };
 export default patterns;
