@@ -96,6 +96,22 @@ const patterns = {
     "NOT Gate": {
       rle: 'x = 49, y = 36, rule = B3/S23\n42b2o$42b2o6$obo$b2o$bo$42b3o$41bo3bo$40bo5bo$40bo5bo$8bo34bo$9b2o30bo\n3bo$8b2o32b3o$43bo3$44b3o$44b3o$43bo3bo$37bobo$37b2o3b2o3b2o$38bo4$23b\no$24b2o5bo$23b2o4b2o$30b2o2$44b2o$44b2o!',
       description: 'A NOT gate in Conway\'s Game of Life.',
+    },
+    "Barge": {
+      rle: "x = 6, y = 66b$2bo3b$bobo2b$2bobob$3bo2b$6b!",
+      description: "Barge still life"
+    },
+    "Snake": {
+      rle: 'x = 4, y = 2\n2obo$ob2o!',
+      description: ""
+    },
+    "Long boat": {
+      rle: "x = 6, y = 6\n6b$2bo3b$bobo2b$2bobob$3b2ob$6b!",
+      description: ""
+    },
+    "Long snake": {
+      rle: "x = 7, y = 5\n7b$b2o4b$bobobob$4b2ob$7b!",
+      description: ""
     }
   },
 };
