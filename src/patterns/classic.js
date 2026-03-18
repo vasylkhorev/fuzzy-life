@@ -98,20 +98,24 @@ const patterns = {
       description: 'A NOT gate in Conway\'s Game of Life.',
     },
     "Barge": {
-      rle: "x = 6, y = 66b$2bo3b$bobo2b$2bobob$3bo2b$6b!",
+      rle: "x = 6, y = 6\n6b$2bo3b$bobo2b$2bobob$3bo2b$6b!",
       description: "Barge still life"
     },
     "Snake": {
       rle: 'x = 4, y = 2\n2obo$ob2o!',
-      description: ""
+      description: "Snake still life"
     },
     "Long boat": {
       rle: "x = 6, y = 6\n6b$2bo3b$bobo2b$2bobob$3b2ob$6b!",
-      description: ""
+      description: "Long boat still life"
     },
     "Long snake": {
       rle: "x = 7, y = 5\n7b$b2o4b$bobobob$4b2ob$7b!",
-      description: ""
+      description: "Long snake still life"
+    },
+    "Honey farm": {
+      rle: "x = 13, y = 13, rule = B3/S23\n6bo6b$5bobo5b$5bobo5b$6bo6b2$b2o7b2ob$o2bo5bo2bo$b2o7b2ob2$6bo6b$5bobo\n5b$5bobo5b$6bo!",
+      description: "A common 24-cell still life that is made up of four beehives."
     }
   },
 };
