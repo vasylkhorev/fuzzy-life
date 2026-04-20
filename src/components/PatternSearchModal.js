@@ -37,7 +37,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                 return pRuleKey === currentRuleKey;
             });
 
-            setFoundPatterns(filteredStored.reverse()); // Show newest first
+            setFoundPatterns(filteredStored.reverse());
         } catch (err) {
             console.error("Failed to load patterns from db:", err);
         }
@@ -48,8 +48,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
             loadPatternsFromDB();
         }
     }, [isOpen, loadPatternsFromDB]);
-
-    // ─── 1D helpers ──────────────────────────────────────────────
 
     const getTrimmedString1D = (row) => {
         const first = row.findIndex(v => v > 0);
@@ -70,7 +68,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         const historyKeys = [];
         const MAX_HISTORY_WINDOW = 100;
 
-        // Ensure 1d has access to its dependencies
         let currentGrid = Array.from({ length: GRID_SIZE }, () => new Array(GRID_SIZE).fill(0));
         let currentRow = Array(GRID_SIZE).fill(0);
         const offset = Math.floor((GRID_SIZE - initialRow.length) / 2);
@@ -82,7 +79,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         });
         currentGrid[0] = currentRow;
 
-        // Initial serialization to detect still lifes immediately
         const initB = getTrimmedString1D(currentRow);
         if (initB.s) {
             history.set(initB.s, { gen: -1, minC: initB.offset });
@@ -90,13 +86,11 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         }
 
         for (let gen = 0; gen < maxGenerations; gen++) {
-            // Calculate next row
             const nextRow = Array(GRID_SIZE).fill(0);
             for (let c = 0; c < GRID_SIZE; c++) {
                 nextRow[c] = currentMode.computeNextState(currentGrid, 0, c, modeParams, gen);
             }
 
-            // Find bounds for 1D serialization
             let minC = GRID_SIZE, maxC = -1;
             for (let c = 0; c < GRID_SIZE; c++) {
                 if (nextRow[c] > 0) {
@@ -105,11 +99,10 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                 }
             }
 
-            if (maxC === -1) return null; // died
-            if (maxC - minC > searchWidth * 2) return null; // chaos expanding too fast
-            if (minC <= 1 || maxC >= GRID_SIZE - 2) return null; // hit walls
+            if (maxC === -1) return null;
+            if (maxC - minC > searchWidth * 2) return null;
+            if (minC <= 1 || maxC >= GRID_SIZE - 2) return null;
 
-            // Serialize 1D (only horizontal)
             const s = nextRow.slice(minC, maxC + 1).map(v => v.toFixed(3)).join(',');
 
             if (history.has(s)) {
@@ -142,13 +135,10 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                 history.delete(oldestKey);
             }
 
-            // update grid for next step calculation
             currentGrid[0] = nextRow;
         }
         return null;
     };
-
-    // ─── 2D helpers ──────────────────────────────────────────────
 
     const getBoundingBox = (grid) => {
         let minR = GRID_SIZE, maxR = -1, minC = GRID_SIZE, maxC = -1;
@@ -172,7 +162,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         for (let r = bbox.minR; r <= bbox.maxR; r++) {
             const row = [];
             for (let c = bbox.minC; c <= bbox.maxC; c++) {
-                row.push(grid[r][c].toFixed(3)); // use fixed precision to avoid floating point mismatch
+                row.push(grid[r][c].toFixed(3));
             }
             rows.push(row.join(','));
         }
@@ -182,7 +172,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
     const runOneTrial2D = (initialCells) => {
         const currentMode = modes[mode] || modes.classic;
 
-        // Create initial grid and place pattern
         let grid = Array.from({ length: GRID_SIZE }, () => new Array(GRID_SIZE).fill(0));
         const centerR = Math.floor(GRID_SIZE / 2);
         const centerC = Math.floor(GRID_SIZE / 2);
@@ -199,11 +188,8 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
             }
         });
 
-        // Phase 1: Let the pattern run and settle for [maxGenerations] steps.
-        // This allows initial explosive chaos to separate into distinct objects.
         for (let gen = 0; gen < maxGenerations; gen++) {
             const nextGrid = Array.from({ length: GRID_SIZE }, () => new Array(GRID_SIZE).fill(0));
-            // Pre-calculate next state
             for (let r = 0; r < GRID_SIZE; r++) {
                 for (let c = 0; c < GRID_SIZE; c++) {
                     nextGrid[r][c] = currentMode.computeNextState(grid, r, c, modeParams, gen);
@@ -211,11 +197,9 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
             }
             grid = nextGrid;
 
-            // Fast exit if grid dies
             if (!getBoundingBox(grid)) return null;
         }
 
-        // Phase 2: Extract distinct, disconnected islands from the settled grid.
         const extractIslands = (sourceGrid) => {
             const visited = Array.from({ length: GRID_SIZE }, () => new Array(GRID_SIZE).fill(false));
             const islands = [];
@@ -229,7 +213,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
             for (let r = 0; r < GRID_SIZE; r++) {
                 for (let c = 0; c < GRID_SIZE; c++) {
                     if (sourceGrid[r][c] > 0 && !visited[r][c]) {
-                        // Found a new unvisited living cell -> start a new island (BFS)
                         const currentIslandCells = [];
                         const queue = [[r, c]];
                         visited[r][c] = true;
@@ -257,14 +240,12 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         const islands = extractIslands(grid);
         const validResults = [];
 
-        // Phase 3: Simulate each separated island individually.
         for (const islandCells of islands) {
             let isolatedGrid = Array.from({ length: GRID_SIZE }, () => new Array(GRID_SIZE).fill(0));
             islandCells.forEach(([r, c, v]) => {
                 isolatedGrid[r][c] = v;
             });
 
-            // Capture the initial shape of this specific island for the preview
             const islandInitialBBox = getBoundingBox(isolatedGrid);
             if (!islandInitialBBox) continue;
 
@@ -284,14 +265,12 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
 
             for (let gen = 0; gen < maxGenerations; gen++) {
                 const bbox = getBoundingBox(isolatedGrid);
-                if (!bbox) break; // Island died
+                if (!bbox) break;
 
-                // Check expansion limit
                 const bboxW = bbox.maxC - bbox.minC + 1;
                 const bboxH = bbox.maxR - bbox.minR + 1;
-                if (bboxW > searchWidth * 2 || bboxH > searchWidth * 2) break; // Chaos
+                if (bboxW > searchWidth * 2 || bboxH > searchWidth * 2) break;
 
-                // Boundary check
                 if (bbox.minR <= 1 || bbox.minC <= 1 || bbox.maxR >= GRID_SIZE - 2 || bbox.maxC >= GRID_SIZE - 2) break;
 
                 const s = serializeBBox(isolatedGrid, bbox);
@@ -301,11 +280,10 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                     const shiftR = bbox.minR - prev.minR;
                     const shiftC = bbox.minC - prev.minC;
 
-                    // Extract the canonical representation of this island
                     const canonicalPattern = [];
                     for (let r = bbox.minR; r <= bbox.maxR; r++) {
                         const row = [];
-                        for (let c = bbox.minC; c <= bbox.minC + (bbox.maxC - bbox.minC); c++) { // Corrected loop for canonical pattern
+                        for (let c = bbox.minC; c <= bbox.minC + (bbox.maxC - bbox.minC); c++) {
                             row.push(isolatedGrid[r][c]);
                         }
                         canonicalPattern.push(row);
@@ -317,10 +295,10 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                         shift: Math.abs(shiftR) + Math.abs(shiftC),
                         shiftR,
                         shiftC,
-                        canonicalPattern,       // The simplified shape it reduces to
-                        initialPattern: islandInitialPattern, // The state of this island at generation MaxGen
+                        canonicalPattern,
+                        initialPattern: islandInitialPattern,
                         is1D: false,
-                        islandCellsOrigin: islandCells // keeping metadata just in case
+                        islandCellsOrigin: islandCells
                     };
                     break;
                 }
@@ -332,7 +310,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                     islandHistory.delete(oldestKey);
                 }
 
-                // compute next frame for this isolated island
                 const nextIsolatedGrid = Array.from({ length: GRID_SIZE }, () => new Array(GRID_SIZE).fill(0));
                 for (let r = 0; r < GRID_SIZE; r++) {
                     for (let c = 0; c < GRID_SIZE; c++) {
@@ -347,16 +324,12 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
             }
         }
 
-        // Return the first valid unique pattern we found in the islands
-        // (If multiple islands arose from the same trial, we output the first successful glider/oscillator to save array complexity downstream)
         if (validResults.length > 0) {
             return validResults[0];
         }
 
         return null;
     };
-
-    // ─── Search ──────────────────────────────────────────────────
 
     const startSearch = async () => {
         setIsSearching(true);
@@ -376,7 +349,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                 const currentDensity = minSeedDensity + Math.random() * (maxSeedDensity - minSeedDensity);
 
                 if (is1D) {
-                    // ── 1D search ──
                     let initial;
                     const isThreeState = mode === 'testMode' || mode === 'halfLife';
 
@@ -401,7 +373,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
 
                     result = runOneTrial1D(initial);
                 } else {
-                    // ── 2D search ──
                     const cells = [];
                     if (strategy === 'random') {
                         const currentWidth = searchSmaller ? Math.floor(Math.random() * searchWidth) + 1 : searchWidth;
@@ -410,7 +381,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                                 if (Math.random() < currentDensity) {
                                     let val = 1;
                                     if (mode === 'testMode' || mode === 'halfLife') {
-                                        val = (Math.random() > 0.33) ? 2 : 1; // Place fully alive or weak alive cells
+                                        val = (Math.random() > 0.33) ? 2 : 1;
                                     }
                                     cells.push([r, c, val]);
                                 }
@@ -445,7 +416,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                 }
 
                 if (result) {
-                    // Check if result matches filters
                     const isStillLife = result.type === 'oscillator' && result.period === 1;
                     const isOscillator = result.type === 'oscillator' && result.period > 1;
                     const isGlider = result.type === 'glider';
@@ -455,8 +425,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                         (isOscillator && filterOscillators) ||
                         (isGlider && filterGliders)
                     ) {
-                        // Create unique hash based on shape and parameters
-                        // This prevents adding exactly identical generated patterns multiple times
                         const canonicalShape = result.is1D
                             ? result.canonicalPattern[0].map(v => v.toFixed(3)).join(',')
                             : result.canonicalPattern.map(r => r.map(v => v.toFixed(3)).join(',')).join('|');
@@ -466,8 +434,8 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                             shiftR: result.shiftR,
                             shiftC: result.shiftC,
                             period: result.period,
-                            mode: mode, // Include mode in hash to distinguish patterns from different rules
-                            modeParams: modeParams // Include modeParams
+                            mode: mode,
+                            modeParams: modeParams
                         });
 
                         const newItem = {
@@ -478,13 +446,11 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                         };
 
                         setFoundPatterns(prev => {
-                            // double check memory state just in case
                             const isNew = !prev.some(p => p.hash === hash);
                             if (isNew) {
                                 foundCount++;
-                                // Push to database asynchronously
                                 db.patterns.put({ ...newItem }).catch(e => console.error("Failed to save pattern to DB:", e));
-                                return [newItem, ...prev]; // Add to the beginning for newest first
+                                return [newItem, ...prev];
                             }
                             return prev;
                         });
@@ -547,8 +513,6 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
         onClose();
     };
 
-    // ─── Mini preview for 2D patterns ────────────────────────────
-
     const PatternGrid = ({ pattern2D, size = 60 }) => {
         if (!pattern2D || pattern2D.length === 0) return null;
         const rows = pattern2D.length;
@@ -574,44 +538,44 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 text-slate-200">
-            <div className="w-full max-w-4xl bg-gray-900 border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[85vh]">
-                <header className="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-950/50">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 text-slate-800">
+            <div className="w-full max-w-4xl bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[85vh]">
+                <header className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
                     <div>
-                        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                             {t('patternSearch.title')}
                         </h2>
                     </div>
-                    <button onClick={onClose} className="p-2 text-gray-400 hover:text-white transition">
+                    <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-700 transition">
                         <AiOutlineClose size={20} />
                     </button>
                 </header>
 
                 <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
-                    <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                             <div className="space-y-2">
-                                <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('patternSearch.config.patternWidth')}</label>
+                                <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{t('patternSearch.config.patternWidth')}</label>
                                 <input
                                     type="number"
                                     value={searchWidth}
                                     onChange={(e) => setSearchWidth(Math.max(1, parseInt(e.target.value) || 1))}
-                                    className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                                    className="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('patternSearch.config.maxGen')}</label>
+                                <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{t('patternSearch.config.maxGen')}</label>
                                 <input
                                     type="number"
                                     min="10"
                                     max="1000"
                                     value={maxGenerations}
                                     onChange={(e) => setMaxGenerations(parseInt(e.target.value) || 0)}
-                                    className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                                    className="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('patternSearch.config.minSeedDensity')}</label>
+                                <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{t('patternSearch.config.minSeedDensity')}</label>
                                 <input
                                     type="number"
                                     step="0.05"
@@ -619,11 +583,11 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                                     max="0.99"
                                     value={minSeedDensity}
                                     onChange={(e) => setMinSeedDensity(parseFloat(e.target.value) || 0)}
-                                    className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                                    className="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('patternSearch.config.maxSeedDensity')}</label>
+                                <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{t('patternSearch.config.maxSeedDensity')}</label>
                                 <input
                                     type="number"
                                     step="0.05"
@@ -631,18 +595,18 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                                     max="0.99"
                                     value={maxSeedDensity}
                                     onChange={(e) => setMaxSeedDensity(parseFloat(e.target.value) || 0)}
-                                    className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                                    className="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-x-8 gap-y-4 bg-gray-800/40 p-4 rounded-xl border border-gray-800/50 mt-2">
+                        <div className="flex flex-wrap items-center gap-x-8 gap-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mt-2">
                             <div className="flex items-center gap-3">
-                                <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">{t('patternSearch.config.strategy')}</label>
+                                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">{t('patternSearch.config.strategy')}</label>
                                 <select
                                     value={strategy}
                                     onChange={(e) => setStrategy(e.target.value)}
-                                    className="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-sm text-white outline-none focus:border-blue-500 min-w-[120px]"
+                                    className="bg-white border border-slate-300 rounded px-2 py-1 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 min-w-[120px]"
                                 >
                                     <option value="random">{t('patternSearch.config.strategies.random')}</option>
                                     <option value="brute-force">{t('patternSearch.config.strategies.bruteForce')}</option>
@@ -650,51 +614,51 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                             </div>
 
                             {strategy === 'random' && (
-                                <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer hover:text-white transition-colors">
+                                <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer hover:text-slate-900 transition-colors">
                                     <input
                                         type="checkbox"
                                         checked={searchSmaller}
                                         onChange={(e) => setSearchSmaller(e.target.checked)}
-                                        className="w-4 h-4 rounded border-gray-700 text-blue-500 focus:ring-blue-500 bg-gray-900"
+                                        className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 bg-white"
                                     />
                                     <span className="whitespace-nowrap">{t('patternSearch.config.searchSmaller')}</span>
                                 </label>
                             )}
 
-                            <div className="h-4 w-px bg-gray-700 mx-2 hidden md:block"></div>
+                            <div className="h-4 w-px bg-slate-300 mx-2 hidden md:block"></div>
 
                             <div className="flex items-center gap-6">
-                                <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer hover:text-white transition-colors">
+                                <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer hover:text-slate-900 transition-colors">
                                     <input
                                         type="checkbox"
                                         checked={filterGliders}
                                         onChange={(e) => setFilterGliders(e.target.checked)}
-                                        className="w-4 h-4 rounded border-gray-700 text-purple-500 focus:ring-purple-500 bg-gray-900"
+                                        className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 bg-white"
                                     />
                                     <span className="whitespace-nowrap">{t('patternSearch.filters.gliders')}</span>
                                 </label>
-                                <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer hover:text-white transition-colors">
+                                <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer hover:text-slate-900 transition-colors">
                                     <input
                                         type="checkbox"
                                         checked={filterOscillators}
                                         onChange={(e) => setFilterOscillators(e.target.checked)}
-                                        className="w-4 h-4 rounded border-gray-700 text-blue-500 focus:ring-blue-500 bg-gray-900"
+                                        className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 bg-white"
                                     />
                                     <span className="whitespace-nowrap">{t('patternSearch.filters.oscillators')}</span>
                                 </label>
-                                <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer hover:text-white transition-colors">
+                                <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer hover:text-slate-900 transition-colors">
                                     <input
                                         type="checkbox"
                                         checked={filterStillLifes}
                                         onChange={(e) => setFilterStillLifes(e.target.checked)}
-                                        className="w-4 h-4 rounded border-gray-700 text-green-500 focus:ring-green-500 bg-gray-900"
+                                        className="w-4 h-4 rounded border-slate-300 text-green-600 focus:ring-green-500 bg-white"
                                     />
                                     <span className="whitespace-nowrap">{t('patternSearch.filters.stillLifes')}</span>
                                 </label>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4 border-t border-gray-800 pt-6">
+                        <div className="flex items-center gap-4 border-t border-slate-200 pt-6">
                             {!isSearching ? (
                                 <button
                                     onClick={startSearch}
@@ -715,36 +679,36 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                             <button
                                 onClick={exportResults}
                                 disabled={filteredPatterns.length === 0}
-                                className={`p-3 rounded-lg transition border ${filteredPatterns.length === 0 ? 'border-gray-800 text-gray-700 cursor-not-allowed' : 'border-gray-700 text-green-400 hover:text-white hover:bg-green-600/20'}`}
+                                className={`p-3 rounded-lg transition border ${filteredPatterns.length === 0 ? 'border-slate-200 text-slate-300 cursor-not-allowed bg-slate-50' : 'border-slate-300 text-green-600 hover:text-white hover:bg-green-600'}`}
                                 title={t('patternSearch.config.exportResults') || 'Export Results to JSON'}
                             >
                                 <AiOutlineDownload size={20} />
                             </button>
                             <button
                                 onClick={handleClear}
-                                className="p-3 text-gray-400 hover:text-white border border-gray-700 rounded-lg transition"
+                                className="p-3 text-slate-500 hover:text-slate-900 border border-slate-300 rounded-lg transition hover:bg-slate-50"
                                 title={t('patternSearch.config.clearResults')}
                             >
                                 <AiOutlineDelete size={20} />
                             </button>
                         </div>
 
-                        <div className="bg-gray-800/50 rounded-lg p-4 flex justify-between items-center text-sm">
+                        <div className="bg-slate-50 rounded-lg p-4 flex justify-between items-center text-sm border border-slate-200">
                             <div className="flex gap-4">
-                                <span className="text-gray-400">{t('patternSearch.progress.trials')}: <span className="text-white font-mono">{progress.trials}</span></span>
-                                <span className="text-gray-400">{t('patternSearch.progress.found')}: <span className="text-green-400 font-mono">{progress.found}</span></span>
+                                <span className="text-slate-600">{t('patternSearch.progress.trials')}: <span className="text-slate-900 font-mono">{progress.trials}</span></span>
+                                <span className="text-slate-600">{t('patternSearch.progress.found')}: <span className="text-green-600 font-mono">{progress.found}</span></span>
                             </div>
-                            {isSearching && <span className="text-blue-400 animate-pulse">{t('patternSearch.progress.searching')}</span>}
+                            {isSearching && <span className="text-blue-600 animate-pulse">{t('patternSearch.progress.searching')}</span>}
                         </div>
 
                         <div className="grid gap-2">
                             {filteredPatterns.length === 0 ? (
-                                <div className="text-center py-8 text-gray-500 border border-dashed border-gray-800 rounded-lg text-sm">
+                                <div className="text-center py-8 text-slate-400 border border-dashed border-slate-300 rounded-lg text-sm bg-slate-50">
                                     {foundPatterns.length === 0 ? t('patternSearch.results.noPatternsYet') : t('patternSearch.results.noPatternsFound')}
                                 </div>
                             ) : (
                                 [...filteredPatterns].reverse().map((p) => (
-                                    <div key={p.id} className="bg-gray-800 border border-gray-700 rounded-lg p-3 flex items-center justify-between group">
+                                    <div key={p.id} className="bg-white border border-slate-200 rounded-lg p-3 flex items-center justify-between group shadow-sm hover:shadow-md transition">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 flex items-center justify-center shrink-0">
                                                 {p.is1D ? (
@@ -763,8 +727,10 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                                             </div>
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${p.type === 'glider' ? 'bg-purple-500/20 text-purple-400' : (p.type === 'oscillator' && p.period === 1) ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'}`}>{t(`patternSearch.filters.${p.type === 'oscillator' && p.period === 1 ? 'stillLifes' : p.type + 's'}`)}</span>
-                                                    <span className="text-xs text-gray-400">
+                                                    <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${p.type === 'glider' ? 'bg-purple-100 text-purple-700' : (p.type === 'oscillator' && p.period === 1) ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                                                        {t(`patternSearch.filters.${p.type === 'oscillator' && p.period === 1 ? 'stillLifes' : p.type + 's'}`)}
+                                                    </span>
+                                                    <span className="text-xs text-slate-500">
                                                         {!(p.type === 'oscillator' && p.period === 1) && `P${p.period}`}
                                                         {p.is1D && p.shift !== 0 ? ` S${p.shift}` : ''}
                                                         {!p.is1D && p.type === 'glider' ? ` (${p.shiftR}, ${p.shiftC})` : ''}
@@ -773,23 +739,32 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                                            <button onClick={() => {
-                                                const currentMode = modes[mode] || modes.classic;
-                                                const pat = p.canonicalPattern || p.initialPattern;
-                                                if (!pat) return;
-                                                const cells = [];
-                                                if (p.is1D) {
-                                                    const row = p.canonicalRow || p.initialRow;
-                                                    row.forEach((v, c) => { if (v > 0) cells.push({ r: 0, c, v }); });
-                                                } else {
-                                                    pat.forEach((row, r) => row.forEach((v, c) => { if (v > 0) cells.push({ r, c, v }); }));
-                                                }
-                                                const rle = encodeRle(cells, { stateMap: currentMode.rleStateMap });
-                                                navigator.clipboard.writeText(rle);
-                                            }} className="p-1.5 bg-gray-700 hover:bg-gray-600 rounded text-gray-300 hover:text-white" title="Copy RLE to clipboard">
+                                            <button
+                                                onClick={() => {
+                                                    const currentMode = modes[mode] || modes.classic;
+                                                    const pat = p.canonicalPattern || p.initialPattern;
+                                                    if (!pat) return;
+                                                    const cells = [];
+                                                    if (p.is1D) {
+                                                        const row = p.canonicalRow || p.initialRow;
+                                                        row.forEach((v, c) => { if (v > 0) cells.push({ r: 0, c, v }); });
+                                                    } else {
+                                                        pat.forEach((row, r) => row.forEach((v, c) => { if (v > 0) cells.push({ r, c, v }); }));
+                                                    }
+                                                    const rle = encodeRle(cells, { stateMap: currentMode.rleStateMap });
+                                                    navigator.clipboard.writeText(rle);
+                                                }}
+                                                className="p-1.5 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 hover:text-slate-900"
+                                                title="Copy RLE to clipboard"
+                                            >
                                                 <AiOutlineCopy size={16} />
                                             </button>
-                                            <button onClick={() => handleLoad(p)} className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-xs font-semibold rounded">{t('patternSearch.results.load')}</button>
+                                            <button
+                                                onClick={() => handleLoad(p)}
+                                                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded text-slate-800"
+                                            >
+                                                {t('patternSearch.results.load')}
+                                            </button>
                                         </div>
                                     </div>
                                 ))
@@ -798,7 +773,7 @@ const PatternSearchModal = ({ isOpen, onClose, mode, modeParams, onLoadPattern }
                     </div>
                 </div>
 
-                <footer className="px-6 py-4 bg-gray-950 border-t border-gray-800 text-[10px] text-gray-500 text-center">
+                <footer className="px-6 py-4 bg-slate-50 border-t border-slate-200 text-[10px] text-slate-500 text-center">
                     {t('patternSearch.info.searchFooter')}
                 </footer>
             </div>
