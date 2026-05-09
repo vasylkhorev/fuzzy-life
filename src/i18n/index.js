@@ -408,28 +408,28 @@ const translations = {
             descriptionPlaceholder: 'Umiestnite kurzor nad vzor pre zobrazenie podrobností...',
         },
         help: {
-            title: 'Ako používať hru',
+            title: 'Používanie aplikácie',
             subtitle:
-                'Majte pod kontrolou ovládanie, preskúmajte vzory a udržujte simuláciu v pohybe - všetko potrebné pre rýchle iterácie nájdete tu.',
+                'Získajte prehľad o ovládaní, preskúmajte dostupné vzory a efektívne pracujte so simuláciou. Na tomto mieste nájdete všetky základné informácie pre rýchlu orientáciu.',
             close: 'Zavrieť',
-            shortcutsTitle: 'Skratky a gestá',
+            shortcutsTitle: 'Klávesové skratky a gestá',
             languageHeading: 'Jazyk',
-            languageDescription: 'Zmeňte jazyk rozhrania okamžite. Voľba sa uloží automaticky.',
+            languageDescription: 'Zmena jazyka rozhrania sa aplikuje okamžite a automaticky sa uloží.',
             sections: {
                 simulationBasics: {
                     title: 'Základy simulácie',
                     bullets: {
                         runPause: {
-                            label: 'Spustiť a pozastaviť',
-                            body: 'Použite tlačidlo Štart/Stop v plávajúcich ovládacích prvkoch na prepínanie simulácie bez vymazania mriežky.',
+                            label: 'Spustenie a pozastavenie',
+                            body: 'Pomocou tlačidla Štart/Stop v ovládacom paneli môžete prepínať beh simulácie bez ovplyvnenia aktuálneho stavu mriežky.',
                         },
                         singleStep: {
-                            label: 'Jeden krok',
-                            body: 'Stlačte Krok pre posun o jednu generáciu - ideálne na ladenie vzorov alebo sledovanie fuzzy prechodov.',
+                            label: 'Jednokrokový režim',
+                            body: 'Funkcia Krok umožňuje posun o jednu generáciu, čo je vhodné najmä pri analýze správania vzorov alebo sledovaní prechodových javov.',
                         },
                         clearGrid: {
-                            label: 'Vyčistiť mriežku',
-                            body: 'Okamžite vymažte svet pomocou Vyčistiť. Zachová sa aktuálny režim, rýchlosť aj poloha kamery.',
+                            label: 'Vymazanie mriežky',
+                            body: 'Voľbou Vyčistiť odstránite aktuálnu konfiguráciu bez zmeny zvoleného režimu, rýchlosti simulácie ani nastavenia zobrazenia.',
                         },
                     },
                 },
@@ -438,19 +438,19 @@ const translations = {
                     bullets: {
                         patternsTab: {
                             label: 'Karta vzorov',
-                            body: 'Pretiahnite ľubovoľný vzor na mriežku tam, kde ho chcete. Uložené vzory sa normalizujú na svoju hornú ľavú bunku.',
+                            body: 'Vybraný vzor je možné presunúť na mriežku metódou „drag and drop“. Vzory sú pri ukladaní normalizované vzhľadom na svoju ľavú hornú bunku.',
                         },
                         configurationsTab: {
                             label: 'Karta konfigurácií',
-                            body: 'Kliknutím na konfiguráciu nahradíte celú mriežku. Na import `.rle` exportov použite ikonu nahratia.',
+                            body: 'Výber konfigurácie nahradí aktuálny stav celej mriežky. Import súborov vo formáte `.rle` je dostupný prostredníctvom príslušnej ikony.',
                         },
                         localStorage: {
                             label: 'Lokálne úložisko',
-                            body: 'Vlastné uloženia ostávajú vo vašom prehliadači. Vymazanie údajov stránky ich odstráni, preto dôležité projekty pravidelne exportujte.',
+                            body: 'Používateľské dáta sú ukladané lokálne v prehliadači. Pri vymazaní údajov stránky dôjde k ich odstráneniu, preto sa odporúča dôležité konfigurácie pravidelne exportovať.',
                         },
                         copyRle: {
-                            label: 'Kopírovanie RLE',
-                            body: 'Rýchly export akéhokoľvek vzoru alebo konfigurácie skopírovaním ich RLE kódu priamo do schránky.',
+                            label: 'Export RLE',
+                            body: 'Vzor alebo konfiguráciu je možné exportovať skopírovaním ich RLE reprezentácie priamo do systémovej schránky.',
                         },
                     },
                 },
@@ -458,16 +458,16 @@ const translations = {
                     title: 'Pokročilé funkcie',
                     bullets: {
                         patternSearcher: {
-                            label: 'Hľadač vzorov',
-                            body: 'Automaticky objavujte nové klzáky a oscilátory v 1D režimoch. Nájdete ho v paneli Režimy.',
+                            label: 'Vyhľadávač vzorov',
+                            body: 'Nástroj umožňuje automatizované vyhľadávanie zaujímavých štruktúr, ako sú klzáky alebo oscilátory, najmä v jednorozmerných režimoch.',
                         },
                         weightEditor: {
                             label: 'Editor váh',
-                            body: 'Prispôsobte pravidlá a váhy susedstva pre 1D automaty a objavujte unikátne správanie.',
+                            body: 'Umožňuje detailnú konfiguráciu váh susedstva a pravidiel pre jednorozmerné automaty, čím otvára priestor pre experimentovanie s rôznymi dynamikami.',
                         },
                         patternPresets: {
                             label: 'Predvoľby vzorov',
-                            body: 'Rýchlo aplikujte známe zaujímavé kombinácie pravidiel a k nim prislúchajúce vzory priamo z panela Režimy.',
+                            body: 'Preddefinované kombinácie pravidiel a vzorov umožňujú rýchle nastavenie simulácie bez nutnosti manuálnej konfigurácie.',
                         },
                     },
                 },

@@ -23,7 +23,7 @@ const HelpDialog = ({ isOpen, onClose }) => {
             }}
         >
             <div
-                className="relative max-h-[80vh] w-full max-w-2xl overflow-y-auto no-scrollbar rounded-xl border border-white/10 bg-gray-900/95 p-6 text-white shadow-2xl"
+                className="relative max-h-[80vh] w-full max-w-4xl overflow-y-auto no-scrollbar rounded-xl border border-white/10 bg-gray-900/95 p-6 text-white shadow-2xl"
                 onClick={(event) => event.stopPropagation()}
             >
                 <header className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
